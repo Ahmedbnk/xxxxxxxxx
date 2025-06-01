@@ -43,32 +43,29 @@ SRCS = main.c \
 	src/parser/handle_redir_out.c\
 	src/parser/handle_append.c \
 	src/execution/execute_command.c \
-	src/builtins/builtins.c
+	src/builtins/builtins.c \
+	src/utils/ft_strncmp.c \
+	src/utils/ft_putstr_fd.c \
+	src/utils/ft_atoi.c
 
 OBJS = $(SRCS:.c=.o)
 
 READLINE = -lreadline
-LIBFT = -L./libft -lft
 
-all: libft $(NAME)
-
-libft:
-	@make -C libft
+all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(READLINE) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(READLINE) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@make -C libft clean
 	rm -f $(OBJS) 
 
 fclean: clean
-	@make -C libft fclean
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re
