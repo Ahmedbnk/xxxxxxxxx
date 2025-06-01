@@ -1,0 +1,47 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/nkasimi/minishell/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+BUFFER_SIZE	include/minishell.h	/^#define BUFFER_SIZE /;"	d	language:C++
+HEREDOC	include/minishell.h	/^	HEREDOC,      \/\/ << 5$/;"	e	language:C++	enum:e_token_type
+MINISHELL_H	include/minishell.h	/^# define MINISHELL_H$/;"	d	language:C++
+PIPE	include/minishell.h	/^	PIPE,         \/\/ | 1$/;"	e	language:C++	enum:e_token_type
+REDIR_APPEND	include/minishell.h	/^	REDIR_APPEND, \/\/ >> 4$/;"	e	language:C++	enum:e_token_type
+REDIR_IN	include/minishell.h	/^	REDIR_IN,     \/\/ < 2$/;"	e	language:C++	enum:e_token_type
+REDIR_OUT	include/minishell.h	/^	REDIR_OUT,    \/\/ > 3$/;"	e	language:C++	enum:e_token_type
+WORD	include/minishell.h	/^	WORD,         \/\/  0 for regular words$/;"	e	language:C++	enum:e_token_type
+after_dollar	include/minishell.h	/^	char			*after_dollar;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+befor_dollar	include/minishell.h	/^	char			*befor_dollar;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+content	include/minishell.h	/^	void			*content;$/;"	m	language:C++	struct:s_list	typeref:typename:void *
+double_q	include/minishell.h	/^# define double_q /;"	d	language:C++
+e_token_type	include/minishell.h	/^typedef enum e_token_type$/;"	g	language:C++
+heredoc_flag	include/minishell.h	/^	int				heredoc_flag;$/;"	m	language:C++	struct:s_expand	typeref:typename:int
+last_one	include/minishell.h	/^	int				last_one;$/;"	m	language:C++	struct:s_expand	typeref:typename:int
+next	include/minishell.h	/^	struct s_list	*next;$/;"	m	language:C++	struct:s_list	typeref:struct:s_list *
+s_data	include/minishell.h	/^typedef struct s_data$/;"	s	language:C++
+s_data::type	include/minishell.h	/^	int				type;$/;"	m	language:C++	struct:s_data	typeref:typename:int
+s_data::word	include/minishell.h	/^	char			*word;$/;"	m	language:C++	struct:s_data	typeref:typename:char *
+s_expand	include/minishell.h	/^typedef struct s_expand$/;"	s	language:C++
+s_expand::after_dollar	include/minishell.h	/^	char			*after_dollar;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+s_expand::befor_dollar	include/minishell.h	/^	char			*befor_dollar;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+s_expand::heredoc_flag	include/minishell.h	/^	int				heredoc_flag;$/;"	m	language:C++	struct:s_expand	typeref:typename:int
+s_expand::last_one	include/minishell.h	/^	int				last_one;$/;"	m	language:C++	struct:s_expand	typeref:typename:int
+s_expand::to_expand	include/minishell.h	/^	char			*to_expand;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+s_list	include/minishell.h	/^typedef struct s_list$/;"	s	language:C++
+s_list::content	include/minishell.h	/^	void			*content;$/;"	m	language:C++	struct:s_list	typeref:typename:void *
+s_list::next	include/minishell.h	/^	struct s_list	*next;$/;"	m	language:C++	struct:s_list	typeref:struct:s_list *
+single_q	include/minishell.h	/^# define single_q /;"	d	language:C++
+t_data	include/minishell.h	/^}					t_data;$/;"	t	language:C++	typeref:struct:s_data
+t_expand	include/minishell.h	/^}					t_expand;$/;"	t	language:C++	typeref:struct:s_expand
+t_list	include/minishell.h	/^}					t_list;$/;"	t	language:C++	typeref:struct:s_list
+t_token	include/minishell.h	/^}					t_token;$/;"	t	language:C++	typeref:enum:e_token_type
+to_expand	include/minishell.h	/^	char			*to_expand;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
+type	include/minishell.h	/^	int				type;$/;"	m	language:C++	struct:s_data	typeref:typename:int
+word	include/minishell.h	/^	char			*word;$/;"	m	language:C++	struct:s_data	typeref:typename:char *
