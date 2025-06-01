@@ -119,4 +119,9 @@ int ft_exit(char **args);
 int is_builtin(char *cmd);
 int execute_builtin(char **args, char **env);
 
+// Additional utility functions
+int     ft_strncmp(const char *s1, const char *s2, size_t n);
+void    ft_putstr_fd(char *s, int fd);
+int     ft_atoi(const char *str);
+
 #endif

@@ -1,4 +1,7 @@
 #include "../../include/minishell.h"
+#include <limits.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 int ft_echo(char **args)
 {
@@ -30,6 +33,9 @@ int ft_cd(char **args, char **env)
     char *oldpwd;
     char *newpwd;
     char cwd[PATH_MAX];
+
+    (void)env;  // Silence unused parameter warning
+    (void)cwd;  // Silence unused variable warning if not used in all paths
 
     if (!args[1] || !ft_strncmp(args[1], "~", 2))
     {
@@ -78,6 +84,8 @@ int ft_export(char **args, char **env)
     char *name;
     char *value;
     char *equal;
+
+    (void)env;  // Silence unused parameter warning
 
     if (!args[1])
     {
