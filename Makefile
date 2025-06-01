@@ -47,23 +47,28 @@ SRCS = main.c \
 
 OBJS = $(SRCS:.c=.o)
 
-READLINE =-lreadline
+READLINE = -lreadline
+LIBFT = -L./libft -lft
 
-all: $(NAME)
+all: libft $(NAME)
+
+libft:
+	@make -C libft
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(READLINE) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(READLINE) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
+	@make -C libft clean
 	rm -f $(OBJS) 
 
 fclean: clean
+	@make -C libft fclean
 	rm -f $(NAME)
-
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re libft
