@@ -62,7 +62,7 @@ static int	execute_external_command(char **splitted, char **env)
 	}
 	else if (pid > 0)
 		waitpid(pid, &status, 0);
-	return (status);
+	return (WEXITSTATUS(status));
 }
 
 static int	process_command(char **splitted, char **env)
@@ -78,7 +78,7 @@ int	main(int ac, char **av, char **env)
 {
 	char	*line;
 	char	**splitted;
-	int		status;
+	int		exit_status;
 
 	unused_vars(ac, av);
 	handle_signals();
@@ -91,11 +91,16 @@ int	main(int ac, char **av, char **env)
 		{
 			splitted = NULL;
 			parse_and_expand(line, &splitted, env);
-			status = process_command(splitted, env);
+			exit_status = process_command(splitted, env);
 			if (splitted)
-				free_array(splitted);
+			{
+				int i = 0;
+				while (splitted[i])
+					free(splitted[i++]);
+				free(splitted);
+			}
 		}
 		free(line);
 	}
-	return (0);
+	return (exit_status);
 }
