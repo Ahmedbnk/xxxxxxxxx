@@ -124,4 +124,10 @@ int     ft_strncmp(const char *s1, const char *s2, size_t n);
 void    ft_putstr_fd(char *s, int fd);
 int     ft_atoi(const char *str);
 
+// Signal handling
+void    handle_signals(void);
+void    handle_signals_in_child(void);
+int     get_signal(void);
+void    reset_signal(void);
+
 #endif
