@@ -1,109 +1,129 @@
 #include "minishell.h"
+#include <sys/wait.h>
 
-void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
-{
-	int i;
-	char *cmd_with_slash;
-	char *cmd_with_its_path;
-
-	i = 0;
-	cmd_with_slash = ft_strjoin("/", cmd);
-	while(path[i])
-	{
-		cmd_with_its_path = ft_strjoin(path[i] ,cmd_with_slash);
-		if(access(cmd_with_its_path, F_OK) == 0)
-		{
-			if(access(cmd_with_its_path, X_OK) == 0)
-			{
-				execve(cmd_with_its_path , av, env);
-				exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-			}
-			else
-				exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-		}
-		i++;
-	}
-	exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-}
-
-
-void  check_the_access(char *cmd, char **av, char **env)
-{
-	if (access(cmd, F_OK) == 0)
-	{
-		if(access(cmd, X_OK) == 0)
-		{
-			execve(cmd , av, env);
-			exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-		}
-		else
-			exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-	}
-	else
-		exit((printf("%s: %s\n", cmd, strerror(errno)), 1));
-}
-
-
-char **get_path()
+static char	**get_path(void)
 {
 	char	*path;
 	char	**splited;
 
 	path = getenv("PATH");
-	splited = ft_split(path , ':');
-	return splited;
+	if (!path)
+		return (NULL);
+	splited = ft_split(path, ':');
+	return (splited);
 }
 
-void execute_command(char *cmd , char **av, char **env)
+static void	check_after_getting_path(char *cmd, char **av, char **path, char **env)
 {
-	if(!cmd)
-		return;
-	char **path = get_path();
-	if(*cmd == '/')
+	int		i;
+	char	*cmd_with_slash;
+	char	*cmd_with_its_path;
+
+	if (!path)
+		exit(ft_putstr_fd("minishell: No such file or directory\n", 2), 1);
+	i = 0;
+	cmd_with_slash = ft_strjoin("/", cmd);
+	if (!cmd_with_slash)
+		exit(1);
+	while (path[i])
+	{
+		cmd_with_its_path = ft_strjoin(path[i], cmd_with_slash);
+		if (!cmd_with_its_path)
+		{
+			free(cmd_with_slash);
+			exit(1);
+		}
+		if (access(cmd_with_its_path, F_OK) == 0)
+		{
+			if (access(cmd_with_its_path, X_OK) == 0)
+			{
+				free(cmd_with_slash);
+				execve(cmd_with_its_path, av, env);
+				free(cmd_with_its_path);
+				exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+			}
+			free(cmd_with_its_path);
+			free(cmd_with_slash);
+			exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+		}
+		free(cmd_with_its_path);
+		i++;
+	}
+	free(cmd_with_slash);
+	exit(ft_putstr_fd("minishell: command not found\n", 2), 127);
+}
+
+static void	check_the_access(char *cmd, char **av, char **env)
+{
+	if (access(cmd, F_OK) == 0)
+	{
+		if (access(cmd, X_OK) == 0)
+		{
+			execve(cmd, av, env);
+			exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+		}
+		exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+	}
+	exit(ft_putstr_fd("minishell: No such file or directory\n", 2), 127);
+}
+
+void	execute_command(char *cmd, char **av, char **env)
+{
+	char	**path;
+
+	if (!cmd)
+		return ;
+	if (*cmd == '/')
 		check_the_access(cmd, av, env);
 	else
-		check_after_geting_bath(cmd ,av , path , env);
+	{
+		path = get_path();
+		check_after_getting_path(cmd, av, path, env);
+	}
 }
 
-int how_many_strcut_in_the_array(t_data *arr_of_stracts)
+int	how_many_struct_in_the_array(t_data *arr_of_structs)
 {
-	int number_of_structs;
+	int	number_of_structs;
 
 	number_of_structs = 0;
-	while(arr_of_stracts->word != NULL )
-	{
-
+	while (arr_of_structs[number_of_structs].word != NULL)
 		number_of_structs++;
-		arr_of_stracts++;
-	}
-	return  number_of_structs;
+	return (number_of_structs);
 }
 
-char **get_cmd_and_its_args(t_data *arr_of_stracts)
+char	**get_cmd_and_its_args(t_data *arr_of_structs)
 {
-	int i;
-	int j;
-	char **cmd_and_args;
+	int		i;
+	int		j;
+	char	**cmd_and_args;
 
-	cmd_and_args = ft_malloc( how_many_strcut_in_the_array(arr_of_stracts)* sizeof(t_data ) + 1);
-
+	cmd_and_args = ft_malloc((how_many_struct_in_the_array(arr_of_structs) + 1) * sizeof(char *));
+	if (!cmd_and_args)
+		return (NULL);
 	i = 0;
 	j = 0;
-	while(arr_of_stracts[i].word != NULL)
+	while (arr_of_structs[i].word != NULL)
 	{
-		if(arr_of_stracts[i].type == REDIR_IN || arr_of_stracts[i].type == HEREDOC || 
-		arr_of_stracts[i].type == REDIR_OUT || arr_of_stracts[i].type == REDIR_APPEND)
+		if (arr_of_structs[i].type == REDIR_IN || arr_of_structs[i].type == HEREDOC
+			|| arr_of_structs[i].type == REDIR_OUT || arr_of_structs[i].type == REDIR_APPEND)
 			i++;
-		else if(arr_of_stracts[i].type == WORD)
+		else if (arr_of_structs[i].type == WORD)
 		{
-
-			cmd_and_args[j] = ft_strdup(arr_of_stracts[i].word);
-		j++;
-	}
+			cmd_and_args[j] = ft_strdup(arr_of_structs[i].word);
+			if (!cmd_and_args[j])
+			{
+				while (j > 0)
+					free(cmd_and_args[--j]);
+				free(cmd_and_args);
+				return (NULL);
+			}
+			j++;
+		}
 		else
-			break;
+			break ;
 		i++;
 	}
 	cmd_and_args[j] = NULL;
-	return cmd_and_args;
+	return (cmd_and_args);
 }

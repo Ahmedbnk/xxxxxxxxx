@@ -35,6 +35,8 @@ static int	change_directory(char *path, char *cwd)
 	char	*oldpwd;
 	int		ret;
 
+	if (!path)
+		return (1);
 	ret = chdir(path);
 	if (ret == -1)
 	{
@@ -70,7 +72,10 @@ int	ft_cd(char **args, char **env)
 		if (!home)
 			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), 1);
 		if (change_directory(home, cwd) == 0)
-			ft_putstr_fd(home, 1), ft_putstr_fd("\n", 1);
+		{
+			ft_putstr_fd(home, 1);
+			ft_putstr_fd("\n", 1);
+		}
 		return (0);
 	}
 	return (change_directory(args[1], cwd));
