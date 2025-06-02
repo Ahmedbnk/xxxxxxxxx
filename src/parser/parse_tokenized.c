@@ -127,7 +127,7 @@ void process_command(t_shell *shell, t_data *tokenized)
     free_2d_array(command_and_args);
 }
 
-static void setup_pipe_redirections(int *arr, int previous_read_end)
+static void setup_pipe_redirections(int previous_read_end)
 {
     if (previous_read_end != -1)
     {
@@ -148,14 +148,14 @@ static void handle_child_process(t_shell *shell, t_data *start, t_data *tokenize
                                int *arr, int previous_read_end)
 {
     if (previous_read_end != -1)
-        setup_pipe_redirections(arr, previous_read_end);
+        setup_pipe_redirections(previous_read_end);
     if (tokenized && tokenized->type == PIPE)
         setup_pipe_write_end(arr, previous_read_end);
     process_command(shell, start);
     exit(0);
 }
 
-static void handle_parent_process(t_shell *shell, int *arr, int *previous_read_end)
+static void handle_parent_process(int *arr, int *previous_read_end)
 {
     if (*previous_read_end != -1)
         close(*previous_read_end);
@@ -184,7 +184,7 @@ void execute_command_line(t_shell *shell, t_data *tokenized)
         if (fork() == 0)
             handle_child_process(shell, start, tokenized, arr, previous_read_end);
         
-        handle_parent_process(shell, arr, &previous_read_end);
+        handle_parent_process(arr, &previous_read_end);
         
         if (tokenized && tokenized->type == PIPE)
             tokenized++;

@@ -83,7 +83,7 @@ char	**split_with_operators(char **splitted);
 void print_splitted(char **splitted);
 t_data *make_token(char **arr);
 int len_of_two_d_array(char **str);
-void execute_command_line(t_data *tokenized, char **env);
+void execute_command_line(t_shell *shell, t_data *tokenized);
 
 
 int					ft_isalnum(int c);
@@ -110,7 +110,7 @@ char *read_file(char *file_name);
 void handle_redir_out(char *str, char **file_name);
 void handle_append(char *str, char **file_name);
 char **get_cmd_and_its_args(t_data *arr_of_stracts);
-void execute_command(char *cmd , char **av, char **env);
+void execute_command(t_shell *shell, char *cmd, char **av);
 void	remove_quotes(char **line);
 
 void	handle_signals_in_child(void);
@@ -180,5 +180,7 @@ void           reset_shell_state(t_shell *shell);
 // Helper functions for shell management
 void    free_2d_array(char **array);
 void    free_tokenized_data(t_data *tokenized);
+
+void process_command(t_shell *shell, t_data *tokenized);
 
 #endif
