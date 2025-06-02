@@ -173,14 +173,18 @@ typedef struct s_shell
     t_list      *garbage;           // Garbage collection list
 }               t_shell;
 
-t_shell        *init_shell(char **env);
-void           cleanup_shell(t_shell *shell);
-void           reset_shell_state(t_shell *shell);
+// Function declarations that use t_shell
+void execute_command_line(t_shell *shell, t_data *tokenized);
+void execute_command(t_shell *shell, char *cmd, char **av);
+void process_command(t_shell *shell, t_data *tokenized);
+t_shell *init_shell(char **env);
+void cleanup_shell(t_shell *shell);
+void reset_shell_state(t_shell *shell);
 
 // Helper functions for shell management
 void    free_2d_array(char **array);
 void    free_tokenized_data(t_data *tokenized);
 
-void process_command(t_shell *shell, t_data *tokenized);
+// ... rest of existing function declarations ...
 
 #endif
