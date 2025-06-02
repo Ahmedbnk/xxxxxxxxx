@@ -34,9 +34,6 @@ void string_before_dollar(t_expand *data, int index, char *str, int *offset)
 
 static int find_expand_end(char *str, int offset, int heredoc_flag)
 {
-	int start;
-
-	start = offset;
 	if (str[offset] == '$')
 		offset++;
 	while (str[offset])
