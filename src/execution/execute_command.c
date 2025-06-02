@@ -20,7 +20,10 @@ static void	check_after_getting_path(char *cmd, char **av, char **path, char **e
 	char	*cmd_with_its_path;
 
 	if (!path)
-		exit(ft_putstr_fd("minishell: No such file or directory\n", 2), 1);
+	{
+		ft_putstr_fd("minishell: No such file or directory\n", 2);
+		exit(1);
+	}
 	i = 0;
 	cmd_with_slash = ft_strjoin("/", cmd);
 	if (!cmd_with_slash)
@@ -40,17 +43,20 @@ static void	check_after_getting_path(char *cmd, char **av, char **path, char **e
 				free(cmd_with_slash);
 				execve(cmd_with_its_path, av, env);
 				free(cmd_with_its_path);
-				exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+				ft_putstr_fd("minishell: Permission denied\n", 2);
+				exit(126);
 			}
 			free(cmd_with_its_path);
 			free(cmd_with_slash);
-			exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+			ft_putstr_fd("minishell: Permission denied\n", 2);
+			exit(126);
 		}
 		free(cmd_with_its_path);
 		i++;
 	}
 	free(cmd_with_slash);
-	exit(ft_putstr_fd("minishell: command not found\n", 2), 127);
+	ft_putstr_fd("minishell: command not found\n", 2);
+	exit(127);
 }
 
 static void	check_the_access(char *cmd, char **av, char **env)
@@ -60,11 +66,14 @@ static void	check_the_access(char *cmd, char **av, char **env)
 		if (access(cmd, X_OK) == 0)
 		{
 			execve(cmd, av, env);
-			exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+			ft_putstr_fd("minishell: Permission denied\n", 2);
+			exit(126);
 		}
-		exit(ft_putstr_fd("minishell: Permission denied\n", 2), 126);
+		ft_putstr_fd("minishell: Permission denied\n", 2);
+		exit(126);
 	}
-	exit(ft_putstr_fd("minishell: No such file or directory\n", 2), 127);
+	ft_putstr_fd("minishell: No such file or directory\n", 2);
+	exit(127);
 }
 
 void	execute_command(char *cmd, char **av, char **env)
