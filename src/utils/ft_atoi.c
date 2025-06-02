@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "../../include/minishell.h"
 
 int ft_atoi(const char *str)
