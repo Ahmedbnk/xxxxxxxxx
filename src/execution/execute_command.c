@@ -80,14 +80,29 @@ void	execute_command(char *cmd, char **av, char **env)
 {
 	char	**path;
 
-	if (!cmd)
-		return ;
+	if (!cmd || !av || !env)
+	{
+		ft_putstr_fd("minishell: invalid command\n", 2);
+		exit(1);
+	}
 	if (*cmd == '/')
+		check_the_access(cmd, av, env);
+	else if (ft_strchr(cmd, '/'))
 		check_the_access(cmd, av, env);
 	else
 	{
 		path = get_path();
+		if (!path)
+		{
+			ft_putstr_fd("minishell: PATH not set\n", 2);
+			exit(1);
+		}
 		check_after_getting_path(cmd, av, path, env);
+		// Free path array if we somehow get here (we shouldn't)
+		int i = 0;
+		while (path[i])
+			free(path[i++]);
+		free(path);
 	}
 }
 

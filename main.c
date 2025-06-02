@@ -53,16 +53,23 @@ static int	execute_external_command(char **splitted, char **env)
 	int	pid;
 	int	status;
 
+	if (!splitted || !splitted[0])
+		return (1);
 	pid = fork();
 	if (pid == 0)
 	{
 		handle_signals_in_child();
 		execute_command(splitted[0], splitted, env);
-		exit(1);
+		exit(1);  // This will only be reached if execute_command fails
 	}
 	else if (pid > 0)
+	{
 		waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+		return (1);
+	}
+	return (1);
 }
 
 static int	process_command(char **splitted, char **env)
