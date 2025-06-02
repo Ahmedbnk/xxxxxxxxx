@@ -137,4 +137,48 @@ int	ft_strcmp(char *s1, char *s2);
 void cd(char **env, char *path);
 int	print_error(const char *str, ...);
 void create_all_heredocs(t_data *tokenized);
+
+typedef struct s_shell
+{
+    // Environment and command line
+    char        **env;              // Environment variables
+    char        *line;              // Current input line
+    char        **splitted;         // Split command line
+    t_data      *tokenized;         // Tokenized commands
+    
+    // File descriptors and redirection
+    int         stdin_fd;           // Original stdin fd
+    int         stdout_fd;          // Original stdout fd
+    int         pipe_fd[2];         // Pipe file descriptors
+    char        *in_file;           // Input redirection file
+    char        *out_file;          // Output redirection file
+    char        *heredoc_file;      // Heredoc temporary file
+    
+    // Process control
+    pid_t       *pids;              // Array of process IDs
+    int         num_commands;       // Number of commands in pipeline
+    int         exit_status;        // Last command exit status
+    
+    // State flags
+    int         is_running;         // Shell running state
+    int         heredoc_active;     // Heredoc processing flag
+    int         in_pipe;            // Inside pipe flag
+    int         in_redir;           // Inside redirection flag
+    
+    // Error handling
+    int         error_code;         // Error code
+    char        *error_msg;         // Error message
+    
+    // Memory management
+    t_list      *garbage;           // Garbage collection list
+}               t_shell;
+
+t_shell        *init_shell(char **env);
+void           cleanup_shell(t_shell *shell);
+void           reset_shell_state(t_shell *shell);
+
+// Helper functions for shell management
+void    free_2d_array(char **array);
+void    free_tokenized_data(t_data *tokenized);
+
 #endif
