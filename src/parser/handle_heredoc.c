@@ -1,78 +1,60 @@
 #include "minishell.h"
 
-static char *get_delimiter(char *str)
+char *remake_delimeter(char *str)
 {
-    char *delimiter;
-    int len;
+  char *returned_str = malloc(ft_strlen(str) + 1);
 
-    if (!str)
-        return (NULL);
-    if (*str == '$' && (*(str + 1) == single_q || *(str + 1) == double_q))
-        str++;
-    len = 0;
-    while (str[len] && !is_space(str[len]))
-        len++;
-    delimiter = ft_substr(str, 0, len);
-    if (!delimiter)
-        return (NULL);
-    remove_quotes(&delimiter);
-    return (delimiter);
+  int i = 0;
+  int j = 0;
+  while(str[i])
+  {
+    if(str[i] == '$' && str[i + 1] == '$')
+    {
+      returned_str[j++] = str[i++];
+      returned_str[j++] = str[i++];
+    }
+    else if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q) && !is_between_quotes(str, i))
+      i ++;
+    else
+      returned_str[j++] = str[i++];
+  }
+  returned_str[i] = '\0';
+  remove_quotes(&returned_str);
+  return returned_str;
 }
 
-void handle_heredoc(char *str, char **in_file_name)
+void create_heredoc(t_data *tokenized)
 {
-    int fd;
-    char *buffer;
-    char *delimiter;
-    char *tmp;
+  int fd;
+  char *str = NULL; 
+  char *buffer = NULL; 
 
-    if (!str || !in_file_name)
-        return;
-    delimiter = get_delimiter(str);
-    if (!delimiter)
-        return;
-    *in_file_name = ft_strjoin("/tmp/", generate_random_name());
-    if (!*in_file_name)
+  tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
+  tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
+  while(1)
+  {
+    str = readline(">>>");
+    if(str == NULL)
     {
-        free(delimiter);
-        return;
+      print_error("warning: here-document delimited by end-of-file (wanted `%s')\n", str);
+      break;
     }
-    fd = open(*in_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
-    if (fd == -1)
-    {
-        free(delimiter);
-        free(*in_file_name);
-        *in_file_name = NULL;
-        return;
-    }
-    while (1)
-    {
-        buffer = readline("> ");
-        if (!buffer)
-        {
-            ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted `", 2);
-            ft_putstr_fd(delimiter, 2);
-            ft_putstr_fd("')\n", 2);
-            break;
-        }
-        if (are_they_equal(delimiter, buffer))
-        {
-            free(buffer);
-            break;
-        }
-        tmp = expand_if_possible(buffer, 1);
-        free(buffer);
-        if (!tmp)
-        {
-            ft_putstr_fd("minishell: warning: here-document at line 1 delimited by end-of-file (wanted `", 2);
-            ft_putstr_fd(delimiter, 2);
-            ft_putstr_fd("')\n", 2);
-            break;
-        }
-        write(fd, tmp, ft_strlen(tmp));
-        write(fd, "\n", 1);
-        free(tmp);
-    }
-    free(delimiter);
-    close(fd);
+    if(are_they_equal(str, tokenized->delimiter))
+       break;
+    buffer = ft_strjoin(buffer, str);
+  }
+  fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
+  write(fd,buffer,ft_strlen(buffer));
+  write(fd,"\n", 1);
+  close(fd);
+}
+
+void create_all_heredocs(t_data *tokenized)
+{
+  while(tokenized && tokenized -> word)
+  {
+    if(tokenized -> type == HEREDOC)
+      create_heredoc(tokenized);
+    tokenized ++;
+  }
 }

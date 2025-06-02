@@ -25,7 +25,7 @@ int	check_error(char *str)
 {
 	if (check_unclosed_quotes(str))
 	{
-		printf("unclosed quote\n");
+		print_error("unclosed quote\n");
     return 1;
 	}
 	return (0);

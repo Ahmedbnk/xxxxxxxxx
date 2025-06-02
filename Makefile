@@ -40,22 +40,27 @@ SRCS = main.c \
 	src/utils/print_file.c\
 	src/parser/handle_redir_in.c\
 	src/utils/read_file.c\
+	src/utils/print_error.c\
 	src/parser/handle_redir_out.c\
 	src/parser/handle_append.c \
-	src/execution/execute_command.c \
-	src/builtins/builtins_core.c \
-	src/builtins/builtins_echo.c \
-	src/builtins/builtins_cd.c \
-	src/builtins/builtins_pwd.c \
-	src/builtins/builtins_env.c \
-	src/builtins/builtins_exit.c \
-	src/utils/ft_strncmp.c \
-	src/utils/ft_putstr_fd.c \
-	src/utils/ft_atoi.c
+	src/execution/execute_command.c\
+	src/built_in/echo.c\
+	src/built_in/pwd.c\
+	src/built_in/env.c\
+	src/built_in/ft_strncmp.c\
+	src/built_in/check_built_in_command.c\
+	src/built_in/cd.c\
+	src/built_in/export.c\
+	src/built_in/ft_isalpha.c\
+	src/built_in/ft_isdigit.c\
+	src/built_in/ft_strcmp.c\
+	src/built_in/ist_valid_env_var.c\
+	src/built_in/unset.c\
+
 
 OBJS = $(SRCS:.c=.o)
 
-READLINE = -lreadline
+READLINE =-lreadline
 
 all: $(NAME)
 
@@ -70,6 +75,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+
 
 re: fclean all
 

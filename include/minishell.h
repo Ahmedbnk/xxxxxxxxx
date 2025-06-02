@@ -38,6 +38,8 @@ typedef struct s_data
 {
 	int				type;
 	char			*word;
+  char      *heredoc_file_name;
+  char      *delimiter;
 }					t_data;
 
 typedef struct s_list
@@ -46,6 +48,13 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+typedef struct s_mini_data
+{
+  char **env_cpy;
+  char *line;
+  char **splitted;
+  t_data *tokenized;
+}t_shell_block;
 
 //t_token				*add_node(t_token **list, t_token *node);
 //t_token				*creat_node(char *str);
@@ -74,9 +83,7 @@ char	**split_with_operators(char **splitted);
 void print_splitted(char **splitted);
 t_data *make_token(char **arr);
 int len_of_two_d_array(char **str);
-void parse_tokenized(t_data *tokenized, char **env);
-void	free_tokenized(t_data *tokenized);
-
+void execute_command_line(t_data *tokenized, char **env);
 
 
 int					ft_isalnum(int c);
@@ -96,7 +103,7 @@ void	free_memory(t_list *lst);
 void	*ft_malloc(size_t size);
 t_list	*garbage_collection_lstnew(void *content);
 char	*get_next_line(int fd);
-void handle_heredoc(char *str, char **in_file_name);
+void handle_heredoc(t_data *tokenized, char **in_file_name);
 void print_file(char *str);
 void handle_redir_in(char *str, char **in_file_name);
 char *read_file(char *file_name);
@@ -109,26 +116,25 @@ void	remove_quotes(char **line);
 void	handle_signals_in_child(void);
 char	*generate_random_name(void);
 
-// Built-in commands
-int ft_echo(char **args);
-int ft_cd(char **args, char **env);
-int ft_pwd(void);
-int ft_export(char **args, char **env);
-int ft_unset(char **args);
-int ft_env(char **env);
-int ft_exit(char **args);
-int is_builtin(char *cmd);
-int execute_builtin(char **args, char **env);
+char ** copy_env(char **env);
+void print_env(char **env);
+void echo(char **args);
+int	ft_strncmp(const char *big, const char *little, size_t n);
+char *pwd();
+void check_built_in_command(char **env, char **cmd_and_args);
+void print_env(char **env);
+void export(char ***env, char **to_export);
+int is_it_key_value(char *str);
+int is_valid_var(char *str);
+int compare_env_var(char *var1, char *var2);
+int	ft_isalpha(int c);
+int	ft_isdigit(int c);
+int	ft_strcmp(char *s1, char *s2);
 
-// Additional utility functions
-int     ft_strncmp(const char *s1, const char *s2, size_t n);
-void    ft_putstr_fd(char *s, int fd);
-int     ft_atoi(const char *str);
 
-// Signal handling
-void    handle_signals(void);
-void    handle_signals_in_child(void);
-int     get_signal(void);
-void    reset_signal(void);
 
+//int	ft_strncmp(const char *big, const char *little, size_t n);
+void cd(char **env, char *path);
+int	print_error(const char *str, ...);
+void create_all_heredocs(t_data *tokenized);
 #endif

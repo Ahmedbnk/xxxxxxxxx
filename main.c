@@ -1,126 +1,75 @@
 #include "minishell.h"
 
-static void	unused_vars(int ac, char **av)
-{
-	(void)ac;
-	(void)av;
+void expand_input(char **input) {
+  int i;
+  i = 0;
+  while (input[i]) {
+    if(are_they_equal(input[i], "<<"))
+      i++;
+    else
+      input[i] = expand_if_possible(input[i], 0);
+    i++;
+  }
 }
 
-static char	*ft_readline(void)
+void parse_and_expand(t_shell_block *shell_block)
 {
-	char	*line;
-	char	*prompt;
 
-	prompt = "minishell$ ";
-	line = readline(prompt);
-	if (line && *line)
-		add_history(line);
-	return (line);
+  shell_block->splitted = customized_split(shell_block->line);
+  shell_block->splitted = split_with_operators(shell_block->splitted);
+  expand_input(shell_block->splitted);
+
+  shell_block->tokenized = make_token(shell_block->splitted);
+  if (shell_block->tokenized) {
+    remove_quotes_from_args(shell_block->splitted);
+    create_all_heredocs(shell_block->tokenized);
+    execute_command_line(shell_block->tokenized,shell_block->env_cpy);
+  }
 }
 
-static void	expand_input(char **input)
-{
-	int	i;
+char *ft_readline(void) {
 
-	i = 0;
-	while (input[i])
-	{
-		if (are_they_equal(input[i], "<<"))
-			i++;
-		else
-			input[i] = expand_if_possible(input[i], 0);
-		i++;
-	}
+  char *line;
+  handle_signals();
+
+  line = readline("\001\033[1;31m\002⚡ Undefined Behavior ⚡ » \001\033[0m\002");
+  if (line && *line)
+    add_history(line);
+  if (line == NULL)
+  {
+    free(line);
+    free_memory(*get_garbage_pointer());
+    exit(0);
+    return NULL;
+  }
+  return line;
 }
 
-static int	has_pipe(t_data *tokenized)
+void ft_init_shell_block(t_shell_block *shell_block)
 {
-	while (tokenized && tokenized->word != NULL)
-	{
-		if (tokenized->type == PIPE)
-			return (1);
-		tokenized++;
-	}
-	return (0);
+  shell_block->env_cpy = NULL;
+  shell_block->line = NULL;
+  shell_block->splitted = NULL;
+}
+int main(int ac, char **av, char **env) {
+
+  t_shell_block shell_block;
+
+  ft_init_shell_block(&shell_block);
+
+  shell_block.env_cpy = copy_env(env);
+
+  (void)ac;
+  (void)av;
+  while (1) {
+    shell_block.line  = ft_readline();
+    if(!shell_block.line )
+      continue;
+    if (check_error(shell_block.line ))
+      free_memory(*get_garbage_pointer());
+    parse_and_expand(&shell_block);
+    free(shell_block.line);
+  }
+  return (0);
 }
 
-static void	parse_and_expand(char *line, char ***splitted, char **env)
-{
-	*splitted = customized_split(line);
-	*splitted = split_with_operators(*splitted);
-	expand_input(*splitted);
-	t_data	*tokenized;
-
-	tokenized = make_token(*splitted);
-	if (tokenized)
-	{
-		remove_quotes_from_args(*splitted);
-		if (has_pipe(tokenized))
-			parse_tokenized(tokenized, env);
-		free_tokenized(tokenized);
-	}
-}
-
-static int	execute_external_command(char **splitted, char **env)
-{
-	int	pid;
-	int	status;
-
-	if (!splitted || !splitted[0])
-		return (1);
-	pid = fork();
-	if (pid == 0)
-	{
-		handle_signals_in_child();
-		execute_command(splitted[0], splitted, env);
-		exit(1);  // This will only be reached if execute_command fails
-	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			return (WEXITSTATUS(status));
-		return (1);
-	}
-	return (1);
-}
-
-static int	process_command(char **splitted, char **env)
-{
-	if (!splitted)
-		return (0);
-	if (is_builtin(splitted[0]))
-		return (execute_builtin(splitted, env));
-	return (execute_external_command(splitted, env));
-}
-
-int	main(int ac, char **av, char **env)
-{
-	char	*line;
-	char	**splitted;
-	int		exit_status;
-
-	unused_vars(ac, av);
-	handle_signals();
-	while (1)
-	{
-		line = ft_readline();
-		if (!line)
-			break ;
-		if (*line)
-		{
-			splitted = NULL;
-			parse_and_expand(line, &splitted, env);
-			exit_status = process_command(splitted, env);
-			if (splitted)
-			{
-				int i = 0;
-				while (splitted[i])
-					free(splitted[i++]);
-				free(splitted);
-			}
-		}
-		free(line);
-	}
-	return (exit_status);
-}
