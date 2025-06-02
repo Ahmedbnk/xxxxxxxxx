@@ -33,36 +33,65 @@ int ft_cd(char **args, char **env)
     char *oldpwd;
     char *newpwd;
     char cwd[PATH_MAX];
+    int ret;
 
     (void)env;  // Silence unused parameter warning
-    (void)cwd;  // Silence unused variable warning if not used in all paths
+
+    if (!getcwd(cwd, PATH_MAX))
+        return (ft_putstr_fd("minishell: cd: error retrieving current directory\n", 2), 1);
 
     if (!args[1] || !ft_strncmp(args[1], "~", 2))
     {
         home = getenv("HOME");
         if (!home)
             return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), 1);
-        if (chdir(home) == -1)
-            return (ft_putstr_fd("minishell: cd: ", 2), 
-                    ft_putstr_fd(home, 2),
-                    ft_putstr_fd(": No such file or directory\n", 2), 1);
+        ret = chdir(home);
+    }
+    else if (!ft_strncmp(args[1], "-", 2))
+    {
+        oldpwd = getenv("OLDPWD");
+        if (!oldpwd)
+            return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), 1);
+        ret = chdir(oldpwd);
+        if (ret == 0)
+            ft_putstr_fd(oldpwd, 1), ft_putstr_fd("\n", 1);
     }
     else
+        ret = chdir(args[1]);
+
+    if (ret == -1)
     {
-        if (chdir(args[1]) == -1)
-            return (ft_putstr_fd("minishell: cd: ", 2),
-                    ft_putstr_fd(args[1], 2),
-                    ft_putstr_fd(": No such file or directory\n", 2), 1);
-    }
-    oldpwd = getenv("PWD");
-    if (!getcwd(cwd, PATH_MAX))
+        ft_putstr_fd("minishell: cd: ", 2);
+        ft_putstr_fd(args[1] ? args[1] : "~", 2);
+        ft_putstr_fd(": No such file or directory\n", 2);
         return (1);
+    }
+
+    oldpwd = ft_strdup(cwd);
+    if (!oldpwd)
+        return (1);
+
+    if (!getcwd(cwd, PATH_MAX))
+    {
+        free(oldpwd);
+        return (ft_putstr_fd("minishell: cd: error retrieving current directory\n", 2), 1);
+    }
+
     newpwd = ft_strdup(cwd);
     if (!newpwd)
+    {
+        free(oldpwd);
         return (1);
-    if (oldpwd)
-        setenv("OLDPWD", oldpwd, 1);
-    setenv("PWD", newpwd, 1);
+    }
+
+    if (setenv("OLDPWD", oldpwd, 1) == -1 || setenv("PWD", newpwd, 1) == -1)
+    {
+        free(oldpwd);
+        free(newpwd);
+        return (1);
+    }
+
+    free(oldpwd);
     free(newpwd);
     return (0);
 }

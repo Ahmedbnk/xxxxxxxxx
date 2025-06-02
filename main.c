@@ -6,54 +6,58 @@ void expand_input(char **input);
 void parse_and_expand(char *line, char ***splitted, char **env);
 
 int main(int ac, char **av, char **env) {
+    char *line;
+    char **splitted;
+    int status;
 
-  char *line;
-  char **splitted;
-  splitted = NULL;
-
-  unused_vars(ac, av);
-  while (1) {
-    line = ft_readline();
-    if(!line)
-      continue;
-    int rc = fork();
-    if(rc == 0)
-    {
-      if (check_error(line))
-        free_memory(*get_garbage_pointer());
-      handle_signals_in_child();
-      parse_and_expand(line, &splitted, env);
-      exit(0);
+    unused_vars(ac, av);
+    handle_signals();
+    while (1) {
+        line = ft_readline();
+        if (!line)
+            break;  // Exit on EOF (Ctrl+D)
+        if (*line)  // Only process non-empty lines
+        {
+            splitted = NULL;
+            parse_and_expand(line, &splitted, env);
+            if (splitted)
+            {
+                if (is_builtin(splitted[0]))
+                    execute_builtin(splitted, env);
+                else
+                {
+                    int pid = fork();
+                    if (pid == 0)
+                    {
+                        handle_signals_in_child();
+                        execute_command(splitted[0], splitted, env);
+                        exit(1);  // Exit with error if command not found
+                    }
+                    else if (pid > 0)
+                        waitpid(pid, &status, 0);
+                }
+            }
+        }
+        free(line);
     }
-    else
-      wait(NULL);
-    free(line);
-  }
-  return (0);
+    return (0);
 }
 
 void unused_vars(int ac, char **av)
 {
-  (void)ac;
-  (void)av;
+    (void)ac;
+    (void)av;
 }
 
 char *ft_readline(void) {
+    char *line;
+    char *prompt;
 
-	char *line;
-
-	handle_signals();
-
-	line = readline("\001\033[1;31m\002⚡ Undefined Behavior ⚡ » \001\033[0m\002");
-	if (line && *line)
-		add_history(line);
-	if (line == NULL)
-	{
-    free(line);
-    free_memory(*get_garbage_pointer());
-    return NULL;
-	}
- return line;
+    prompt = "minishell$ ";
+    line = readline(prompt);
+    if (line && *line)
+        add_history(line);
+    return (line);
 }
 
 void expand_input(char **input) {
