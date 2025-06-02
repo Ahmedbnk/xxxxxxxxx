@@ -75,6 +75,7 @@ void print_splitted(char **splitted);
 t_data *make_token(char **arr);
 int len_of_two_d_array(char **str);
 void parse_tokenized(t_data *tokenized, char **env);
+void	free_tokenized(t_data *tokenized);
 
 
 

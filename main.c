@@ -33,6 +33,17 @@ static void	expand_input(char **input)
 	}
 }
 
+static int	has_pipe(t_data *tokenized)
+{
+	while (tokenized && tokenized->word != NULL)
+	{
+		if (tokenized->type == PIPE)
+			return (1);
+		tokenized++;
+	}
+	return (0);
+}
+
 static void	parse_and_expand(char *line, char ***splitted, char **env)
 {
 	*splitted = customized_split(line);
@@ -44,7 +55,9 @@ static void	parse_and_expand(char *line, char ***splitted, char **env)
 	if (tokenized)
 	{
 		remove_quotes_from_args(*splitted);
-		parse_tokenized(tokenized, env);
+		if (has_pipe(tokenized))
+			parse_tokenized(tokenized, env);
+		free_tokenized(tokenized);
 	}
 }
 

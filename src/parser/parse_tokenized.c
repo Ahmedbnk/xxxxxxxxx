@@ -119,3 +119,18 @@ void	parse_tokenized(t_data *tokenized, char **env)
   while (wait(NULL) < 0)
     ;
 }
+
+void	free_tokenized(t_data *tokenized)
+{
+	int	i;
+
+	if (!tokenized)
+		return;
+	i = 0;
+	while (tokenized[i].word != NULL)
+	{
+		free(tokenized[i].word);
+		i++;
+	}
+	free(tokenized);
+}
