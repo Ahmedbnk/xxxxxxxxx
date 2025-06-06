@@ -10,8 +10,11 @@ int	how_many_dallar_to_expand(char *str, int heredoc_flag)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && (heredoc_flag || should_i_expand(str, i)) && ft_isalnum(str[i + 1]))
-			counter++;
+		if (str[i] == '$' && (heredoc_flag || should_i_expand(str, i)))
+		{
+			if (str[i + 1] == '?' || ft_isalnum(str[i + 1]))
+				counter++;
+		}
 		i++;
 	}
 	return (counter);
@@ -46,6 +49,11 @@ void	string_to_expand(t_expand *data, int index, char *str, int *offset)
 	{
 		if (str[*offset] == '$' && start == (*offset))
 			(*offset)++;
+		if (str[*offset] == '?')
+		{
+			(*offset)++;
+			break;
+		}
 		if (!ft_isalnum(str[*offset]) || (str[*offset] == '$'
 				&& (data->heredoc_flag || should_i_expand(str, *offset))))
 			break ;

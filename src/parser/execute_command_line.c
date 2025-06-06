@@ -106,25 +106,22 @@ void execute_command_line_helper(t_shell_control_block *shell)
 }
 void execute_command_line(t_shell_control_block *shell)
 {
-  shell->line_pointer = shell->tokenized;
-  shell->previous_read_end = -1;
-  while (shell->line_pointer && shell->line_pointer->word)
+  int status;
+  pid_t pid;
+
+  pid = fork();
+  if (pid == 0)
   {
-    shell->tokenized = shell->line_pointer;
-    skip_command(&(shell->line_pointer));
-    if (shell->line_pointer && shell->line_pointer->type == PIPE)
-      pipe(shell->arr);
-    execute_command_line_helper(shell);
-    if (shell->previous_read_end != -1)
-      close(shell->previous_read_end);
-    if (shell->line_pointer && shell->line_pointer->type == PIPE)
-    {
-      close(shell->arr[1]);
-      shell->previous_read_end =shell->arr[0];
-      shell->line_pointer++;
-    }
+    handle_signals_in_child();
+    execute_command(shell);
+    exit(1);  // Exit with error if execute_command returns
   }
-  if (shell->previous_read_end != -1)
-    close(shell->previous_read_end);
-  while (wait(NULL) > 0);
+  else
+  {
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+      g_shell->last_exit_status = WEXITSTATUS(status);
+    else if (WIFSIGNALED(status))
+      g_shell->last_exit_status = 128 + WTERMSIG(status);
+  }
 }

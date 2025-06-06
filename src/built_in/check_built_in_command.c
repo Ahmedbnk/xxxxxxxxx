@@ -1,20 +1,26 @@
 #include "minishell.h"
 
 // void execute_built_in(char **env, char **cmd_and_args)
-int  execute_built_in(t_shell_control_block *shell)
+int execute_built_in(t_shell_control_block *shell)
 { 
+    int status = 0;
+
     if(are_they_equal(*shell->cmd_and_args, "pwd"))
-      return ((printf("%s\n",pwd()), 1));
+      status = (printf("%s\n", pwd()) < 0) ? 1 : 0;
     else if(are_they_equal(*shell->cmd_and_args, "env"))
-      return ((print_env(shell->env_cpy), 1));
+      status = (print_env(shell->env_cpy), 0);
     else if(are_they_equal(*shell->cmd_and_args, "echo"))
-      return ((echo(shell->cmd_and_args), 1));
+      status = (echo(shell->cmd_and_args), 0);
     else if(are_they_equal(*shell->cmd_and_args, "cd"))
-      return ((cd(shell->env_cpy, shell->cmd_and_args), 1));
+      status = (cd(shell->env_cpy, shell->cmd_and_args), 0);
     else if(are_they_equal(*shell->cmd_and_args, "export"))
-      return((export(&shell->env_cpy, shell->cmd_and_args +1),1));
+      status = (export(&shell->env_cpy, shell->cmd_and_args + 1), 0);
     else if(are_they_equal(*shell->cmd_and_args, "unset"))
-      return((unset(&shell->env_cpy, shell->cmd_and_args +1),1));
-  return 0;
+      status = (unset(&shell->env_cpy, shell->cmd_and_args + 1), 0);
+    else
+      return 0;
+
+    g_shell->last_exit_status = status;
+    return 1;
 }
 

@@ -1,5 +1,8 @@
 #include "minishell.h"
 
+// Global shell pointer definition
+t_shell_control_block *g_shell;
+
 void expand_input(char **input) {
   int i;
   i = 0;
@@ -76,6 +79,7 @@ void ft_init_shell_block(t_shell_control_block *shell, int ac, char **av)
   shell->line = NULL;
   shell->splitted = NULL;
   shell->cmd_and_args= NULL;
+  shell->last_exit_status = 0;
 }
 
 int main(int ac, char **av, char **env)
@@ -84,8 +88,8 @@ int main(int ac, char **av, char **env)
 
   ft_init_shell_block(&shell, ac, av);
   shell.env_cpy = copy_env(env);
- while (1) {
-
+  g_shell = &shell;  // Set global shell pointer
+  while (1) {
     handle_signals();
     if(!ft_readline(&shell))
       continue;

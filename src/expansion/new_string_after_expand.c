@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 char	*expnad_and_join_node(t_expand data)
@@ -6,11 +5,21 @@ char	*expnad_and_join_node(t_expand data)
 	char	*path;
 	char	*the_joined_node;
 	char	*rest;
+	extern t_shell_control_block *g_shell;  // Add global shell pointer
 
 	if (data.to_expand != NULL)
 	{
-		path = ft_strdup(getenv((data.to_expand) + 1),1);
-		the_joined_node = custom_join(data.befor_dollar, path);
+		if (ft_strcmp(data.to_expand, "$?") == 0)
+		{
+			path = ft_itoa(g_shell->last_exit_status);
+			the_joined_node = custom_join(data.befor_dollar, path);
+			free(path);  // Free the itoa result
+		}
+		else
+		{
+			path = ft_strdup(getenv((data.to_expand) + 1), 1);
+			the_joined_node = custom_join(data.befor_dollar, path);
+		}
 	}
 	if (data.last_one)
 	{

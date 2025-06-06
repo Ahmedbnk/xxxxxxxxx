@@ -62,7 +62,7 @@ typedef struct s_shell_control_block
   char	*file_name;
   int		fd_out;
   int		fd_in;
-
+  int     last_exit_status;  // Track the last command's exit status
 }t_shell_control_block;
 
 
@@ -148,4 +148,8 @@ void cd(char **env, char **path);
 int	print_error(const char *str, ...);
 void create_all_heredocs(t_data *tokenized);
 void unset(char ***env, char **vars);
+
+// Global shell pointer for accessing shell state
+extern t_shell_control_block *g_shell;
+
 #endif
