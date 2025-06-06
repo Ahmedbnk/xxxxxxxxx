@@ -3,7 +3,8 @@
 void expand_input(char **input) {
   int i;
   i = 0;
-  while (input[i]) {
+  while (input[i])
+  {
     if(are_they_equal(input[i], "<<"))
       i++;
     else
@@ -12,64 +13,86 @@ void expand_input(char **input) {
   }
 }
 
-void parse_and_expand(t_shell_block *shell_block)
+void parse_line(t_shell_control_block *shell)
 {
+  shell->splitted = customized_split(shell->line);
+  shell->splitted = split_with_operators(shell->splitted);
+  expand_input(shell->splitted);
+  shell->splitted = handle_dollar_with_quotes(shell->splitted);
+  shell->tokenized = make_token(shell->splitted);
+}
 
-  shell_block->splitted = customized_split(shell_block->line);
-  shell_block->splitted = split_with_operators(shell_block->splitted);
-  expand_input(shell_block->splitted);
+int is_there_a_pipe(t_shell_control_block *shell)
+{
+  t_data *ptr;
 
-  shell_block->tokenized = make_token(shell_block->splitted);
-  if (shell_block->tokenized) {
-    remove_quotes_from_args(shell_block->splitted);
-    create_all_heredocs(shell_block->tokenized);
-    execute_command_line(shell_block->tokenized,shell_block->env_cpy);
+  ptr = shell->tokenized;
+  while(ptr->word != NULL)
+  {
+    if(ptr->type == PIPE)
+      return 1;
+    ptr++;
+  }
+  return 0;
+}
+
+void execute_line(t_shell_control_block *shell)
+{
+  if (shell->tokenized)
+  {
+    create_all_heredocs(shell->tokenized);
+    get_cmd_and_its_args(shell);
+    if(!is_there_a_pipe(shell) && execute_built_in(shell));
+    else
+      execute_command_line(shell);
   }
 }
 
-char *ft_readline(void) {
+char *ft_readline(t_shell_control_block *shell) {
 
-  char *line;
-  handle_signals();
 
-  line = readline("\001\033[1;31m\002⚡ Undefined Behavior ⚡ » \001\033[0m\002");
-  if (line && *line)
-    add_history(line);
-  if (line == NULL)
+  shell->line = readline("\001\033[1;31m\002⚡ Undefined Behavior ⚡ » \001\033[0m\002");
+  if (shell->line && *shell->line)
+
+    add_history(shell->line);
+  if (shell->line == NULL)
   {
-    free(line);
-    free_memory(*get_garbage_pointer());
+    free(shell->line);
+    free_memory(get_garbage_pointer(1));
+    free_memory(get_garbage_pointer(0));
     exit(0);
     return NULL;
   }
-  return line;
+  if (check_error(shell->line ))
+    return NULL;
+  return shell->line;
 }
 
-void ft_init_shell_block(t_shell_block *shell_block)
+void ft_init_shell_block(t_shell_control_block *shell, int ac, char **av)
 {
-  shell_block->env_cpy = NULL;
-  shell_block->line = NULL;
-  shell_block->splitted = NULL;
+  (void) ac;
+  (void) av;
+  shell->env_cpy = NULL;
+  shell->line = NULL;
+  shell->splitted = NULL;
+  shell->cmd_and_args= NULL;
 }
-int main(int ac, char **av, char **env) {
 
-  t_shell_block shell_block;
+int main(int ac, char **av, char **env)
+{ 
+  t_shell_control_block shell;
 
-  ft_init_shell_block(&shell_block);
+  ft_init_shell_block(&shell, ac, av);
+  shell.env_cpy = copy_env(env);
+ while (1) {
 
-  shell_block.env_cpy = copy_env(env);
-
-  (void)ac;
-  (void)av;
-  while (1) {
-    shell_block.line  = ft_readline();
-    if(!shell_block.line )
+    handle_signals();
+    if(!ft_readline(&shell))
       continue;
-    if (check_error(shell_block.line ))
-      free_memory(*get_garbage_pointer());
-    parse_and_expand(&shell_block);
-    free(shell_block.line);
+    parse_line(&shell);
+    execute_line(&shell);
+    free_memory(get_garbage_pointer(1));
+    free(shell.line);
   }
   return (0);
 }
-

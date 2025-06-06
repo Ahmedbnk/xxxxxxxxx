@@ -9,7 +9,7 @@ char	*expnad_and_join_node(t_expand data)
 
 	if (data.to_expand != NULL)
 	{
-		path = ft_strdup(getenv((data.to_expand) + 1));
+		path = ft_strdup(getenv((data.to_expand) + 1),1);
 		the_joined_node = custom_join(data.befor_dollar, path);
 	}
 	if (data.last_one)

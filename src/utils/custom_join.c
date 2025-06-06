@@ -29,7 +29,7 @@ char	*custom_join(char const *s1, char const *s2)
 		len1 = ft_strlen(s1);
 	if (s2)
 		len2 = ft_strlen(s2);
-	a = ft_malloc(len1 + len2 + 1);
+	a = ft_malloc(len1 + len2 + 1, 1);
 	if (s1)
 		ft_strcpy(a, s1);
 	else
@@ -38,32 +38,3 @@ char	*custom_join(char const *s1, char const *s2)
 		ft_strcpy(a + len1, s2);
 	return (a);
 }
-
-// char	*custom_join(char const *s1, char const *s2)
-//{
-//	char	*a;
-//	int		i;
-//	int		k;
-//
-//	if (!s1 && !s2)
-//		return (NULL);
-//  else if (!s1)
-//    return ((char *)s2);
-//  else if(!s2)
-//    return ((char *)s1);
-//	a = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * (sizeof(char)));
-//	if (!a)
-//		return (NULL);
-//	i = 0;
-//	while (i < (int)ft_strlen(s1))
-//  {
-//		a[i] = s1[i];
-//    i++;
-//  }
-//	k = 0;
-//	while (k < (int)ft_strlen(s2))
-//		a[i++] = s2[k++];
-//	a[i] = '\0';
-//	return (a);
-//}
-

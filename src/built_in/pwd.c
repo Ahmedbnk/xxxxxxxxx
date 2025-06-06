@@ -6,7 +6,7 @@ char *pwd()
 {
     char *buffer;
 
-    buffer = ft_malloc(SIZE);
+    buffer = ft_malloc(SIZE, 1);
     if ((getcwd(buffer, SIZE) == NULL))
     {
        printf("%s\n", strerror(errno));

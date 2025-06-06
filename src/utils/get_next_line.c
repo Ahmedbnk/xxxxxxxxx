@@ -61,7 +61,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!rest)
 	{
-		rest = ft_malloc(1);
+		rest = ft_malloc(1, 1);
 		rest[0] = '\0';
 	}
 	rest = creat_rest(fd, rest);

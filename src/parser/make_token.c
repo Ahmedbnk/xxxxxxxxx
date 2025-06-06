@@ -24,7 +24,7 @@ void fill_the_list(t_data * list, char **arr)
   while(arr[i])
   {
     list[i].type = get_token_type(arr[i]);
-    list[i].word = ft_strdup(arr[i]);
+    list[i].word = ft_strdup(arr[i], 1);
     i++;
   }
     list[i].word = 0;
@@ -56,22 +56,9 @@ t_data *make_token(char **arr)
   t_data *list;
 
   len = len_of_two_d_array(arr);
-  list = ft_malloc((len  + 1)* sizeof(t_data));
+  list = ft_malloc((len  + 1)* sizeof(t_data), 1);
   fill_the_list(list, arr);
   if(check_syntax_error(list, len))
-    exit(1);
+    return NULL;
   return list;
 }
-
-// int main()
-// {
-//   char *av[] = {"f", ">"  , "f", "eh", "|", NULL};
-    
-//   for(int i = 0; i < tow_d_lenth(av); i++)
-//   {
-//     print_error("%s : ", ptr[i].word);
-//     print_error("%d\n", ptr[i].type);
-//   }
-//
-//   return 0;
-// }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(const char *s, int flag)
 {
 	char	*a;
 	int		i;
@@ -8,7 +8,7 @@ char	*ft_strdup(const char *s)
 	if (!s)
 		return (NULL);
 	i = 0;
-	a = ft_malloc((ft_strlen(s) + 1) * sizeof(char));
+	a = ft_malloc((ft_strlen(s) + 1) * sizeof(char), flag);
 	while (s[i])
 	{
 		a[i] = s[i];

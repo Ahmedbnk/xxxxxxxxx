@@ -35,7 +35,7 @@ SRCS = main.c \
 	src/utils/garbage_collector.c\
 	src/utils/ft_lstnew.c\
 	src/utils/ft_lstadd_back.c\
-	src/parser/parse_tokenized.c\
+	src/parser/execute_command_line.c\
 	src/parser/handle_heredoc.c\
 	src/utils/print_file.c\
 	src/parser/handle_redir_in.c\
@@ -56,7 +56,7 @@ SRCS = main.c \
 	src/built_in/ft_strcmp.c\
 	src/built_in/ist_valid_env_var.c\
 	src/built_in/unset.c\
-
+	src/parser/handle_dollar_with_quotes.c\
 
 OBJS = $(SRCS:.c=.o)
 

@@ -30,7 +30,7 @@ void	remove_quotes(char **line)
 {
 	char	*line_without_quotes;
 
-	line_without_quotes = ft_malloc(ft_strlen(*line) + 1);
+	line_without_quotes = ft_malloc(ft_strlen(*line) + 1, 1);
 	remove_quotes_helper(*line, &line_without_quotes);
 	*line = line_without_quotes;
 }

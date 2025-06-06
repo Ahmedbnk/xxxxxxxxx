@@ -33,7 +33,7 @@ char	**ft_split(char const *s, char c)
 	int (i), (k), (start);
 	if (!s)
 		return (NULL);
-	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *));
+	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *),1);
 	i = 0;
 	k = 0;
 	while (s[i])

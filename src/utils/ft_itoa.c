@@ -45,9 +45,9 @@ char	*ft_itoa(int n)
 	char	*a;
 
 	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
+		return (ft_strdup("-2147483648", 1));
 	len = n_counter(n);
-	a = ft_malloc((len + 1) * sizeof(char));
+	a = ft_malloc((len + 1) * sizeof(char),1);
 	if (n == 0)
 		a[0] = '0';
 	if (n > 0)

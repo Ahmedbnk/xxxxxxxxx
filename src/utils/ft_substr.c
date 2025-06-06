@@ -11,10 +11,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	i = 0;
 	n = ft_strlen(s);
 	if (start >= n)
-		return (ft_strdup(""));
+		return (ft_strdup("", 1));
 	if (len > n - start)
 		len = n - start;
-	a = ft_malloc(len + 1);
+	a = ft_malloc(len + 1, 1);
 	if (!a)
 		return (NULL);
 	while (i < len)

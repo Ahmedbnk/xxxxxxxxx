@@ -48,16 +48,23 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-typedef struct s_mini_data
+typedef struct s_shell_control_block
 {
   char **env_cpy;
   char *line;
   char **splitted;
   t_data *tokenized;
-}t_shell_block;
+  char **cmd_and_args;
+  int arr[2];
+  int previous_read_end;
+  t_data *line_pointer;
+  char	*in_file_name;
+  char	*file_name;
+  int		fd_out;
+  int		fd_in;
 
-//t_token				*add_node(t_token **list, t_token *node);
-//t_token				*creat_node(char *str);
+}t_shell_control_block;
+
 
 int					check_error(char *str);
 
@@ -83,7 +90,7 @@ char	**split_with_operators(char **splitted);
 void print_splitted(char **splitted);
 t_data *make_token(char **arr);
 int len_of_two_d_array(char **str);
-void execute_command_line(t_shell *shell, t_data *tokenized);
+void execute_command_line(t_shell_control_block *shell);
 
 
 int					ft_isalnum(int c);
@@ -91,17 +98,19 @@ size_t				ft_strlen(const char *s);
 void				*ft_memcpy(void *dest, const void *src, size_t n);
 char				*ft_substr(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(const char *s1, const char *s2);
-char				*ft_strdup(const char *s);
+// char				*ft_strdup(const char *s);
+char	*ft_strdup(const char *s, int flag);
 char	*ft_strchr(const char *s, int c);
 char	**ft_split(char const *s, char c);
 char	*ft_itoa(int n);
 
 t_list				*ft_lstnew(void *content);
 void				ft_lstadd_back(t_list **lst, t_list *new);
-t_list	**get_garbage_pointer(void);
-void	free_memory(t_list *lst);
-void	*ft_malloc(size_t size);
-t_list	*garbage_collection_lstnew(void *content);
+void	*ft_malloc(size_t size, int falg);
+t_list	**get_garbage_pointer(int flag);
+void	free_memory(t_list **lst);
+t_list	*garbage_collection_lstnew(void *content, int flag);
+// t_list	*garbage_collection_lstnew(void *content);
 char	*get_next_line(int fd);
 void handle_heredoc(t_data *tokenized, char **in_file_name);
 void print_file(char *str);
@@ -109,8 +118,8 @@ void handle_redir_in(char *str, char **in_file_name);
 char *read_file(char *file_name);
 void handle_redir_out(char *str, char **file_name);
 void handle_append(char *str, char **file_name);
-char **get_cmd_and_its_args(t_data *arr_of_stracts);
-void execute_command(t_shell *shell, char *cmd, char **av);
+char **get_cmd_and_its_args(t_shell_control_block *shell);
+void execute_command(t_shell_control_block *shell);
 void	remove_quotes(char **line);
 
 void	handle_signals_in_child(void);
@@ -121,7 +130,7 @@ void print_env(char **env);
 void echo(char **args);
 int	ft_strncmp(const char *big, const char *little, size_t n);
 char *pwd();
-void check_built_in_command(char **env, char **cmd_and_args);
+int execute_built_in(t_shell_control_block *shell);
 void print_env(char **env);
 void export(char ***env, char **to_export);
 int is_it_key_value(char *str);
@@ -132,59 +141,11 @@ int	ft_isdigit(int c);
 int	ft_strcmp(char *s1, char *s2);
 
 
+char **handle_dollar_with_quotes(char **splitted);
 
 //int	ft_strncmp(const char *big, const char *little, size_t n);
-void cd(char **env, char *path);
+void cd(char **env, char **path);
 int	print_error(const char *str, ...);
 void create_all_heredocs(t_data *tokenized);
-
-typedef struct s_shell
-{
-    // Environment and command line
-    char        **env;              // Environment variables
-    char        *line;              // Current input line
-    char        **splitted;         // Split command line
-    t_data      *tokenized;         // Tokenized commands
-    
-    // File descriptors and redirection
-    int         stdin_fd;           // Original stdin fd
-    int         stdout_fd;          // Original stdout fd
-    int         pipe_fd[2];         // Pipe file descriptors
-    char        *in_file;           // Input redirection file
-    char        *out_file;          // Output redirection file
-    char        *heredoc_file;      // Heredoc temporary file
-    
-    // Process control
-    pid_t       *pids;              // Array of process IDs
-    int         num_commands;       // Number of commands in pipeline
-    int         exit_status;        // Last command exit status
-    
-    // State flags
-    int         is_running;         // Shell running state
-    int         heredoc_active;     // Heredoc processing flag
-    int         in_pipe;            // Inside pipe flag
-    int         in_redir;           // Inside redirection flag
-    
-    // Error handling
-    int         error_code;         // Error code
-    char        *error_msg;         // Error message
-    
-    // Memory management
-    t_list      *garbage;           // Garbage collection list
-}               t_shell;
-
-// Function declarations that use t_shell
-void execute_command_line(t_shell *shell, t_data *tokenized);
-void execute_command(t_shell *shell, char *cmd, char **av);
-void process_command(t_shell *shell, t_data *tokenized);
-t_shell *init_shell(char **env);
-void cleanup_shell(t_shell *shell);
-void reset_shell_state(t_shell *shell);
-
-// Helper functions for shell management
-void    free_2d_array(char **array);
-void    free_tokenized_data(t_data *tokenized);
-
-// ... rest of existing function declarations ...
-
+void unset(char ***env, char **vars);
 #endif

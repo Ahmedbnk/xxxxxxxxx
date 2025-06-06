@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-// Move these functions to src/parser/operator_utils.c
 static int	is_operator(char *str, int i)
 {
 	if (is_between_quotes(str, i))
 		return (0);
-	if ((str[i] == '>' && str[i + 1] == '>') || (str[i] == '<' && str[i + 1] == '<'))
+	if ((str[i] == '>' && str[i + 1] == '>') || (str[i] == '<' && str[i
+			+ 1] == '<'))
 		return (2);
 	if (str[i] == '>' || str[i] == '<' || str[i] == '|')
 		return (1);
@@ -40,7 +40,8 @@ static int	calculate_all_symboles_operators(char **splitted)
 		j = 0;
 		while (splitted[i][j])
 		{
-			if (!is_between_quotes(splitted[i], j) && strchr("<>|", splitted[i][j]))
+			if (!is_between_quotes(splitted[i], j) && strchr("<>|",
+					splitted[i][j]))
 				number++;
 			j++;
 		}
@@ -49,40 +50,33 @@ static int	calculate_all_symboles_operators(char **splitted)
 	return (number);
 }
 
-// Helper functions for splitting
-static void	handle_operator_split(char **container, char *str, int *j_ptr, int i, int start, int op_len)
-{
-	int j;
-
-	j = *j_ptr;
-	if (i > start)
-		container[j++] = ft_substr(str, start, i - start);
-	container[j++] = ft_substr(str, i, op_len);
-	*j_ptr = j;
-}
-
 static void	split_string_with_operators(char **container, char *str, int *j_ptr)
 {
 	int	i;
 	int	start;
+	int	j;
 	int	op_len;
 
 	i = 0;
 	start = 0;
+	j = *j_ptr;
 	while (str[i])
 	{
 		op_len = is_operator(str, i);
 		if (op_len > 0)
 		{
-			handle_operator_split(container, str, j_ptr, i, start, op_len);
+			if (i > start)
+				container[j++] = ft_substr(str, start, i - start);
+			container[j++] = ft_substr(str, i, op_len);
 			i += op_len;
 			start = i;
 		}
 		else
 			i++;
 	}
-	if(start != i)
-		container[(*j_ptr)++] = ft_substr(str, start, i - start);
+  if(start != i)
+    container[j++] = ft_substr(str, start, i - start);
+	*j_ptr = j;
 }
 
 char	**split_with_operators(char **splitted)
@@ -97,7 +91,7 @@ char	**split_with_operators(char **splitted)
 	j = 0;
 	while (splitted[i])
 		i++;
-	container = ft_malloc(sizeof(char *) * ((i + 2 * len) + 1));
+	container = ft_malloc(sizeof(char *) * ((i + 2 * len) + 1), 1);
 	i = 0;
 	j = 0;
 	while (splitted[i])
@@ -105,7 +99,7 @@ char	**split_with_operators(char **splitted)
 		if (does_string_has_operators(splitted[i]))
 			split_string_with_operators(container, splitted[i], &j);
 		else
-			container[j++] = ft_strdup(splitted[i]);
+			container[j++] = ft_strdup(splitted[i], 1);
 		i++;
 	}
 	container[j] = NULL;

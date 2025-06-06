@@ -23,6 +23,8 @@ int	check_unclosed_quotes(char *str)
 
 int	check_error(char *str)
 {
+  if(!str || !*str)
+    return 1;
 	if (check_unclosed_quotes(str))
 	{
 		print_error("unclosed quote\n");
