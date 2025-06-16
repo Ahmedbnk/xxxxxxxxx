@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_type	get_type_type(const char *str)
@@ -42,9 +41,24 @@ int check_syntax_error(t_token *data, int len)
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
       return((print_error("error near | \n"), 1));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
-      return((print_error("error near new line \n"), 1));
+    {
+      // Check for ambiguous redirection (redirection followed by empty string)
+      if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+           data[i].type == REDIR_APPEND) && data[i + 1].type == WORD && 
+          (data[i + 1].word == NULL || data[i + 1].word[0] == '\0'))
+        return((print_error("ambiguous redirect\n"), 1));
+      else
+        return((print_error("error near new line \n"), 1));
+    }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
-      return((print_error("error near new line \n"), 1));
+    {
+      // Check for ambiguous redirection at the end
+      if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+           data[i].type == REDIR_APPEND))
+        return((print_error("ambiguous redirect\n"), 1));
+      else
+        return((print_error("error near new line \n"), 1));
+    }
     i++;
   }
   return 0;

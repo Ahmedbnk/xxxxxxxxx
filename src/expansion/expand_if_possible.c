@@ -94,7 +94,12 @@ void expand(t_shell_control_block *shell)
     if(are_they_equal(shell->splitted[i], "<<"))
       i++;
     else
+    {
       shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
+      // If expansion failed due to ambiguous redirect, set exit status and return
+      if (shell->exit_status == 1)
+        return;
+    }
     i++;
   }
 }

@@ -11,6 +11,15 @@ char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
 			path = ft_itoa(s->exit_status);
 		else
 			path = ft_strdup(get_env_var(s, data), 1);
+		
+		// Check for ambiguous redirection if this is part of a redirection
+		if (path && check_ambiguous_redirection(path))
+		{
+			print_error("ambiguous redirect\n");
+			s->exit_status = 1;
+			return NULL;
+		}
+		
 		the_joined_node = custom_join(data.befor_dollar, path);
 	}
 	if (data.last_one)

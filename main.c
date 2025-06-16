@@ -21,6 +21,12 @@ void execute_line(t_shell_control_block *shell)
     else
       execute_command_line(shell);
   }
+  // If expansion failed due to ambiguous redirect, don't execute
+  else if (shell->exit_status == 1)
+  {
+    // Expansion already set the exit status and printed the error
+    return;
+  }
 }
 
 int main(int ac, char **av, char **env)

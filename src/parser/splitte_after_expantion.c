@@ -2,8 +2,6 @@
 
 int find_char_in_str(char *str, char c)
 {
-  int i;
-  i = 0;
   while(*str)
   {
     if(*str == c)
