@@ -73,19 +73,10 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   int i ;
   i = 0;
   
-  // Debug: print what we're looking for
-  print_error("DEBUG: Looking for variable '%s' in environment\n", data.to_expand);
-  
   while(ptr && ptr[i])
   {
-    if (ptr[i])
-      print_error("DEBUG: Checking env[%d]='%s'\n", i, ptr[i]);
-    else
-      print_error("DEBUG: Checking env[%d]='(null)'\n", i);
-      
     if(is_var_exist(ptr[i], (data.to_expand)+1))
     {
-      print_error("DEBUG: Found variable '%s'\n", data.to_expand);
       get_start_and_end(ptr[i], &start, &end);
       value = ft_substr(ptr[i], start, (end-start));
       value = protect_str(value);
@@ -93,7 +84,6 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
     }
     i++;
   }
-  print_error("DEBUG: Variable '%s' not found\n", data.to_expand);
   return NULL;
 }
 
