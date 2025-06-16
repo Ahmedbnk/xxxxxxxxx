@@ -10,7 +10,10 @@ char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
 		if (are_they_equal(data.to_expand, "$?"))
 			path = ft_itoa(s->exit_status);
 		else
+		{
 			path = ft_strdup(get_env_var(s, data), 1);
+			print_error("DEBUG: get_env_var returned: '%s'\n", path ? path : "NULL");
+		}
 		
 		// Check for ambiguous redirection if this is part of a redirection
 		if (path && check_ambiguous_redirection(path))
@@ -20,11 +23,20 @@ char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
 			return NULL;
 		}
 		
+		print_error("DEBUG: About to call custom_join with '%s' and '%s'\n", 
+		           data.befor_dollar ? data.befor_dollar : "NULL", 
+		           path ? path : "NULL");
 		the_joined_node = custom_join(data.befor_dollar, path);
+		print_error("DEBUG: custom_join returned: '%s'\n", 
+		           the_joined_node ? the_joined_node : "NULL");
 	}
 	if (data.last_one)
 	{
+		print_error("DEBUG: About to call custom_join with '%s' and '%s'\n", 
+		           the_joined_node ? the_joined_node : "NULL", 
+		           data.after_dollar ? data.after_dollar : "NULL");
 		rest = custom_join(the_joined_node, data.after_dollar);
+		print_error("DEBUG: Final result: '%s'\n", rest ? rest : "NULL");
 		return (rest);
 	}
 	return (the_joined_node);
