@@ -103,6 +103,9 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 		if (i > start)
 			splitted[k++] = ft_substr(s, start, i - start);
 	}
+	// Handle empty string case
+	if (ft_strlen(s) == 0)
+		splitted[k++] = ft_strdup("", 1);
 	splitted[k] = NULL;
 }
 char	**test_split(char const *s)
