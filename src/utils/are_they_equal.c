@@ -15,7 +15,7 @@ int	are_they_equal(const char *str1, const char *str2)
 	}
 	return (1);
 }
-// t_token get_token_type(const char *str) {
+// t_type get_type_type(const char *str) {
 //     if (are_they_equal((char *)str, "|"))
 //         return (TOKEN_PIPE);
 //     else if (are_they_equal((char *)str, "<"))
@@ -34,10 +34,10 @@ int	are_they_equal(const char *str1, const char *str2)
 
 // int main()
 // {
-//     printf("%d\n", get_token_type("<<"));
-//     printf("%d\n", get_token_type(">>"));
-//     printf("%d\n", get_token_type("<"));
-//     printf("%d\n", get_token_type(">"));
-//     printf("%d\n", get_token_type("|"));
-//     printf("%d\n", get_token_type("kjjhkdfh"));
+//     printf("%d\n", get_type_type("<<"));
+//     printf("%d\n", get_type_type(">>"));
+//     printf("%d\n", get_type_type("<"));
+//     printf("%d\n", get_type_type(">"));
+//     printf("%d\n", get_type_type("|"));
+//     printf("%d\n", get_type_type("kjjhkdfh"));
 // }

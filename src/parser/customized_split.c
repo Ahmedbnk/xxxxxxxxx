@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	ft_w_counter(char const *s)
+int	ft_w_counter(char const *s)
 {
 	int	i;
 	int	k;

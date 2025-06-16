@@ -1,7 +1,7 @@
 
 #include "minishell.h"
 
-t_token	get_token_type(const char *str)
+t_type	get_type_type(const char *str)
 {
 	if (are_they_equal(str, "|"))
 		return (PIPE);
@@ -17,13 +17,13 @@ t_token	get_token_type(const char *str)
 		return (WORD);
 }
 
-void fill_the_list(t_data * list, char **arr)
+void fill_the_list(t_token * list, char **arr)
 {
   int i;
   i = 0;
   while(arr[i])
   {
-    list[i].type = get_token_type(arr[i]);
+    list[i].type = get_type_type(arr[i]);
     list[i].word = ft_strdup(arr[i], 1);
     i++;
   }
@@ -32,7 +32,7 @@ void fill_the_list(t_data * list, char **arr)
 }
 
 
-int check_syntax_error(t_data *data, int len)
+int check_syntax_error(t_token *data, int len)
 {
   int i; i = 0;
   while(i < len)
@@ -50,15 +50,20 @@ int check_syntax_error(t_data *data, int len)
   return 0;
 }
 
-t_data *make_token(char **arr)
+t_token *make_token(t_shell_control_block *shell)
 {
   int len;
-  t_data *list;
+  t_token *list;
+  char **arr;
 
+  arr = shell->splitted;
   len = len_of_two_d_array(arr);
-  list = ft_malloc((len  + 1)* sizeof(t_data), 1);
+  list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
   if(check_syntax_error(list, len))
+  {
+    shell->exit_status = 2;
     return NULL;
+  }
   return list;
 }

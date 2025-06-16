@@ -26,7 +26,7 @@ char *remake_delimeter(char *str)
   return returned_str;
 }
 
-void create_heredoc(t_data *tokenized)
+void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
 {
   int fd;
   char *str = NULL; 
@@ -42,7 +42,7 @@ void create_heredoc(t_data *tokenized)
       print_error("warning: here-document delimited by end-of-file (wanted `%s')\n", tokenized->delimiter);
       break;
     }
-    str = expand_if_possible(str, 1);
+    str = expand_if_possible(s, str, 1);
     if(are_they_equal(str, tokenized->delimiter))
        break;
     buffer = ft_strjoin(buffer, str);
@@ -53,12 +53,15 @@ void create_heredoc(t_data *tokenized)
   close(fd);
 }
 
-void create_all_heredocs(t_data *tokenized)
+void create_all_heredocs(t_shell_control_block *shell)
 {
-  while(tokenized && tokenized -> word)
+  t_token *ptr;
+
+  ptr = shell->tokenized;
+  while(ptr && ptr -> word)
   {
-    if(tokenized -> type == HEREDOC)
-      create_heredoc(tokenized);
-    tokenized ++;
+    if(ptr -> type == HEREDOC)
+      create_heredoc(shell, ptr);
+    ptr ++;
   }
 }

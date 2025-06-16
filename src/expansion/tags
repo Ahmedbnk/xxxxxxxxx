@@ -1,0 +1,21 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/nkasimi/minishell/src/expansion/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+expand_if_possible	expand_if_possible.c	/^char	*expand_if_possible(char *str , int heredoc_flag)$/;"	f	typeref:typename:char *
+expnad_and_join_node	new_string_after_expand.c	/^char	*expnad_and_join_node(t_arr_of_structs data)$/;"	f	typeref:typename:char *
+how_many_dallar_to_expand	expand_if_possible.c	/^int	how_many_dallar_to_expand(char *str, int heredoc_flag)$/;"	f	typeref:typename:int
+is_expand_separator	is_expand_separator.c	/^int	is_expand_separator(char c)$/;"	f	typeref:typename:int
+is_expend_seperator	is_expand_separator_fix.c	/^int	is_expend_seperator(char c)$/;"	f	typeref:typename:int
+new_str_after_expand	new_string_after_expand.c	/^char	*new_str_after_expand(t_arr_of_structs *data, int num_of_expantion)$/;"	f	typeref:typename:char *
+should_i_expand	should_i_expand.c	/^int	should_i_expand(char *str, int index)$/;"	f	typeref:typename:int
+string_after_dollar	expand_if_possible.c	/^void	string_after_dollar(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	typeref:typename:void
+string_before_dollar	expand_if_possible.c	/^void	string_before_dollar(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	typeref:typename:void
+string_to_expand	expand_if_possible.c	/^void	string_to_expand(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	typeref:typename:void

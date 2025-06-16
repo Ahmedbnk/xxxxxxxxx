@@ -10,6 +10,7 @@ SRCS = main.c \
 	src/expansion/should_i_expand.c \
 	src/expansion/is_expand_separator.c \
 	src/expansion/new_string_after_expand.c \
+	src/expansion/how_many_dallar_to_expand.c \
 	src/parser/check_input_error.c \
 	src/parser/remove_quotes_from_args.c \
 	src/parser/split_with_operators.c \
@@ -36,6 +37,7 @@ SRCS = main.c \
 	src/utils/ft_lstnew.c\
 	src/utils/ft_lstadd_back.c\
 	src/parser/execute_command_line.c\
+	src/parser/splitte_after_expantion.c\
 	src/parser/handle_heredoc.c\
 	src/utils/print_file.c\
 	src/parser/handle_redir_in.c\
@@ -57,6 +59,14 @@ SRCS = main.c \
 	src/built_in/ist_valid_env_var.c\
 	src/built_in/unset.c\
 	src/parser/handle_dollar_with_quotes.c\
+	src/execution/print_exit_signal_message.c\
+	src/execution/is_there_a_pipe.c\
+	src/expansion/ft_get_env_var.c\
+	src/expansion/new_expand.c\
+	src/main_tools/debug.c\
+	src/main_tools/tool_one.c\
+	src/utils/ft_lstsize.c \
+	# src/main_tools
 
 OBJS = $(SRCS:.c=.o)
 

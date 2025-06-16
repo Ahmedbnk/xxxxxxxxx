@@ -25,24 +25,14 @@ char	*generate_random_name(void)
 
 
 
-void	skip_command(t_data **tokenized_address)
+void	skip_command(t_token **tokenized_address)
 {
-  t_data	*tokenized;
+  t_token	*tokenized;
 
   tokenized = *tokenized_address;
   while (tokenized && tokenized->word != NULL && tokenized->type != PIPE)
     tokenized ++;
   *tokenized_address = tokenized;
-}
-
-void	print_command(t_data *tokenized)
-{
-  while (tokenized && tokenized->word != NULL && tokenized->type != PIPE)
-  {
-    printf("%s ", tokenized->word);
-    tokenized ++;
-  }
-  printf("\n");
 }
 
 void handle_all_redir(t_shell_control_block *shell)
@@ -81,13 +71,17 @@ void	process_command(t_shell_control_block *shell)
   }
   if(!execute_built_in(shell))
     execute_command(shell);
-  unlink(shell->in_file_name);
+  if(shell->in_file_name)
+    unlink(shell->in_file_name);
 }
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
-  if (fork() == 0)
+  handle_signals(1);
+  int p_id = fork();
+  if (p_id == 0)
   {
+    child_signal_handler();
     if (shell->previous_read_end != -1)
     {
       dup2(shell->previous_read_end, 0);
@@ -103,25 +97,44 @@ void execute_command_line_helper(t_shell_control_block *shell)
     process_command(shell);
     exit(0);
   }
+  else
+    shell->last_child_pid = p_id;
 }
+
 void execute_command_line(t_shell_control_block *shell)
 {
   int status;
-  pid_t pid;
 
-  pid = fork();
-  if (pid == 0)
+  status = 0;
+  shell->line_pointer = shell->tokenized;
+  shell->previous_read_end = -1;
+  while (shell->line_pointer && shell->line_pointer->word)
   {
-    handle_signals_in_child();
-    execute_command(shell);
-    exit(1);  // Exit with error if execute_command returns
+    shell->tokenized = shell->line_pointer;
+    skip_command(&(shell->line_pointer));
+    if (shell->line_pointer && shell->line_pointer->type == PIPE)
+      pipe(shell->arr);
+    execute_command_line_helper(shell);
+    if (shell->previous_read_end != -1)
+      close(shell->previous_read_end);
+    if (shell->line_pointer && shell->line_pointer->type == PIPE)
+    {
+      close(shell->arr[1]);
+      shell->previous_read_end =shell->arr[0];
+      shell->line_pointer++;
+    }
   }
-  else
-  {
-    waitpid(pid, &status, 0);
-    if (WIFEXITED(status))
-      g_shell->last_exit_status = WEXITSTATUS(status);
-    else if (WIFSIGNALED(status))
-      g_shell->last_exit_status = 128 + WTERMSIG(status);
-  }
+  if (shell->previous_read_end != -1)
+    close(shell->previous_read_end);
+  waitpid(shell->last_child_pid, &status, 0);
+  if (WIFEXITED(status))
+    shell->exit_status = WEXITSTATUS(status);
+  else if(WIFSIGNALED(status))
+    shell->exit_status =  128 + WTERMSIG(status);
+  else if(WIFSTOPPED(status))
+    shell->exit_status = WSTOPSIG(status);
+  while (wait(NULL) > 0)
+    ;
+  if(shell->exit_status > 128)
+    print_exit_signal_message(shell->exit_status);
 }

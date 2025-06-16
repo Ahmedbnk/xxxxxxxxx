@@ -1,20 +1,18 @@
 #include "minishell.h"
 
 
-void	sigint_handler_in_child(int signo)
+void	sigint_child_handler(int signo)
 {
-	if (signo == SIGINT)
-	{
-		wait(NULL);
-		exit(0);
-	}
+	(void ) signo;
+	  while (wait(NULL) > 0);
+	write(1, "\n", 1);
+	signal(SIGINT, SIG_IGN);
 }
 
 void	sigint_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		wait(NULL);
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -23,24 +21,22 @@ void	sigint_handler(int signo)
 }
 
 
-void	handle_signals(void)
+void	handle_signals(int flag)
 {
 	struct sigaction sa;
 
-	sa.sa_handler = sigint_handler;
+	if(flag == 0)
+		sa.sa_handler = sigint_handler;
+	else if(flag == 1)
+		sa.sa_handler = sigint_child_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
-
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	handle_signals_in_child(void)
+void child_signal_handler()
 {
-	struct sigaction sa;
-
-	sa.sa_handler = sigint_handler_in_child;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }

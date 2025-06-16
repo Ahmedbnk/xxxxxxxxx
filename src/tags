@@ -9,13 +9,13 @@
 !_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	//
-allocat_and_init	src/env/allocate_and_init_expand_list.c	/^void	allocat_and_init(t_expand **expand_list, int how_much_to_expand, int heredoc_flag)$/;"	f	language:C	typeref:typename:void
-allocat_expand_list	src/env/allocate_and_init_expand_list.c	/^static void	allocat_expand_list(t_expand **expand_list, int how_much_to_expand)$/;"	f	language:C	typeref:typename:void	file:
+allocat_and_init	src/env/allocate_and_init_arr_of_structs_list.c	/^void	allocat_and_init(t_arr_of_structs **expand_list, int how_much_to_expand, int heredoc_flag)$/;"	f	language:C	typeref:typename:void
+allocat_arr_of_structs_list	src/env/allocate_and_init_arr_of_structs_list.c	/^static void	allocat_arr_of_structs_list(t_arr_of_structs **expand_list, int how_much_to_expand)$/;"	f	language:C	typeref:typename:void	file:
 are_they_equal	src/utils/are_they_equal.c	/^int	are_they_equal(const char *str1, const char *str2)$/;"	f	language:C	typeref:typename:int
 calculate_all_symboles_operators	src/parser/split_with_operators.c	/^static int	calculate_all_symboles_operators(char **splitted)$/;"	f	language:C	typeref:typename:int	file:
 check_after_geting_bath	src/execution/execute_command.c	/^void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)$/;"	f	language:C	typeref:typename:void
 check_error	src/parser/check_input_error.c	/^int	check_error(char *str)$/;"	f	language:C	typeref:typename:int
-check_syntax_error	src/parser/make_token.c	/^int check_syntax_error(t_data *data, int len)$/;"	f	language:C	typeref:typename:int
+check_syntax_error	src/parser/make_token.c	/^int check_syntax_error(t_token *data, int len)$/;"	f	language:C	typeref:typename:int
 check_the_access	src/execution/execute_command.c	/^void  check_the_access(char *cmd, char **av, char **env)$/;"	f	language:C	typeref:typename:void
 check_unclosed_quotes	src/parser/check_input_error.c	/^int	check_unclosed_quotes(char *str)$/;"	f	language:C	typeref:typename:int
 copy_env	src/env/copy_env.c	/^char ** copy_env(char **env)$/;"	f	language:C	typeref:typename:char **
@@ -26,9 +26,9 @@ customized_split	src/parser/customized_split.c	/^char	**customized_split(char co
 does_string_has_operators	src/parser/split_with_operators.c	/^static int	does_string_has_operators(char *str)$/;"	f	language:C	typeref:typename:int	file:
 execute_command	src/execution/execute_command.c	/^void execute_command(char *cmd , char **av, char **env)$/;"	f	language:C	typeref:typename:void
 expand_if_possible	src/expansion/expand_if_possible.c	/^char	*expand_if_possible(char *str , int heredoc_flag)$/;"	f	language:C	typeref:typename:char *
-expnad_and_join_node	src/expansion/new_string_after_expand.c	/^char	*expnad_and_join_node(t_expand data)$/;"	f	language:C	typeref:typename:char *
+expnad_and_join_node	src/expansion/new_string_after_expand.c	/^char	*expnad_and_join_node(t_arr_of_structs data)$/;"	f	language:C	typeref:typename:char *
 fill_n_str	src/utils/ft_itoa.c	/^static void	fill_n_str(char *str, int n)$/;"	f	language:C	typeref:typename:void	file:
-fill_the_list	src/parser/make_token.c	/^void fill_the_list(t_data * list, char **arr)$/;"	f	language:C	typeref:typename:void
+fill_the_list	src/parser/make_token.c	/^void fill_the_list(t_token * list, char **arr)$/;"	f	language:C	typeref:typename:void
 free_memory_and_exit	src/utils/garbage_collector.c	/^void	free_memory_and_exit(t_list *lst)$/;"	f	language:C	typeref:typename:void
 ft_isalnum	src/utils/ft_isalnum.c	/^int	ft_isalnum(int c)$/;"	f	language:C	typeref:typename:int
 ft_itoa	src/utils/ft_itoa.c	/^char	*ft_itoa(int n)$/;"	f	language:C	typeref:typename:char *
@@ -48,11 +48,11 @@ ft_w_counter	src/utils/ft_split.c	/^static int	ft_w_counter(char const *s, char 
 garbage_collection_lstnew	src/utils/garbage_collection_lstnew.c	/^t_list	*garbage_collection_lstnew(void *content)$/;"	f	language:C	typeref:typename:t_list *
 generate_random_name	src/parser/parse_tokenized.c	/^char *generate_random_name()$/;"	f	language:C	typeref:typename:char *
 generate_random_number	src/parser/parse_tokenized.c	/^int generate_random_number()$/;"	f	language:C	typeref:typename:int
-get_cmd_and_its_args	src/execution/execute_command.c	/^char **get_cmd_and_its_args(t_data *arr_of_stracts)$/;"	f	language:C	typeref:typename:char **
+get_cmd_and_its_args	src/execution/execute_command.c	/^char **get_cmd_and_its_args(t_token *arr_of_stracts)$/;"	f	language:C	typeref:typename:char **
 get_garbage_pointer	src/utils/garbage_collector.c	/^t_list	**get_garbage_pointer(void)$/;"	f	language:C	typeref:typename:t_list **
 get_next_line	src/utils/get_next_line.c	/^char	*get_next_line(int fd)$/;"	f	language:C	typeref:typename:char *
 get_path	src/execution/execute_command.c	/^char **get_path()$/;"	f	language:C	typeref:typename:char **
-get_token_type	src/parser/make_token.c	/^t_token	get_token_type(const char *str)$/;"	f	language:C	typeref:typename:t_token
+get_type_type	src/parser/make_token.c	/^t_type	get_type_type(const char *str)$/;"	f	language:C	typeref:typename:t_type
 handle_append	src/parser/handle_append.c	/^void handle_append(char *str)$/;"	f	language:C	typeref:typename:void
 handle_failure_and_eof	src/utils/get_next_line.c	/^static char	*handle_failure_and_eof(char *rest, ssize_t readed_bytes)$/;"	f	language:C	typeref:typename:char *	file:
 handle_heredoc	src/parser/handle_heredoc.c	/^void handle_heredoc(char *str, char *tmp_file_name)$/;"	f	language:C	typeref:typename:void
@@ -60,22 +60,22 @@ handle_redir_in	src/parser/handle_redir_in.c	/^void handle_redir_in(char *str, c
 handle_redir_out	src/parser/handle_redir_out.c	/^void handle_redir_out(char *str)$/;"	f	language:C	typeref:typename:void
 handle_signals	src/signals/handle_signals.c	/^void	handle_signals(void)$/;"	f	language:C	typeref:typename:void
 how_many_dallar_to_expand	src/expansion/expand_if_possible.c	/^int	how_many_dallar_to_expand(char *str, int heredoc_flag)$/;"	f	language:C	typeref:typename:int
-how_many_strcut_in_the_array	src/execution/execute_command.c	/^int how_many_strcut_in_the_array(t_data *arr_of_stracts)$/;"	f	language:C	typeref:typename:int
-init_expand_list	src/env/allocate_and_init_expand_list.c	/^static void	init_expand_list(t_expand *expand_list, int how_much_to_expand, int heredoc_flag)$/;"	f	language:C	typeref:typename:void	file:
+how_many_strcut_in_the_array	src/execution/execute_command.c	/^int how_many_strcut_in_the_array(t_token *arr_of_stracts)$/;"	f	language:C	typeref:typename:int
+init_arr_of_structs_list	src/env/allocate_and_init_arr_of_structs_list.c	/^static void	init_arr_of_structs_list(t_arr_of_structs *expand_list, int how_much_to_expand, int heredoc_flag)$/;"	f	language:C	typeref:typename:void	file:
 is_between_quotes	src/parser/is_between_quotes.c	/^int	is_between_quotes(char *line, int index)$/;"	f	language:C	typeref:typename:int
 is_expand_separator	src/expansion/is_expand_separator.c	/^int	is_expand_separator(char c)$/;"	f	language:C	typeref:typename:int
 is_expend_seperator	src/expansion/is_expand_separator_fix.c	/^int	is_expend_seperator(char c)$/;"	f	language:C	typeref:typename:int
 is_operator	src/parser/split_with_operators.c	/^static int	is_operator(char *str, int i)$/;"	f	language:C	typeref:typename:int	file:
 is_space	src/utils/is_space.c	/^int	is_space(char c)$/;"	f	language:C	typeref:typename:int
 len_of_two_d_array	src/utils/len_of_two_d_array.c	/^int len_of_two_d_array(char **str)$/;"	f	language:C	typeref:typename:int
-make_token	src/parser/make_token.c	/^t_data *make_token(char **arr)$/;"	f	language:C	typeref:typename:t_data *
+make_token	src/parser/make_token.c	/^t_token *make_token(char **arr)$/;"	f	language:C	typeref:typename:t_token *
 n_counter	src/utils/ft_itoa.c	/^static int	n_counter(int n)$/;"	f	language:C	typeref:typename:int	file:
-new_str_after_expand	src/expansion/new_string_after_expand.c	/^char	*new_str_after_expand(t_expand *data, int num_of_expantion)$/;"	f	language:C	typeref:typename:char *
-parse_tokenized	src/parser/parse_tokenized.c	/^void parse_tokenized(t_data *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
-print_command	src/parser/parse_tokenized.c	/^void print_command(t_data *tokenized)$/;"	f	language:C	typeref:typename:void
+new_str_after_expand	src/expansion/new_string_after_expand.c	/^char	*new_str_after_expand(t_arr_of_structs *data, int num_of_expantion)$/;"	f	language:C	typeref:typename:char *
+parse_tokenized	src/parser/parse_tokenized.c	/^void parse_tokenized(t_token *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
+print_command	src/parser/parse_tokenized.c	/^void print_command(t_token *tokenized)$/;"	f	language:C	typeref:typename:void
 print_file	src/utils/print_file.c	/^void print_file(char *str)$/;"	f	language:C	typeref:typename:void
 print_splitted	src/utils/print_splitted.c	/^void print_splitted(char **splitted)$/;"	f	language:C	typeref:typename:void
-process_command	src/parser/parse_tokenized.c	/^void process_command(t_data *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
+process_command	src/parser/parse_tokenized.c	/^void process_command(t_token *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
 read_file	src/parser/read_file.c	/^char *read_file(char *file_name)$/;"	f	language:C	typeref:typename:char *
 read_file	src/utils/read_file.c	/^char *read_file(char *file_name)$/;"	f	language:C	typeref:typename:char *
 remove_quotes	src/parser/remove_quotes_from_args.c	/^void	remove_quotes(char **line)$/;"	f	language:C	typeref:typename:void
@@ -83,10 +83,10 @@ remove_quotes_from_args	src/parser/remove_quotes_from_args.c	/^void remove_quote
 remove_quotes_helper	src/parser/remove_quotes_from_args.c	/^static void	remove_quotes_helper(char *line, char **parsed_quote_line)$/;"	f	language:C	typeref:typename:void	file:
 should_i_expand	src/expansion/should_i_expand.c	/^int	should_i_expand(char *str, int index)$/;"	f	language:C	typeref:typename:int
 sigint_handler	src/signals/handle_signals.c	/^void	sigint_handler(int signo)$/;"	f	language:C	typeref:typename:void
-skip_command	src/parser/parse_tokenized.c	/^void skip_command(t_data **tokenized_address)$/;"	f	language:C	typeref:typename:void
+skip_command	src/parser/parse_tokenized.c	/^void skip_command(t_token **tokenized_address)$/;"	f	language:C	typeref:typename:void
 split_helper	src/parser/customized_split.c	/^static void	split_helper(char **splitted, char *s, int i, int k)$/;"	f	language:C	typeref:typename:void	file:
 split_string_with_operators	src/parser/split_with_operators.c	/^static void	split_string_with_operators(char **container, char *str, int *j_ptr)$/;"	f	language:C	typeref:typename:void	file:
 split_with_operators	src/parser/split_with_operators.c	/^char	**split_with_operators(char **splitted)$/;"	f	language:C	typeref:typename:char **
-string_after_dollar	src/expansion/expand_if_possible.c	/^void	string_after_dollar(t_expand *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void
-string_before_dollar	src/expansion/expand_if_possible.c	/^void	string_before_dollar(t_expand *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void
-string_to_expand	src/expansion/expand_if_possible.c	/^void	string_to_expand(t_expand *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void
+string_after_dollar	src/expansion/expand_if_possible.c	/^void	string_after_dollar(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void
+string_before_dollar	src/expansion/expand_if_possible.c	/^void	string_before_dollar(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void
+string_to_expand	src/expansion/expand_if_possible.c	/^void	string_to_expand(t_arr_of_structs *data, int index, char *str, int *offset)$/;"	f	language:C	typeref:typename:void

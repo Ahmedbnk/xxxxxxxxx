@@ -21,13 +21,17 @@ int	check_unclosed_quotes(char *str)
 	return (single_quote || double_quote);
 }
 
-int	check_error(char *str)
+int	check_error(t_shell_control_block *shell)
 {
+  char *str;
+
+  str = shell->line;
   if(!str || !*str)
     return 1;
 	if (check_unclosed_quotes(str))
 	{
 		print_error("unclosed quote\n");
+    shell->exit_status = 2;
     return 1;
 	}
 	return (0);

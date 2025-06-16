@@ -84,10 +84,13 @@ void export(char ***env, char **to_export)
     {
         if(!is_valid_var(*to_export) || !is_it_key_value(*to_export) )
             ;
-        else if (find_and_update_var(*env, *to_export))
-        ;
         else
-            *env = add_var_to_env(*env , *to_export);
+        {
+            if (find_and_update_var(*env, *to_export))
+            ;
+            else
+                *env = add_var_to_env(*env , *to_export);
+        }
         to_export++;
     }
 }

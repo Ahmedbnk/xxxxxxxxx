@@ -1,25 +1,17 @@
 #include "minishell.h"
 
-char	*expnad_and_join_node(t_expand data)
+char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
 {
 	char	*path;
 	char	*the_joined_node;
 	char	*rest;
-	extern t_shell_control_block *g_shell;  // Add global shell pointer
-
 	if (data.to_expand != NULL)
 	{
-		if (ft_strcmp(data.to_expand, "$?") == 0)
-		{
-			path = ft_itoa(g_shell->last_exit_status);
-			the_joined_node = custom_join(data.befor_dollar, path);
-			free(path);  // Free the itoa result
-		}
+		if (are_they_equal(data.to_expand, "$?"))
+			path = ft_itoa(s->exit_status);
 		else
-		{
-			path = ft_strdup(getenv((data.to_expand) + 1), 1);
-			the_joined_node = custom_join(data.befor_dollar, path);
-		}
+			path = ft_strdup(get_env_var(s, data), 1);
+		the_joined_node = custom_join(data.befor_dollar, path);
 	}
 	if (data.last_one)
 	{
@@ -29,7 +21,7 @@ char	*expnad_and_join_node(t_expand data)
 	return (the_joined_node);
 }
 
-char	*new_str_after_expand(t_expand *data, int num_of_expantion)
+char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 {
 	char	*new_after_expand;
 	char	*expanded;
@@ -41,8 +33,8 @@ char	*new_str_after_expand(t_expand *data, int num_of_expantion)
 	while (i < num_of_expantion)
 	{
 		if (num_of_expantion - i == 1)
-			data[i].last_one = 1;
-		expanded = expnad_and_join_node(data[i]);
+			s->expand_arr[i].last_one = 1;
+		expanded = expnad_and_join_node(s, s->expand_arr[i]);
 		if (!expanded)
 			return (NULL);
 		joined = custom_join(new_after_expand, expanded);

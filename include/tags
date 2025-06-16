@@ -38,10 +38,10 @@ s_list	include/minishell.h	/^typedef struct s_list$/;"	s	language:C++
 s_list::content	include/minishell.h	/^	void			*content;$/;"	m	language:C++	struct:s_list	typeref:typename:void *
 s_list::next	include/minishell.h	/^	struct s_list	*next;$/;"	m	language:C++	struct:s_list	typeref:struct:s_list *
 single_q	include/minishell.h	/^# define single_q /;"	d	language:C++
-t_data	include/minishell.h	/^}					t_data;$/;"	t	language:C++	typeref:struct:s_data
-t_expand	include/minishell.h	/^}					t_expand;$/;"	t	language:C++	typeref:struct:s_expand
+t_token	include/minishell.h	/^}					t_token;$/;"	t	language:C++	typeref:struct:s_data
+t_arr_of_structs	include/minishell.h	/^}					t_arr_of_structs;$/;"	t	language:C++	typeref:struct:s_expand
 t_list	include/minishell.h	/^}					t_list;$/;"	t	language:C++	typeref:struct:s_list
-t_token	include/minishell.h	/^}					t_token;$/;"	t	language:C++	typeref:enum:e_token_type
+t_type	include/minishell.h	/^}					t_type;$/;"	t	language:C++	typeref:enum:e_token_type
 to_expand	include/minishell.h	/^	char			*to_expand;$/;"	m	language:C++	struct:s_expand	typeref:typename:char *
 type	include/minishell.h	/^	int				type;$/;"	m	language:C++	struct:s_data	typeref:typename:int
 word	include/minishell.h	/^	char			*word;$/;"	m	language:C++	struct:s_data	typeref:typename:char *

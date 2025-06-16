@@ -13,4 +13,4 @@ check_after_geting_bath	execute_command.c	/^int check_after_geting_bath( char *c
 check_command_status	execute_command.c	/^int  check_command_status(char *cmd, char **env)$/;"	f	typeref:typename:int
 check_the_access	execute_command.c	/^int  check_the_access(char *cmd)$/;"	f	typeref:typename:int
 execute_command	execute_command.c	/^void execute_command(char *cmd , char **av, char **env)$/;"	f	typeref:typename:void
-get_cmd_and_its_args	execute_command.c	/^char **get_cmd_and_its_args(t_data *arr_of_stracts)$/;"	f	typeref:typename:char **
+get_cmd_and_its_args	execute_command.c	/^char **get_cmd_and_its_args(t_token *arr_of_stracts)$/;"	f	typeref:typename:char **

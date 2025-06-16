@@ -36,7 +36,7 @@ int compare_env_var(char *var1, char *var2)
 {
     int i ;
     i = 0;
-    while(var1[i] &&  var2[i] && var1[i] != '=' && var2[i] != '=')
+    while((var1[i] ||  var2[i]) && var1[i] != '=' && var2[i] != '=')
     {
         if(var1[i] != var2[i])
             return 0;
