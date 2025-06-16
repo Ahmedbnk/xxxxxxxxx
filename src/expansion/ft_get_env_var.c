@@ -4,6 +4,14 @@ void get_start_and_end(char *str, int *start, int *end)
 {
   int i;
   i = 0;
+  
+  // Safety checks
+  if (!str || !start || !end)
+    return;
+    
+  *start = 0;
+  *end = 0;
+  
   while(str[i])
   {
     if(str[i] == '=')
@@ -36,7 +44,15 @@ int	is_between_lock(char *line, int index)
 char *protect_str(char *str)
 {
   char *new_str;
+  
+  // Safety check
+  if (!str)
+    return NULL;
+    
   new_str = ft_malloc(ft_strlen(str) +3, 1);
+  if (!new_str)
+    return NULL;
+    
   *new_str =14;
   int i;
   i = 1;
@@ -54,6 +70,11 @@ int is_var_exist(char *var1, char *var2)
 {
     int i ;
     i = 0;
+    
+    // Safety checks
+    if (!var1 || !var2)
+        return 0;
+    
     while(var2[i] || var1[i] != '=')
     {
         if(var1[i] != var2[i])
@@ -73,9 +94,13 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   int i ;
   i = 0;
   
-  while(ptr && ptr[i])
+  // Safety checks
+  if (!shell || !ptr || !data.to_expand)
+    return NULL;
+  
+  while(ptr[i])
   {
-    if(is_var_exist(ptr[i], (data.to_expand)+1))
+    if(ptr[i] && is_var_exist(ptr[i], (data.to_expand)+1))
     {
       get_start_and_end(ptr[i], &start, &end);
       value = ft_substr(ptr[i], start, (end-start));
