@@ -2,6 +2,7 @@
 # define MINISHELL_H
 
 # include <fcntl.h>
+# include <stdarg.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
