@@ -173,4 +173,5 @@ int	how_many_dallar_to_expand(char *str, int heredoc_flag);
 void expand(t_shell_control_block *shell);
 int	ft_lstsize(t_list *lst);
 char *ft_charremove(const char *s1, char c);
+int check_ambiguous_redirection(char *filename);
 #endif

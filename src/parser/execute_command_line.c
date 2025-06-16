@@ -47,6 +47,15 @@ void handle_all_redir(t_shell_control_block *shell)
       handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
     else if (shell->tokenized->type == REDIR_APPEND)
       handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+    
+    // Check if any redirection failed due to ambiguous redirect
+    if ((shell->tokenized->type == REDIR_IN && shell->in_file_name == NULL) ||
+        ((shell->tokenized->type == REDIR_OUT || shell->tokenized->type == REDIR_APPEND) && shell->file_name == NULL))
+    {
+      shell->exit_status = 1;
+      return;
+    }
+    
     shell->tokenized ++;
   }
 
@@ -57,7 +66,12 @@ void	process_command(t_shell_control_block *shell)
   shell->file_name = NULL;
   get_cmd_and_its_args(shell);
   handle_all_redir(shell);
-    if (shell->file_name)
+  
+  // If redirections failed due to ambiguous redirect, don't execute command
+  if (shell->exit_status == 1)
+    return;
+    
+  if (shell->file_name)
   {
     shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
     dup2(shell->fd_out, 1);

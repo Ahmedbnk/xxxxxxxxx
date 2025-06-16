@@ -7,6 +7,13 @@ void handle_redir_in(char *str, char **in_file_name)
 
   buffer = NULL;
 
+  if (check_ambiguous_redirection(str))
+  {
+    print_error("ambiguous redirect\n");
+    *in_file_name = NULL;
+    return;
+  }
+
   *in_file_name = ft_strjoin("/tmp/tmp_file", generate_random_name());
   buffer = read_file(str);
   if(!buffer)

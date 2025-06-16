@@ -17,6 +17,7 @@ SRCS = main.c \
 	src/parser/make_token.c \
 	src/parser/is_between_quotes.c \
 	src/parser/customized_split.c \
+	src/parser/check_ambiguous_redirection.c \
 	src/utils/is_space.c \
 	src/utils/are_they_equal.c \
 	src/utils/len_of_two_d_array.c \
