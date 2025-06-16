@@ -58,6 +58,7 @@ int check_syntax_error(t_token *data, int len)
           return((print_error("ambiguous redirect\n"), 1));
         if (ft_strlen(data[i + 1].word) == 0)
           return((print_error("ambiguous redirect\n"), 1));
+        // If we get here, the word is not empty, so it's a valid redirection
       }
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
