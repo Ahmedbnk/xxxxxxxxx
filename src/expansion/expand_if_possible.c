@@ -66,7 +66,12 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	int num_of_expantion;
 	char *new_str;
 
-	s->expand_arr = NULL;
+	// Clean up previous expand_arr if it exists
+	if (s->expand_arr)
+	{
+		// Free the expand_arr (it's managed by garbage collector, so just set to NULL)
+		s->expand_arr = NULL;
+	}
 
 	i = 0;
 	offset = 0;

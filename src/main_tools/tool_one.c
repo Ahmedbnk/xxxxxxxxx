@@ -7,8 +7,10 @@ void ft_init_shell_block(t_shell_control_block *shell, int ac, char **av)
   shell->env_cpy = NULL;
   shell->line = NULL;
   shell->splitted = NULL;
-  shell->cmd_and_args= NULL;
-  shell->exit_status= 0;
+  shell->tokenized = NULL;
+  shell->cmd_and_args = NULL;
+  shell->expand_arr = NULL;
+  shell->exit_status = 0;
 }
 
 char *ft_readline(t_shell_control_block *shell)
