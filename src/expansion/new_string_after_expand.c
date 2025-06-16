@@ -1,45 +1,45 @@
 #include "minishell.h"
 
-char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
+char	*expnad_and_join_node(t_shell_control_block *s, int i)
 {
-	char	*path;
-	char	*the_joined_node;
-	char	*rest;
-	if (data.to_expand != NULL)
+	char	*result;
+	char	*var_value;
+
+	// Handle special case for $? (exit status)
+	if (s->expand_arr[i].to_expand && are_they_equal(s->expand_arr[i].to_expand, "$?"))
 	{
-		if (are_they_equal(data.to_expand, "$?"))
-			path = ft_itoa(s->exit_status);
-		else
-		{
-			path = ft_strdup(get_env_var(s, data), 1);
-			print_error("DEBUG: get_env_var returned: '%s'\n", path ? path : "NULL");
-		}
-		
-		// Check for ambiguous redirection if this is part of a redirection
-		if (path && check_ambiguous_redirection(path))
-		{
-			print_error("ambiguous redirect\n");
-			s->exit_status = 1;
-			return NULL;
-		}
-		
-		print_error("DEBUG: About to call custom_join with '%s' and '%s'\n", 
-		           data.befor_dollar ? data.befor_dollar : "NULL", 
-		           path ? path : "NULL");
-		the_joined_node = custom_join(data.befor_dollar, path);
-		print_error("DEBUG: custom_join returned: '%s'\n", 
-		           the_joined_node ? the_joined_node : "NULL");
+		var_value = ft_itoa(s->exit_status);
 	}
-	if (data.last_one)
+	else
 	{
-		print_error("DEBUG: About to call custom_join with '%s' and '%s'\n", 
-		           the_joined_node ? the_joined_node : "NULL", 
-		           data.after_dollar ? data.after_dollar : "NULL");
-		rest = custom_join(the_joined_node, data.after_dollar);
-		print_error("DEBUG: Final result: '%s'\n", rest ? rest : "NULL");
-		return (rest);
+		var_value = get_env_var(s, s->expand_arr[i]);
 	}
-	return (the_joined_node);
+	
+	if (s->expand_arr[i].befor_dollar && var_value)
+	{
+		result = custom_join(s->expand_arr[i].befor_dollar, var_value);
+		if (s->expand_arr[i].after_dollar)
+			result = custom_join(result, s->expand_arr[i].after_dollar);
+	}
+	else if (s->expand_arr[i].befor_dollar)
+	{
+		result = custom_join(s->expand_arr[i].befor_dollar, "");
+		if (s->expand_arr[i].after_dollar)
+			result = custom_join(result, s->expand_arr[i].after_dollar);
+	}
+	else if (var_value)
+	{
+		result = custom_join("", var_value);
+		if (s->expand_arr[i].after_dollar)
+			result = custom_join(result, s->expand_arr[i].after_dollar);
+	}
+	else
+	{
+		result = custom_join("", "");
+		if (s->expand_arr[i].after_dollar)
+			result = custom_join(result, s->expand_arr[i].after_dollar);
+	}
+	return result;
 }
 
 char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
@@ -55,7 +55,7 @@ char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 	{
 		if (num_of_expantion - i == 1)
 			s->expand_arr[i].last_one = 1;
-		expanded = expnad_and_join_node(s, s->expand_arr[i]);
+		expanded = expnad_and_join_node(s, i);
 		if (!expanded)
 			return (NULL);
 		joined = custom_join(new_after_expand, expanded);
