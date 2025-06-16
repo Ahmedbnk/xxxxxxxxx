@@ -37,18 +37,19 @@ int check_syntax_error(t_token *data, int len)
   while(i < len)
   { 
     if(data[i].type == PIPE && (i == 0 || len - 1 == i))
-      return((print_error("error near | \n"), 1));
+      return((print_error("error near | \n"), 2));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
-      return((print_error("error near | \n"), 1));
+      return((print_error("error near | \n"), 2));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
     {
-      // Check for ambiguous redirection (redirection followed by empty string)
+      // Check for ambiguous redirection (redirection followed by empty string or NULL)
       if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
            data[i].type == REDIR_APPEND) && data[i + 1].type == WORD && 
-          (data[i + 1].word == NULL || data[i + 1].word[0] == '\0'))
+          (data[i + 1].word == NULL || data[i + 1].word[0] == '\0' || 
+           ft_strlen(data[i + 1].word) == 0))
         return((print_error("ambiguous redirect\n"), 1));
       else
-        return((print_error("error near new line \n"), 1));
+        return((print_error("error near new line \n"), 2));
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
     {
@@ -57,7 +58,7 @@ int check_syntax_error(t_token *data, int len)
            data[i].type == REDIR_APPEND))
         return((print_error("ambiguous redirect\n"), 1));
       else
-        return((print_error("error near new line \n"), 1));
+        return((print_error("error near new line \n"), 2));
     }
     i++;
   }
@@ -69,14 +70,16 @@ t_token *make_token(t_shell_control_block *shell)
   int len;
   t_token *list;
   char **arr;
+  int syntax_result;
 
   arr = shell->splitted;
   len = len_of_two_d_array(arr);
   list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
-  if(check_syntax_error(list, len))
+  syntax_result = check_syntax_error(list, len);
+  if(syntax_result)
   {
-    shell->exit_status = 2;
+    shell->exit_status = syntax_result;
     return NULL;
   }
   return list;

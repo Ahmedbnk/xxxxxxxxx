@@ -54,8 +54,6 @@ int is_var_exist(char *var1, char *var2)
 {
     int i ;
     i = 0;
-    int flag;
-    flag = 0;
     while(var2[i] || var1[i] != '=')
     {
         if(var1[i] != var2[i])
