@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <stdarg.h>
 
 void	ft_putchar(char c, int *counter)
 {
