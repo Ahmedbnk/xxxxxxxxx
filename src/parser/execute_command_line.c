@@ -142,6 +142,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
   if (shell->exit_status == 1)
   {
     printf("DEBUG: Ambiguous redirect detected, returning early\n");
+    shell->last_child_pid = -1; // Set to -1 to prevent waitpid from hanging
     return;
   }
   
@@ -215,15 +216,21 @@ void execute_command_line(t_shell_control_block *shell)
   }
   if (shell->previous_read_end != -1)
     close(shell->previous_read_end);
-  waitpid(shell->last_child_pid, &status, 0);
-  if (WIFEXITED(status))
-    shell->exit_status = WEXITSTATUS(status);
-  else if(WIFSIGNALED(status))
-    shell->exit_status =  128 + WTERMSIG(status);
-  else if(WIFSTOPPED(status))
-    shell->exit_status = WSTOPSIG(status);
-  while (wait(NULL) > 0)
-    ;
+  
+  // Only wait for child process if one was actually created
+  if (shell->last_child_pid != -1)
+  {
+    waitpid(shell->last_child_pid, &status, 0);
+    if (WIFEXITED(status))
+      shell->exit_status = WEXITSTATUS(status);
+    else if(WIFSIGNALED(status))
+      shell->exit_status =  128 + WTERMSIG(status);
+    else if(WIFSTOPPED(status))
+      shell->exit_status = WSTOPSIG(status);
+    while (wait(NULL) > 0)
+      ;
+  }
+  
   if(shell->exit_status > 128)
     print_exit_signal_message(shell->exit_status);
 }
