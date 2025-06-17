@@ -69,26 +69,40 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	if (!s || !str)
 		return NULL;
 
+	printf("DEBUG: expand_if_possible called with str: '%s'\n", str);
+
 	i = 0;
 	offset = 0;
 	num_of_expantion = how_many_dallar_to_expand(str, heredoc_flag);
+	printf("DEBUG: num_of_expantion = %d\n", num_of_expantion);
+	
 	if (num_of_expantion == 0)
 		return (ft_strdup(str, 1));
 	
+	printf("DEBUG: About to call allocat_and_init\n");
 	allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
 	
 	// Safety check after allocation
 	if (!s->expand_arr)
+	{
+		printf("DEBUG: expand_arr allocation failed\n");
 		return (ft_strdup(str, 1));
+	}
+	
+	printf("DEBUG: expand_arr allocated successfully\n");
 	
 	while (i < num_of_expantion)
 	{
+		printf("DEBUG: Processing expansion %d/%d\n", i+1, num_of_expantion);
 		string_before_dollar(&(s->expand_arr[i]), str, &offset);
 		string_to_expand(&(s->expand_arr[i]), str, &offset);
 		string_after_dollar(&(s->expand_arr[i]), str, &offset);
 		i++;
 	}
+	
+	printf("DEBUG: About to call new_str_after_expand\n");
 	new_str = new_str_after_expand(s, num_of_expantion);
+	printf("DEBUG: new_str_after_expand returned: '%s'\n", new_str ? new_str : "NULL");
 	return (new_str);
 }
 
