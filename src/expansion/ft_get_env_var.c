@@ -5,7 +5,6 @@ void get_start_and_end(char *str, int *start, int *end)
   int i;
   i = 0;
   
-  // Safety checks
   if (!str || !start || !end)
     return;
     
@@ -45,7 +44,6 @@ char *protect_str(char *str)
 {
   char *new_str;
   
-  // Safety check
   if (!str)
     return NULL;
     
@@ -71,11 +69,9 @@ int is_var_exist(char *var1, char *var2)
     int i;
     i = 0;
     
-    // Safety checks
     if (!var1 || !var2)
         return 0;
     
-    // Compare characters until we reach the end of var2 or the '=' in var1
     while (var2[i] && var1[i] && var1[i] != '=')
     {
         if (var1[i] != var2[i])
@@ -83,7 +79,6 @@ int is_var_exist(char *var1, char *var2)
         i++;
     }
     
-    // Check if we've reached the end of var2 and var1[i] is '=' (meaning it's a complete match)
     return (var2[i] == '\0' && var1[i] == '=');
 }
 
@@ -107,7 +102,6 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
 	return NULL;
 }
 
-
 static void	split_helper(char **splitted, char *s, int i, int k)
 {
 	int	start;
@@ -124,7 +118,6 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 		if (i > start)
 			splitted[k++] = ft_substr(s, start, i - start);
 	}
-	// Handle empty string case
 	if (ft_strlen(s) == 0)
 		splitted[k++] = ft_strdup("", 1);
 	splitted[k] = NULL;

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	w_counter(char const *s, char c)
+static int	ft_w_counter(char const *s, char c)
 {
 	int	i;
 	int	k;
@@ -12,9 +12,7 @@ static int	w_counter(char const *s, char c)
 	while (s[i])
 	{
 		if (s[i] == c)
-		{
 			k = 0;
-		}
 		else
 		{
 			if (k == 0)
@@ -26,16 +24,11 @@ static int	w_counter(char const *s, char c)
 	return (counter);
 }
 
-char	**ft_split(char const *s, char c)
+static void	split_helper(char **splitted, char *s, char c, int i, int k)
 {
-	char	**splitted;
+	int	start;
 
-	int (i), (k), (start);
-	if (!s)
-		return (NULL);
-	splitted = ft_malloc((w_counter(s, c) + 1) * sizeof(char *),1);
-	i = 0;
-	k = 0;
+	start = 0;
 	while (s[i])
 	{
 		while (s[i] == c)
@@ -47,17 +40,19 @@ char	**ft_split(char const *s, char c)
 			splitted[k++] = ft_substr(s, start, i - start);
 	}
 	splitted[k] = NULL;
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**splitted;
+	int		i;
+	int		k;
+
+	if (!s)
+		return (NULL);
+	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *), 1);
+	i = 0;
+	k = 0;
+	split_helper(splitted, (char *)s, c, i, k);
 	return (splitted);
 }
-// #include <stdio.h>
-// int	main(void)
-// {
-// 	char s[] = "hello world";
-// 	// char *str = NULL;
-// 	char **splitted = ft_split(NULL, ' ');
-// 	if (splitted == NULL)
-// 		printf("nadi");
-// 	else
-// 		printf("%s\n", splitted[0]);
-// 	return (0);
-// }

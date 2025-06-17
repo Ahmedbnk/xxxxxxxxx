@@ -2,7 +2,6 @@
 
 void parse_line(t_shell_control_block *shell)
 {
-  //test
   shell->splitted = customized_split(shell->line);
   shell->splitted = split_with_operators(shell->splitted);
   expand(shell);
