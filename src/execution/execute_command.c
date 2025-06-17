@@ -1,31 +1,30 @@
 #include "minishell.h"
 
-void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
+void  check_path(char *cmd, char **av, char **path, char **env)
 {
 	int i;
-	char *cmd_with_slash;
-	char *cmd_with_its_path;
+	char *slash_cmd;
+	char *full_path;
 	DIR *dir;
 
 	if(!path)
 		return;
 	i = 0;
-	cmd_with_slash = ft_strjoin("/", cmd);
+	slash_cmd = ft_strjoin("/", cmd);
 	while(path[i])
 	{
-		cmd_with_its_path = ft_strjoin(path[i] ,cmd_with_slash);
-		if(access(cmd_with_its_path, F_OK) == 0)
+		full_path = ft_strjoin(path[i] ,slash_cmd);
+		if(access(full_path, F_OK) == 0)
 		{
-			// Check if it's a directory
-			dir = opendir(cmd_with_its_path);
+			dir = opendir(full_path);
 			if (dir != NULL)
 			{
 				closedir(dir);
 				exit((print_error("%s: Is a directory\n", cmd), 126));
 			}
-			else if(access(cmd_with_its_path, X_OK) == 0)
+			else if(access(full_path, X_OK) == 0)
 			{
-				execve(cmd_with_its_path , av, env);
+				execve(full_path , av, env);
 				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
 			}
 			else
@@ -36,14 +35,12 @@ void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 	exit((print_error("%s: command not found\n", cmd), 127));
 }
 
-
-void  check_the_access(char *cmd, char **av, char **env)
+void  check_file(char *cmd, char **av, char **env)
 {
 	DIR *dir;
 	
 	if (access(cmd, F_OK) == 0)
 	{
-		// Check if it's a directory
 		dir = opendir(cmd);
 		if (dir != NULL)
 		{
@@ -62,15 +59,14 @@ void  check_the_access(char *cmd, char **av, char **env)
 		exit((print_error("%s: No such file or directory\n", cmd), 127));
 }
 
-
 char **get_path()
 {
 	char	*path;
-	char	**splited;
+	char	**split;
 
 	path = getenv("PATH");
-	splited = ft_split(path , ':');
-	return splited;
+	split = ft_split(path , ':');
+	return split;
 }
 
 void execute_command(t_shell_control_block *shell)
@@ -79,23 +75,22 @@ void execute_command(t_shell_control_block *shell)
 		return;
 	char **path = get_path();
 	if(**shell->cmd_and_args == '/')
-		check_the_access(*shell->cmd_and_args, shell->cmd_and_args, shell->env_cpy);
+		check_file(*shell->cmd_and_args, shell->cmd_and_args, shell->env_cpy);
 	else
-		check_after_geting_bath(*shell->cmd_and_args ,shell->cmd_and_args , path , shell->env_cpy);
+		check_path(*shell->cmd_and_args ,shell->cmd_and_args , path , shell->env_cpy);
 }
 
-int how_many_strcut_in_the_array(t_token *arr_of_stracts)
+int count_tokens(t_token *tokens)
 {
-	int number_of_structs;
+	int count;
 
-	number_of_structs = 0;
-	while(arr_of_stracts->word != NULL )
+	count = 0;
+	while(tokens->word != NULL )
 	{
-
-		number_of_structs++;
-		arr_of_stracts++;
+		count++;
+		tokens++;
 	}
-	return  number_of_structs;
+	return count;
 }
 
 char **get_cmd_and_its_args(t_shell_control_block *shell)
@@ -103,7 +98,7 @@ char **get_cmd_and_its_args(t_shell_control_block *shell)
     int i;
     int j;
 
-    shell->cmd_and_args = ft_malloc( (how_many_strcut_in_the_array(shell->tokenized)+1)* sizeof(char *),1);
+    shell->cmd_and_args = ft_malloc( (count_tokens(shell->tokenized)+1)* sizeof(char *),1);
 
     i = 0;
     j = 0;
