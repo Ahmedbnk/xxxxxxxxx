@@ -103,7 +103,6 @@ void execute_command_line_helper(t_shell_control_block *shell)
   
   if (execute_built_in(shell))
   {
-    printf("DEBUG: Built-in command executed, returning\n");
     // Restore original file descriptors for built-in commands
     dup2(original_stdin, 0);
     dup2(original_stdout, 1);
@@ -113,7 +112,6 @@ void execute_command_line_helper(t_shell_control_block *shell)
     return;
   }
   
-  printf("DEBUG: Not a built-in command, forking\n");
   // Restore original file descriptors before forking
   dup2(original_stdin, 0);
   dup2(original_stdout, 1);
