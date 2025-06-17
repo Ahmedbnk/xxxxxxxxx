@@ -59,8 +59,10 @@ static void sort_env(char **env)
         print_env(env);
 }
 
-void export(char ***env, char **to_export)
+void export(char ***env, char **to_export, t_shell_control_block *shell)
 {
+    int has_error = 0;
+    
     if(!to_export || !*to_export)
     {
         sort_env(*env);
@@ -68,17 +70,23 @@ void export(char ***env, char **to_export)
     }
     while(*to_export)
     {
-        if(!is_valid_var(*to_export) || !is_it_key_value(*to_export) )
-            ;
+        if(!is_valid_var(*to_export) || !is_it_key_value(*to_export))
+        {
+            has_error = 1;
+        }
         else
         {
             if (find_and_update_var(*env, *to_export))
-                ;
+                ; // Variable updated
             else
                 *env = add_var_to_env(*env , *to_export);
         }
         to_export++;
     }
+    
+    // Set exit status to 1 if there were any errors
+    if (has_error)
+        shell->exit_status = 1;
 }
 
 // int main(int ac, char **av, char **env)
