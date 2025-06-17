@@ -11,23 +11,8 @@ char *remake_delimeter(char *str)
   j = 0;
   while(str[i])
   {
-    // Handle multiple $ followed by quotes - remove all the $
-    if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q))
-    {
-      i++; // Skip the $
-    }
-    else if(str[i] == '$' && str[i + 1] == '$' && 
-            (str[i + 2] == single_q || str[i + 2] == double_q))
-    {
-      i += 2; // Skip the $$
-    }
-    else if(str[i] == '$' && str[i + 1] == '$' && str[i + 2] == '$' && 
-            (str[i + 3] == single_q || str[i + 3] == double_q))
-    {
-      i += 3; // Skip the $$$
-    }
-    // Handle $$ not followed by quotes - keep them literal
-    else if(str[i] == '$' && str[i + 1] == '$')
+    // Handle $$ (two dollars next to each other) - keep them literal
+    if(str[i] == '$' && str[i + 1] == '$')
     {
       returned_str[j++] = str[i++];
       returned_str[j++] = str[i++];
