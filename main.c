@@ -50,7 +50,8 @@ int main(int ac, char **av, char **env)
     parse_line(&shell);
     execute_line(&shell);
     free_memory(get_garbage_pointer(0));
-    free(shell.line);
+    if (shell.line)
+      free(shell.line);
   }
   return (0);
 }

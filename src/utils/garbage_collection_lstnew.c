@@ -4,7 +4,7 @@ t_list	*garbage_collection_lstnew(void *content, int flag)
 {
 	t_list	*node;
 
-	node = ft_malloc(sizeof(t_list), flag);
+	node = malloc(sizeof(t_list));
 	if(!node)
 		return NULL;
 	node->content = content;
