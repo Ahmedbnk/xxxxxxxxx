@@ -1,6 +1,6 @@
 NAME = minishell
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g -Iinclude 
 SRCS = main.c \
 	src/env/copy_env.c \

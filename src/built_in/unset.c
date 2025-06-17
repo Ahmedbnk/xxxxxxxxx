@@ -28,14 +28,56 @@ void remove_var_from_env(char ***env , char *var)
   *env = env_after_unset;
 }
 
-void unset(char ***env, char **vars)
+int is_valid_unset_var(char *str)
 {
-  while(*vars)
-  {
-    if(is_the_var_in_env(*env, *vars))
-      remove_var_from_env(env, *vars);
-    vars++;
-  }
+    int i;
+    i = 0;
+    
+    if(!str || !*str)
+    {
+        print_error("unset: `': not a valid identifier\n");
+        return 0;
+    }
+    
+    // First character must be a letter or underscore
+    if(!ft_isalpha(str[0]) && str[0] != '_')
+    {
+        print_error("unset: `%s': not a valid identifier\n", str);
+        return 0;
+    }
+    
+    while(str[i])
+    {
+        if(!ft_isalnum(str[i]) && str[i] != '_')
+        {
+            print_error("unset: `%s': not a valid identifier\n", str);
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+
+void unset(char ***env, char **vars, t_shell_control_block *shell)
+{
+    int has_error = 0;
+    
+    while(*vars)
+    {
+        if(!is_valid_unset_var(*vars))
+        {
+            has_error = 1;
+        }
+        else if(is_the_var_in_env(*env, *vars))
+        {
+            remove_var_from_env(env, *vars);
+        }
+        vars++;
+    }
+    
+    // Set exit status to 1 if there were any errors
+    if (has_error)
+        shell->exit_status = 1;
 }
 
 // int main(int argc, char *argv[], char *env[])
