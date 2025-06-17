@@ -4,7 +4,7 @@ static void	allocat_arr_of_structs_list(t_expand **expand_list, int how_much_to_
 {
 	printf("DEBUG: allocat_arr_of_structs_list called with how_much_to_expand = %d\n", how_much_to_expand);
 	printf("DEBUG: Size to allocate = %zu bytes\n", how_much_to_expand * sizeof(t_expand));
-	*expand_list = ft_malloc(how_much_to_expand * sizeof(t_expand), 0);
+	*expand_list = ft_malloc(how_much_to_expand * sizeof(t_expand), 1);
 	printf("DEBUG: ft_malloc returned: %p\n", (void*)*expand_list);
 }
 
