@@ -39,41 +39,49 @@ void handle_all_redir(t_shell_control_block *shell)
 {
   while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
-    // Stop processing if there's an ambiguous redirect error
-    if (shell->exit_status == 1)
-      break;
-      
     if (shell->tokenized->type == HEREDOC)
       shell->in_file_name = shell->tokenized->heredoc_file_name;
     else if (shell->tokenized->type == REDIR_IN)
       handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
     else if (shell->tokenized->type == REDIR_OUT)
     {
-      // Create the file even if it's not the last output redirection
+      // Check for ambiguous redirect before creating file
       char *filename = (shell->tokenized + 1)->word;
-      if (filename && *filename)
+      if (!filename || !*filename || ft_strlen(filename) == 0)
       {
-        int fd = open(filename, O_WRONLY | O_TRUNC);
-        if (fd == -1)
-          fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-        if (fd != -1)
-          close(fd);
+        print_error("ambiguous redirect\n");
+        shell->exit_status = 1;
+        break; // Stop processing redirections
       }
-      handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+      
+      // Create the file only if no ambiguous redirect
+      int fd = open(filename, O_WRONLY | O_TRUNC);
+      if (fd == -1)
+        fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+      if (fd != -1)
+        close(fd);
+      
+      handle_redir_out(filename, &(shell->file_name));
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
-      // Create the file even if it's not the last append redirection
+      // Check for ambiguous redirect before creating file
       char *filename = (shell->tokenized + 1)->word;
-      if (filename && *filename)
+      if (!filename || !*filename || ft_strlen(filename) == 0)
       {
-        int fd = open(filename, O_WRONLY | O_APPEND);
-        if (fd == -1)
-          fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-        if (fd != -1)
-          close(fd);
+        print_error("ambiguous redirect\n");
+        shell->exit_status = 1;
+        break; // Stop processing redirections
       }
-      handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+      
+      // Create the file only if no ambiguous redirect
+      int fd = open(filename, O_WRONLY | O_APPEND);
+      if (fd == -1)
+        fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+      if (fd != -1)
+        close(fd);
+      
+      handle_append(filename, &(shell->file_name));
     }
     shell->tokenized ++;
   }
