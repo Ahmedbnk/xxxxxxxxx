@@ -58,7 +58,6 @@ void	string_after_dollar(t_expand *data, char *str, int *offset)
 		data->after_dollar = ft_substr(str, start, end - start);
 }
 
-//char	*expand_if_possible(char *str , int heredoc_flag)
 char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 {
 	int i;
@@ -66,19 +65,22 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	int num_of_expantion;
 	char *new_str;
 
-	// Clean up previous expand_arr if it exists
-	if (s->expand_arr)
-	{
-		// Free the expand_arr (it's managed by garbage collector, so just set to NULL)
-		s->expand_arr = NULL;
-	}
+	// Safety checks
+	if (!s || !str)
+		return NULL;
 
 	i = 0;
 	offset = 0;
 	num_of_expantion = how_many_dallar_to_expand(str, heredoc_flag);
 	if (num_of_expantion == 0)
 		return (ft_strdup(str, 1));
+	
 	allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
+	
+	// Safety check after allocation
+	if (!s->expand_arr)
+		return (ft_strdup(str, 1));
+	
 	while (i < num_of_expantion)
 	{
 		string_before_dollar(&(s->expand_arr[i]), str, &offset);
@@ -89,6 +91,7 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	new_str = new_str_after_expand(s, num_of_expantion);
 	return (new_str);
 }
+
 void expand(t_shell_control_block *shell) 
 {
 
