@@ -21,6 +21,9 @@ char *remake_delimeter(char *str)
     else if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q) && 
             (i == 0 || str[i - 1] != '$') && !is_between_quotes(str, i))
       i++;
+    // Handle $ followed by quotes (even if preceded by $) - remove the $
+    else if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q))
+      i++;
     else
       returned_str[j++] = str[i++];
   }
