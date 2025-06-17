@@ -32,6 +32,7 @@ void execute_line(t_shell_control_block *shell)
   else
   {
     // Empty command (only spaces/tabs) - exit with 0
+    //test
     shell->exit_status = 0;
   }
 }
