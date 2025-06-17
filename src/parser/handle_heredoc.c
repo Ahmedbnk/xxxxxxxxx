@@ -2,7 +2,12 @@
 
 char *remake_delimeter(char *str)
 {
-  char *returned_str = ft_malloc(ft_strlen(str) + 1, 1);
+  char *returned_str;
+
+  if (!str)
+    return NULL;
+
+  returned_str = ft_malloc(ft_strlen(str) + 1, 1);
 
   int i;
   int j;
@@ -31,9 +36,22 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   int fd;
   char *str = NULL; 
   char *buffer = NULL; 
+  char *temp;
+
+  if (!s || !tokenized)
+    return;
 
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
+  
+  // Check if there's a delimiter
+  if (!(tokenized + 1) || !(tokenized + 1)->word)
+  {
+    print_error("syntax error near unexpected token `newline'\n");
+    return;
+  }
+  
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
+  
   while(1)
   {
     str = readline(">");
@@ -45,17 +63,34 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     str = expand_if_possible(s, str, 1);
     if(are_they_equal(str, tokenized->delimiter))
        break;
-    buffer = ft_strjoin(buffer, str);
+    
+    // Handle buffer properly
+    if (!buffer)
+      buffer = ft_strdup(str, 1);
+    else
+    {
+      temp = ft_strjoin(buffer, str);
+      free(buffer);
+      buffer = temp;
+    }
   }
-  fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
-  write(fd,buffer,ft_strlen(buffer));
-  write(fd,"\n", 1);
-  close(fd);
+  
+  if (buffer)
+  {
+    fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
+    write(fd,buffer,ft_strlen(buffer));
+    write(fd,"\n", 1);
+    close(fd);
+    free(buffer);
+  }
 }
 
 void create_all_heredocs(t_shell_control_block *shell)
 {
   t_token *ptr;
+
+  if (!shell || !shell->tokenized)
+    return;
 
   ptr = shell->tokenized;
   while(ptr && ptr -> word)
