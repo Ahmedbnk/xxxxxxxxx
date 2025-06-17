@@ -44,17 +44,7 @@ int check_syntax_error(t_token *data, int len)
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
       return((print_error("syntax error near unexpected token `|'\n"), 2));
     
-    // Check for redirection without command before it
-    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i == 0)
-      return((print_error("syntax error near unexpected token `newline'\n"), 2));
-    
-    // Check for redirection at the end (no filename)
-    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && len - 1 == i)
-      return((print_error("syntax error near unexpected token `newline'\n"), 2));
-    
-    // Check for redirection followed by another redirection
+    // Check for redirection followed by another redirection (check this BEFORE redirection at beginning/end)
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
               data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i + 1 < len &&
              (data[i + 1].type == REDIR_IN || data[i + 1].type == REDIR_OUT || 
@@ -69,6 +59,16 @@ int check_syntax_error(t_token *data, int len)
       else if (data[i + 1].type == HEREDOC)
         return((print_error("syntax error near unexpected token `<<'\n"), 2));
     }
+    
+    // Check for redirection without command before it
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i == 0)
+      return((print_error("syntax error near unexpected token `newline'\n"), 2));
+    
+    // Check for redirection at the end (no filename)
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && len - 1 == i)
+      return((print_error("syntax error near unexpected token `newline'\n"), 2));
     
     // Check for ambiguous redirection (redirection followed by empty string)
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
