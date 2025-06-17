@@ -14,6 +14,12 @@ void execute_line(t_shell_control_block *shell)
 {
   if (shell->tokenized)
   {
+    // Check for ambiguous redirect error first
+    if (shell->exit_status == 1)
+    {
+      return; // Return early if there's an ambiguous redirect error
+    }
+    
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
     if(!is_there_a_pipe(shell) && are_they_equal(*shell->cmd_and_args, "cd"))
