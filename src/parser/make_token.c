@@ -108,10 +108,10 @@ t_token *make_token(t_shell_control_block *shell)
     shell->exit_status = syntax_result;
     return NULL;
   }
-  else if(syntax_result == 1) // Ambiguous redirect - continue but set error
+  else if(syntax_result == 1) // Ambiguous redirect - return NULL to prevent execution
   {
     shell->exit_status = syntax_result;
-    // Don't return NULL, allow tokenization to continue
+    return NULL; // Return NULL to prevent command execution
   }
   return list;
 }
