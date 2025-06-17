@@ -68,43 +68,50 @@ char *protect_str(char *str)
 
 int is_var_exist(char *var1, char *var2)
 {
-    int i ;
+    int i;
     i = 0;
     
     // Safety checks
     if (!var1 || !var2)
         return 0;
     
-    while(var2[i] || var1[i] != '=')
+    // Compare characters until we reach the end of var2 or the '=' in var1
+    while (var2[i] && var1[i] && var1[i] != '=')
     {
-        if(var1[i] != var2[i])
+        if (var1[i] != var2[i])
             return 0;
         i++;
     }
-    return 1;
+    
+    // Check if we've reached the end of var2 and var1[i] is '=' (meaning it's a complete match)
+    return (var2[i] == '\0' && var1[i] == '=');
 }
 
 char *get_env_var(t_shell_control_block *shell , t_expand data)
 {
-  char **ptr = shell->env_cpy;
+  char **ptr;
   char *value;
   int start;
   int end;
+  int i;
 
-  int i ;
-  i = 0;
-  
   // Safety checks
-  if (!shell || !ptr || !data.to_expand)
+  if (!shell || !data.to_expand)
     return NULL;
   
+  ptr = shell->env_cpy;
+  if (!ptr)
+    return NULL;
+
+  i = 0;
   while(ptr[i])
   {
     if(ptr[i] && is_var_exist(ptr[i], (data.to_expand)+1))
     {
       get_start_and_end(ptr[i], &start, &end);
       value = ft_substr(ptr[i], start, (end-start));
-      value = protect_str(value);
+      if (value)
+        value = protect_str(value);
       return value;
     }
     i++;

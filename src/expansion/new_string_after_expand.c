@@ -5,6 +5,10 @@ char	*expnad_and_join_node(t_shell_control_block *s, int i)
 	char	*result;
 	char	*var_value;
 
+	// Safety check
+	if (!s || !s->expand_arr || i < 0)
+		return NULL;
+
 	// Handle special case for $? (exit status)
 	if (s->expand_arr[i].to_expand && are_they_equal(s->expand_arr[i].to_expand, "$?"))
 	{
@@ -15,6 +19,7 @@ char	*expnad_and_join_node(t_shell_control_block *s, int i)
 		var_value = get_env_var(s, s->expand_arr[i]);
 	}
 	
+	// Handle the case where var_value might be NULL
 	if (s->expand_arr[i].befor_dollar && var_value)
 	{
 		result = custom_join(s->expand_arr[i].befor_dollar, var_value);
@@ -48,6 +53,10 @@ char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 	char	*expanded;
 	char	*joined;
 	int		i;
+
+	// Safety checks
+	if (!s || num_of_expantion <= 0)
+		return NULL;
 
 	new_after_expand = NULL;
 	i = 0;
