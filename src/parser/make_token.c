@@ -46,19 +46,19 @@ int check_syntax_error(t_token *data, int len)
     
     // Check for redirection without command before it
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND) && i == 0)
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i == 0)
       return((print_error("syntax error near unexpected token `newline'\n"), 2));
     
     // Check for redirection at the end (no filename)
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND) && len - 1 == i)
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && len - 1 == i)
       return((print_error("syntax error near unexpected token `newline'\n"), 2));
     
     // Check for redirection followed by another redirection
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND) && i + 1 < len &&
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i + 1 < len &&
              (data[i + 1].type == REDIR_IN || data[i + 1].type == REDIR_OUT || 
-              data[i + 1].type == REDIR_APPEND))
+              data[i + 1].type == REDIR_APPEND || data[i + 1].type == HEREDOC))
     {
       if (data[i + 1].type == REDIR_OUT)
         return((print_error("syntax error near unexpected token `>'\n"), 2));
@@ -66,11 +66,13 @@ int check_syntax_error(t_token *data, int len)
         return((print_error("syntax error near unexpected token `<'\n"), 2));
       else if (data[i + 1].type == REDIR_APPEND)
         return((print_error("syntax error near unexpected token `>>'\n"), 2));
+      else if (data[i + 1].type == HEREDOC)
+        return((print_error("syntax error near unexpected token `<<'\n"), 2));
     }
     
     // Check for ambiguous redirection (redirection followed by empty string)
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND) && i + 1 < len && data[i + 1].type == WORD)
+              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i + 1 < len && data[i + 1].type == WORD)
     {
       if (data[i + 1].word == NULL || data[i + 1].word[0] == '\0' || 
           ft_strlen(data[i + 1].word) == 0)
