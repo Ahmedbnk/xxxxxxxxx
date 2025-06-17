@@ -51,7 +51,8 @@ void handle_all_redir(t_shell_control_block *shell)
   }
 
 }
-void	process_command(t_shell_control_block *shell)
+
+void	apply_redirections(t_shell_control_block *shell)
 {
   shell->in_file_name = NULL;
   shell->file_name = NULL;
@@ -72,6 +73,11 @@ void	process_command(t_shell_control_block *shell)
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
+}
+
+void	process_command(t_shell_control_block *shell)
+{
+  apply_redirections(shell);
   execute_command(shell);
   if(shell->in_file_name)
     unlink(shell->in_file_name);
@@ -81,6 +87,10 @@ void execute_command_line_helper(t_shell_control_block *shell)
 {
   // Check if it's a built-in command first
   get_cmd_and_its_args(shell);
+  
+  // Apply redirections before executing any command (built-in or not)
+  apply_redirections(shell);
+  
   if (execute_built_in(shell))
   {
     // Built-in command executed successfully in parent process
@@ -105,7 +115,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
       dup2(shell->arr[1], 1);
       close(shell->arr[1]);
     }
-    process_command(shell);
+    execute_command(shell);
     exit(0);
   }
   else
