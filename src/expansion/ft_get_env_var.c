@@ -113,16 +113,29 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 	int	start;
 
 	start = 0;
+	printf("DEBUG: split_helper starting with string: '%s'\n", s);
 	while (s[i])
 	{
 		while (is_space(s[i]))
+		{
+			printf("DEBUG: Skipping space at position %d (char: %d)\n", i, (unsigned char)s[i]);
 			i++;
+		}
 		start = i;
+		printf("DEBUG: Starting word at position %d\n", start);
 		while (s[i] && (!is_space(s[i]) || (is_space(s[i])
 					&& !is_between_lock(s, i))))
+		{
+			if (is_space(s[i]))
+				printf("DEBUG: Found space at position %d but not splitting (is_between_lock: %d)\n", i, is_between_lock(s, i));
 			i++;
+		}
 		if (i > start)
-			splitted[k++] = ft_substr(s, start, i - start);
+		{
+			char *substr = ft_substr(s, start, i - start);
+			printf("DEBUG: Creating substring from %d to %d: '%s'\n", start, i, substr);
+			splitted[k++] = substr;
+		}
 	}
 	// Handle empty string case
 	if (ft_strlen(s) == 0)
@@ -139,6 +152,14 @@ char	**test_split(char const *s)
 		return (NULL);
 	
 	printf("DEBUG: test_split called with: '%s'\n", s);
+	printf("DEBUG: String length: %zu\n", ft_strlen(s));
+	printf("DEBUG: ASCII values: ");
+	for(int x = 0; s[x]; x++)
+	{
+		printf("%d ", (unsigned char)s[x]);
+	}
+	printf("\n");
+	
 	splitted = ft_malloc((ft_w_counter(s) + 1) * sizeof(char *), 1);
 	i = 0;
 	k = 0;
