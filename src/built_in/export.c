@@ -75,21 +75,34 @@ static char **add_var_to_env(char **env , char *var)
 
 void export(char ***env, char **to_export)
 {
+    printf("DEBUG: export called\n");
     if(!to_export || !*to_export)
     {
+        printf("DEBUG: No variables to export, printing sorted env\n");
         sort_env(*env);
         return ;
     }
     while(*to_export)
     {
+        printf("DEBUG: Processing export: '%s'\n", *to_export);
         if(!is_valid_var(*to_export) || !is_it_key_value(*to_export) )
+        {
+            printf("DEBUG: Invalid variable format\n");
             ;
+        }
         else
         {
+            printf("DEBUG: Valid variable format\n");
             if (find_and_update_var(*env, *to_export))
-            ;
+            {
+                printf("DEBUG: Variable updated in existing env\n");
+                ;
+            }
             else
+            {
+                printf("DEBUG: Adding new variable to env\n");
                 *env = add_var_to_env(*env , *to_export);
+            }
         }
         to_export++;
     }

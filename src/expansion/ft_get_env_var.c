@@ -89,53 +89,33 @@ int is_var_exist(char *var1, char *var2)
 
 char *get_env_var(t_shell_control_block *shell , t_expand data)
 {
-  char **ptr;
-  char *value;
-  int start;
-  int end;
-  int i;
-
-  printf("DEBUG: get_env_var called\n");
-
-  // Safety checks
-  if (!shell || !data.to_expand)
-  {
-    printf("DEBUG: get_env_var safety check failed\n");
-    return NULL;
-  }
-  
-  printf("DEBUG: data.to_expand = '%s'\n", data.to_expand);
-  
-  ptr = shell->env_cpy;
-  printf("DEBUG: shell->env_cpy = %p\n", (void*)ptr);
-  
-  if (!ptr)
-  {
-    printf("DEBUG: shell->env_cpy is NULL\n");
-    return NULL;
-  }
-
-  printf("DEBUG: About to search through environment variables\n");
-  printf("DEBUG: First env var pointer: %p\n", (void*)ptr[0]);
-  
-  i = 0;
-  while(ptr[i])
-  {
-    printf("DEBUG: Checking env var: '%s'\n", ptr[i]);
-    if(ptr[i] && is_var_exist(ptr[i], (data.to_expand)+1))
-    {
-      printf("DEBUG: Found matching env var: '%s'\n", ptr[i]);
-      get_start_and_end(ptr[i], &start, &end);
-      value = ft_substr(ptr[i], start, (end-start));
-      if (value)
-        value = protect_str(value);
-      printf("DEBUG: get_env_var returning: '%s'\n", value ? value : "NULL");
-      return value;
-    }
-    i++;
-  }
-  printf("DEBUG: No matching env var found, returning NULL\n");
-  return NULL;
+	printf("DEBUG: get_env_var called\n");
+	printf("DEBUG: data.to_expand = '%s'\n", data.to_expand);
+	printf("DEBUG: shell->env_cpy = %p\n", (void*)shell->env_cpy);
+	
+	if (!shell || !shell->env_cpy || !data.to_expand)
+	{
+		printf("DEBUG: Safety check failed\n");
+		return NULL;
+	}
+	
+	printf("DEBUG: About to search through environment variables\n");
+	printf("DEBUG: First env var pointer: %p\n", (void*)shell->env_cpy[0]);
+	
+	int i = 0;
+	while (shell->env_cpy[i])
+	{
+		printf("DEBUG: Checking env var: '%s'\n", shell->env_cpy[i]);
+		if (ft_strncmp(shell->env_cpy[i], data.to_expand + 1, ft_strlen(data.to_expand) - 1) == 0 && 
+			shell->env_cpy[i][ft_strlen(data.to_expand) - 1] == '=')
+		{
+			printf("DEBUG: Found matching env var: '%s'\n", shell->env_cpy[i]);
+			return (ft_strchr(shell->env_cpy[i], '=') + 1);
+		}
+		i++;
+	}
+	printf("DEBUG: No matching env var found, returning NULL\n");
+	return NULL;
 }
 
 
