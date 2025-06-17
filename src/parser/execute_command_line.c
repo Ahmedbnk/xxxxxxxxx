@@ -55,7 +55,6 @@ void	process_command(t_shell_control_block *shell)
 {
   shell->in_file_name = NULL;
   shell->file_name = NULL;
-  get_cmd_and_its_args(shell);
   handle_all_redir(shell);
   if (shell->file_name)
   {
@@ -69,14 +68,22 @@ void	process_command(t_shell_control_block *shell)
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
-  if(!execute_built_in(shell))
-    execute_command(shell);
+  execute_command(shell);
   if(shell->in_file_name)
     unlink(shell->in_file_name);
 }
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
+  // Check if it's a built-in command first
+  get_cmd_and_its_args(shell);
+  if (execute_built_in(shell))
+  {
+    // Built-in command executed successfully in parent process
+    return;
+  }
+  
+  // Not a built-in command, fork and execute
   handle_signals(1);
   int p_id = fork();
   if (p_id == 0)
