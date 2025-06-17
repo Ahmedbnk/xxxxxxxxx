@@ -198,8 +198,11 @@ void execute_command_line(t_shell_control_block *shell)
   status = 0;
   shell->line_pointer = shell->tokenized;
   shell->previous_read_end = -1;
+  printf("DEBUG: Starting execute_command_line\n");
+  
   while (shell->line_pointer && shell->line_pointer->word)
   {
+    printf("DEBUG: Processing command in loop\n");
     shell->tokenized = shell->line_pointer;
     skip_command(&(shell->line_pointer));
     if (shell->line_pointer && shell->line_pointer->type == PIPE)
@@ -214,12 +217,16 @@ void execute_command_line(t_shell_control_block *shell)
       shell->line_pointer++;
     }
   }
+  
+  printf("DEBUG: Finished command loop\n");
+  
   if (shell->previous_read_end != -1)
     close(shell->previous_read_end);
   
   // Only wait for child process if one was actually created
   if (shell->last_child_pid != -1)
   {
+    printf("DEBUG: Waiting for child process %d\n", shell->last_child_pid);
     waitpid(shell->last_child_pid, &status, 0);
     if (WIFEXITED(status))
       shell->exit_status = WEXITSTATUS(status);
@@ -230,6 +237,12 @@ void execute_command_line(t_shell_control_block *shell)
     while (wait(NULL) > 0)
       ;
   }
+  else
+  {
+    printf("DEBUG: No child process to wait for\n");
+  }
+  
+  printf("DEBUG: About to exit execute_command_line\n");
   
   if(shell->exit_status > 128)
     print_exit_signal_message(shell->exit_status);
