@@ -4,10 +4,14 @@ void parse_line(t_shell_control_block *shell)
 {
   shell->splitted = customized_split(shell->line);
   shell->splitted = split_with_operators(shell->splitted);
+  if (check_syntax_after_split(shell))
+    return;
   expand(shell);
   shell->splitted = split_after_expantion(shell->splitted);
   shell->splitted = handle_dollar_with_quotes(shell->splitted);
   shell->tokenized = make_token(shell);
+  if (check_token_syntax(shell))
+    return;
 }
 
 void execute_line(t_shell_control_block *shell)

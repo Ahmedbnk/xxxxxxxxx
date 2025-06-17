@@ -76,6 +76,8 @@ typedef struct s_shell_control_block
 
 
 int					check_error(t_shell_control_block *shell);
+int					check_syntax_after_split(t_shell_control_block *shell);
+int					check_token_syntax(t_shell_control_block *shell);
 void				handle_signals(int flag);
 void child_signal_handler();
 int					is_between_quotes(char *line, int index);
