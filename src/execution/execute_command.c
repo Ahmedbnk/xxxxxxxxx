@@ -86,7 +86,7 @@ char **get_cmd_and_its_args(t_shell_control_block *shell)
     int i;
     int j;
 
-    shell->cmd_and_args = ft_malloc( (how_many_strcut_in_the_array(shell->tokenized)+1)* sizeof(t_token ),1);
+    shell->cmd_and_args = ft_malloc( (how_many_strcut_in_the_array(shell->tokenized)+1)* sizeof(char *),1);
 
     i = 0;
     j = 0;
