@@ -34,13 +34,13 @@ void echo(char **args)
     {
       if(!is_it_a_valide_minus_n_flag(*args) || first_argument_flag == 0)
       {
-        printf("%s", *args);
+        write(1, *args, ft_strlen(*args));
         if(*(args + 1) != NULL)
-          printf(" ");
+          write(1, " ", 1);
       }
       args++;
     }
     if(!first_argument_flag)
-         printf("\n");
+         write(1, "\n", 1);
 }
 
