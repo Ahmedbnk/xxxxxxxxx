@@ -122,11 +122,15 @@ void	process_command(t_shell_control_block *shell)
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
+  printf("DEBUG: Entering execute_command_line_helper\n");
+  
   // Save original tokenized pointer
   t_token *original_tokenized = shell->tokenized;
   
   // Check if it's a built-in command first
+  printf("DEBUG: About to call get_cmd_and_its_args\n");
   get_cmd_and_its_args(shell);
+  printf("DEBUG: Finished get_cmd_and_its_args\n");
   
   // Save original file descriptors
   int original_stdin = dup(0);
@@ -136,15 +140,20 @@ void execute_command_line_helper(t_shell_control_block *shell)
   shell->tokenized = original_tokenized;
   
   // Apply redirections before executing any command (built-in or not)
+  printf("DEBUG: About to call apply_redirections\n");
   apply_redirections(shell);
+  printf("DEBUG: Finished apply_redirections\n");
   
   // Check if there's an ambiguous redirect error and return early
+  printf("DEBUG: Checking exit_status: %d\n", shell->exit_status);
   if (shell->exit_status == 1)
   {
     printf("DEBUG: Ambiguous redirect detected, returning early\n");
     shell->last_child_pid = -1; // Set to -1 to prevent waitpid from hanging
     return;
   }
+  
+  printf("DEBUG: No ambiguous redirect, continuing with execution\n");
   
   if (execute_built_in(shell))
   {
