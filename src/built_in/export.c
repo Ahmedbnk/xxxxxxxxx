@@ -68,14 +68,18 @@ void export(char ***env, char **to_export, t_shell_control_block *shell)
         sort_env(*env);
         return ;
     }
+    
     while(*to_export)
     {
+        // Check if it's a valid variable assignment
         if(!is_valid_var(*to_export) || !is_it_key_value(*to_export))
         {
             has_error = 1;
+            // Don't process this argument further
         }
         else
         {
+            // Valid variable assignment
             if (find_and_update_var(*env, *to_export))
                 ; // Variable updated
             else
