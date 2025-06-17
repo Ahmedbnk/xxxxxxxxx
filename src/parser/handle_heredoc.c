@@ -23,7 +23,7 @@ char *remake_delimeter(char *str)
       returned_str[j++] = str[i++];
   }
   returned_str[j] = '\0';
-  //remove_quotes(&returned_str, );
+  remove_quotes(&returned_str);
   return returned_str;
 }
 
