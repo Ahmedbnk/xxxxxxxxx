@@ -131,10 +131,10 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 		start = i;
 		printf("DEBUG: Starting word at position %d\n", start);
 		while (s[i] && (!is_space(s[i]) || (is_space(s[i])
-					&& is_between_lock(s, i))))
+					&& is_between_quotes(s, i))))
 		{
 			if (is_space(s[i]))
-				printf("DEBUG: Found space at position %d but not splitting (is_between_lock: %d)\n", i, is_between_lock(s, i));
+				printf("DEBUG: Found space at position %d but not splitting (is_between_quotes: %d)\n", i, is_between_quotes(s, i));
 			i++;
 		}
 		if (i > start)
