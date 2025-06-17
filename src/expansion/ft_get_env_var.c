@@ -89,32 +89,21 @@ int is_var_exist(char *var1, char *var2)
 
 char *get_env_var(t_shell_control_block *shell , t_expand data)
 {
-	printf("DEBUG: get_env_var called\n");
-	printf("DEBUG: data.to_expand = '%s'\n", data.to_expand);
-	printf("DEBUG: shell->env_cpy = %p\n", (void*)shell->env_cpy);
-	
 	if (!shell || !shell->env_cpy || !data.to_expand)
 	{
-		printf("DEBUG: Safety check failed\n");
 		return NULL;
 	}
-	
-	printf("DEBUG: About to search through environment variables\n");
-	printf("DEBUG: First env var pointer: %p\n", (void*)shell->env_cpy[0]);
 	
 	int i = 0;
 	while (shell->env_cpy[i])
 	{
-		printf("DEBUG: Checking env var: '%s'\n", shell->env_cpy[i]);
 		if (ft_strncmp(shell->env_cpy[i], data.to_expand + 1, ft_strlen(data.to_expand) - 1) == 0 && 
 			shell->env_cpy[i][ft_strlen(data.to_expand) - 1] == '=')
 		{
-			printf("DEBUG: Found matching env var: '%s'\n", shell->env_cpy[i]);
 			return (ft_strchr(shell->env_cpy[i], '=') + 1);
 		}
 		i++;
 	}
-	printf("DEBUG: No matching env var found, returning NULL\n");
 	return NULL;
 }
 

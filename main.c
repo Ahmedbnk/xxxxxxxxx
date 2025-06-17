@@ -2,7 +2,6 @@
 
 void parse_line(t_shell_control_block *shell)
 {
-  printf("DEBUG: parse_line: env_cpy = %p\n", (void*)shell->env_cpy);
   shell->splitted = customized_split(shell->line);
   shell->splitted = split_with_operators(shell->splitted);
   expand(shell);
@@ -13,35 +12,19 @@ void parse_line(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
-  printf("DEBUG: execute_line: start: env_cpy = %p\n", (void*)shell->env_cpy);
   if (shell->tokenized)
   {
-    printf("DEBUG: execute_line: before create_all_heredocs: env_cpy = %p\n", (void*)shell->env_cpy);
     create_all_heredocs(shell);
-    printf("DEBUG: execute_line: after create_all_heredocs: env_cpy = %p\n", (void*)shell->env_cpy);
-    printf("DEBUG: execute_line: before get_cmd_and_its_args: env_cpy = %p\n", (void*)shell->env_cpy);
     get_cmd_and_its_args(shell);
-    printf("DEBUG: execute_line: after get_cmd_and_its_args: env_cpy = %p\n", (void*)shell->env_cpy);
     if(!is_there_a_pipe(shell) && are_they_equal(*shell->cmd_and_args, "cd"))
-    {
-      printf("DEBUG: execute_line: before cd: env_cpy = %p\n", (void*)shell->env_cpy);
       cd(shell->env_cpy, shell->cmd_and_args, 1);
-      printf("DEBUG: execute_line: after cd: env_cpy = %p\n", (void*)shell->env_cpy);
-    }
     else
-    {
-      printf("DEBUG: execute_line: before execute_command_line: env_cpy = %p\n", (void*)shell->env_cpy);
       execute_command_line(shell);
-      printf("DEBUG: execute_line: after execute_command_line: env_cpy = %p\n", (void*)shell->env_cpy);
-    }
   }
-  // If expansion failed due to ambiguous redirect, don't execute
   else if (shell->exit_status == 1)
   {
-    // Expansion already set the exit status and printed the error
     return;
   }
-  printf("DEBUG: execute_line: end: env_cpy = %p\n", (void*)shell->env_cpy);
 }
 
 int main(int ac, char **av, char **env)
@@ -50,18 +33,13 @@ int main(int ac, char **av, char **env)
 
   ft_init_shell_block(&shell, ac, av);
   shell.env_cpy = copy_env(env);
-  printf("DEBUG: main: initial env_cpy = %p\n", (void*)shell.env_cpy);
  while (1) {
     handle_signals(0);
     if(!ft_readline(&shell))
       continue;
-    printf("DEBUG: main: before parse_line: env_cpy = %p\n", (void*)shell.env_cpy);
     parse_line(&shell);
-    printf("DEBUG: main: after parse_line: env_cpy = %p\n", (void*)shell.env_cpy);
     execute_line(&shell);
-    printf("DEBUG: main: after execute_line: env_cpy = %p\n", (void*)shell.env_cpy);
     free_memory(get_garbage_pointer(0));
-    printf("DEBUG: main: after free_memory: env_cpy = %p\n", (void*)shell.env_cpy);
     free(shell.line);
   }
   return (0);

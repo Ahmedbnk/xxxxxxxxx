@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 void	string_before_dollar(t_expand *data, char *str, int *offset)
 {
 	int	flag;
@@ -65,41 +64,27 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	int num_of_expantion;
 	char *new_str;
 
-	// Safety checks
 	if (!s || !str)
 		return NULL;
-
-	printf("DEBUG: expand_if_possible called with str: '%s'\n", str);
 
 	i = 0;
 	offset = 0;
 	num_of_expantion = how_many_dallar_to_expand(str, heredoc_flag);
-	printf("DEBUG: num_of_expantion = %d\n", num_of_expantion);
 	
 	if (num_of_expantion == 0)
 		return (ft_strdup(str, 1));
 	
-	// Only allocate new memory if expand_arr is NULL or if we need a different size
-	// This prevents memory corruption by reusing existing memory when possible
 	if (!s->expand_arr)
 	{
-		printf("DEBUG: About to call allocat_and_init (first time)\n");
 		allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
-		printf("DEBUG: allocat_and_init completed\n");
 		
-		// Safety check after allocation
 		if (!s->expand_arr)
 		{
-			printf("DEBUG: expand_arr allocation failed\n");
 			return (ft_strdup(str, 1));
 		}
-		
-		printf("DEBUG: expand_arr allocated successfully at %p\n", (void*)s->expand_arr);
 	}
 	else
 	{
-		printf("DEBUG: Reusing existing expand_arr at %p\n", (void*)s->expand_arr);
-		// Reinitialize the existing expand_arr
 		for (i = 0; i < num_of_expantion; i++)
 		{
 			s->expand_arr[i].befor_dollar = NULL;
@@ -113,22 +98,18 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	i = 0;
 	while (i < num_of_expantion)
 	{
-		printf("DEBUG: Processing expansion %d/%d\n", i+1, num_of_expantion);
 		string_before_dollar(&(s->expand_arr[i]), str, &offset);
 		string_to_expand(&(s->expand_arr[i]), str, &offset);
 		string_after_dollar(&(s->expand_arr[i]), str, &offset);
 		i++;
 	}
 	
-	printf("DEBUG: About to call new_str_after_expand\n");
 	new_str = new_str_after_expand(s, num_of_expantion);
-	printf("DEBUG: new_str_after_expand returned: '%s'\n", new_str ? new_str : "NULL");
 	return (new_str);
 }
 
 void expand(t_shell_control_block *shell) 
 {
-
   int i;
   i = 0;
   while (shell->splitted[i])
@@ -138,7 +119,6 @@ void expand(t_shell_control_block *shell)
     else
     {
       shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
-      // If expansion failed due to ambiguous redirect, set exit status and return
       if (shell->exit_status == 1)
         return;
     }

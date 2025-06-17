@@ -2,83 +2,60 @@
 
 char	*expnad_and_join_node(t_shell_control_block *s, int i)
 {
-	char	*result;
 	char	*var_value;
+	char	*result;
 
-	// Safety check
-	if (!s || !s->expand_arr || i < 0)
-		return NULL;
-
-	// Handle special case for $? (exit status)
-	if (s->expand_arr[i].to_expand && are_they_equal(s->expand_arr[i].to_expand, "$?"))
-	{
+	if (ft_strcmp(s->expand_arr[i].to_expand, "$?") == 0)
 		var_value = ft_itoa(s->exit_status);
-	}
 	else
-	{
 		var_value = get_env_var(s, s->expand_arr[i]);
-	}
-	
-	// Handle the case where var_value might be NULL
-	if (s->expand_arr[i].befor_dollar && var_value)
+
+	if (var_value)
 	{
-		result = custom_join(s->expand_arr[i].befor_dollar, var_value);
-		if (s->expand_arr[i].after_dollar)
-			result = custom_join(result, s->expand_arr[i].after_dollar);
-	}
-	else if (s->expand_arr[i].befor_dollar)
-	{
-		result = custom_join(s->expand_arr[i].befor_dollar, "");
-		if (s->expand_arr[i].after_dollar)
-			result = custom_join(result, s->expand_arr[i].after_dollar);
-	}
-	else if (var_value)
-	{
-		result = custom_join("", var_value);
-		if (s->expand_arr[i].after_dollar)
-			result = custom_join(result, s->expand_arr[i].after_dollar);
+		if (s->expand_arr[i].befor_dollar && s->expand_arr[i].after_dollar)
+			result = custom_join(custom_join(s->expand_arr[i].befor_dollar, var_value), s->expand_arr[i].after_dollar);
+		else if (s->expand_arr[i].befor_dollar)
+			result = custom_join(s->expand_arr[i].befor_dollar, var_value);
+		else if (s->expand_arr[i].after_dollar)
+			result = custom_join(var_value, s->expand_arr[i].after_dollar);
+		else
+			result = ft_strdup(var_value, 1);
 	}
 	else
 	{
-		result = custom_join("", "");
-		if (s->expand_arr[i].after_dollar)
-			result = custom_join(result, s->expand_arr[i].after_dollar);
+		if (s->expand_arr[i].befor_dollar && s->expand_arr[i].after_dollar)
+			result = custom_join(s->expand_arr[i].befor_dollar, s->expand_arr[i].after_dollar);
+		else if (s->expand_arr[i].befor_dollar)
+			result = ft_strdup(s->expand_arr[i].befor_dollar, 1);
+		else if (s->expand_arr[i].after_dollar)
+			result = ft_strdup(s->expand_arr[i].after_dollar, 1);
+		else
+			result = ft_strdup("", 1);
 	}
-	
-	return result;
+	return (result);
 }
 
 char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 {
-	char	*new_after_expand;
-	char	*expanded;
-	char	*joined;
+	char	*result;
 	int		i;
 
-	// Safety checks
-	if (!s || num_of_expantion <= 0)
-		return NULL;
-
-	new_after_expand = NULL;
 	i = 0;
+	result = NULL;
 	while (i < num_of_expantion)
 	{
-		if (num_of_expantion - i == 1)
-			s->expand_arr[i].last_one = 1;
-		
-		expanded = expnad_and_join_node(s, i);
-		
-		if (!expanded)
+		if (i == 0)
+			result = expnad_and_join_node(s, i);
+		else
+		{
+			if (result)
+				result = custom_join(result, expnad_and_join_node(s, i));
+			else
+				result = expnad_and_join_node(s, i);
+		}
+		if (!result)
 			return (NULL);
-		
-		joined = custom_join(new_after_expand, expanded);
-		new_after_expand = joined;
-		
-		if (!new_after_expand)
-			return (NULL);
-		
 		i++;
 	}
-	
-	return (new_after_expand);
+	return (result);
 }
