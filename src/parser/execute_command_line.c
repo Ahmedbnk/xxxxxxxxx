@@ -103,25 +103,47 @@ void handle_all_redir(t_shell_control_block *shell)
 
 void	apply_redirections(t_shell_control_block *shell)
 {
+  printf("DEBUG: Entering apply_redirections\n");
+  
   shell->in_file_name = NULL;
   shell->file_name = NULL;
+  
+  printf("DEBUG: About to call handle_all_redir\n");
   handle_all_redir(shell);
+  printf("DEBUG: handle_all_redir completed\n");
+  
+  printf("DEBUG: Checking shell->file_name: '%s'\n", shell->file_name ? shell->file_name : "NULL");
+  
   if (shell->file_name)
   {
+    printf("DEBUG: About to open file: %s\n", shell->file_name);
     shell->fd_out = open(shell->file_name, O_WRONLY | O_TRUNC);
+    printf("DEBUG: First open result: %d\n", shell->fd_out);
     if (shell->fd_out == -1)
     {
+      printf("DEBUG: About to create file: %s\n", shell->file_name);
       shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+      printf("DEBUG: Second open result: %d\n", shell->fd_out);
     }
+    printf("DEBUG: About to dup2\n");
     dup2(shell->fd_out, 1);
+    printf("DEBUG: About to close fd_out\n");
     close(shell->fd_out);
+    printf("DEBUG: Closed fd_out\n");
   }
+  
+  printf("DEBUG: Checking shell->in_file_name: '%s'\n", shell->in_file_name ? shell->in_file_name : "NULL");
+  
   if(shell->in_file_name)
   {
+    printf("DEBUG: About to open input file: %s\n", shell->in_file_name);
     shell->fd_in = open(shell->in_file_name, O_RDONLY);
+    printf("DEBUG: Input file open result: %d\n", shell->fd_in);
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
+  
+  printf("DEBUG: Exiting apply_redirections\n");
 }
 
 void	process_command(t_shell_control_block *shell)
