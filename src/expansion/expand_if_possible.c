@@ -79,19 +79,38 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	if (num_of_expantion == 0)
 		return (ft_strdup(str, 1));
 	
-	printf("DEBUG: About to call allocat_and_init\n");
-	allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
-	printf("DEBUG: allocat_and_init completed\n");
-	
-	// Safety check after allocation
+	// Only allocate new memory if expand_arr is NULL or if we need a different size
+	// This prevents memory corruption by reusing existing memory when possible
 	if (!s->expand_arr)
 	{
-		printf("DEBUG: expand_arr allocation failed\n");
-		return (ft_strdup(str, 1));
+		printf("DEBUG: About to call allocat_and_init (first time)\n");
+		allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
+		printf("DEBUG: allocat_and_init completed\n");
+		
+		// Safety check after allocation
+		if (!s->expand_arr)
+		{
+			printf("DEBUG: expand_arr allocation failed\n");
+			return (ft_strdup(str, 1));
+		}
+		
+		printf("DEBUG: expand_arr allocated successfully at %p\n", (void*)s->expand_arr);
+	}
+	else
+	{
+		printf("DEBUG: Reusing existing expand_arr at %p\n", (void*)s->expand_arr);
+		// Reinitialize the existing expand_arr
+		for (i = 0; i < num_of_expantion; i++)
+		{
+			s->expand_arr[i].befor_dollar = NULL;
+			s->expand_arr[i].to_expand = NULL;
+			s->expand_arr[i].after_dollar = NULL;
+			s->expand_arr[i].last_one = 0;
+			s->expand_arr[i].heredoc_flag = heredoc_flag;
+		}
 	}
 	
-	printf("DEBUG: expand_arr allocated successfully at %p\n", (void*)s->expand_arr);
-	
+	i = 0;
 	while (i < num_of_expantion)
 	{
 		printf("DEBUG: Processing expansion %d/%d\n", i+1, num_of_expantion);
