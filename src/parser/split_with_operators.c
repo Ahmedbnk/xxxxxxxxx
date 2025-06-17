@@ -4,11 +4,45 @@ static int	is_operator(char *str, int i)
 {
 	if (is_between_quotes(str, i))
 		return (0);
-	if ((str[i] == '>' && str[i + 1] == '>') || (str[i] == '<' && str[i
-			+ 1] == '<'))
-		return (2);
-	if (str[i] == '>' || str[i] == '<' || str[i] == '|')
+	
+	// Handle long sequences of > or < like bash does
+	if (str[i] == '>')
+	{
+		// Count consecutive > characters
+		int count = 0;
+		int j = i;
+		while (str[j] == '>')
+		{
+			count++;
+			j++;
+		}
+		// If we have 2 or more > characters, return 2 (treat as >>)
+		if (count >= 2)
+			return (2);
+		// Otherwise return 1 (single >)
 		return (1);
+	}
+	
+	if (str[i] == '<')
+	{
+		// Count consecutive < characters
+		int count = 0;
+		int j = i;
+		while (str[j] == '<')
+		{
+			count++;
+			j++;
+		}
+		// If we have 2 or more < characters, return 2 (treat as <<)
+		if (count >= 2)
+			return (2);
+		// Otherwise return 1 (single <)
+		return (1);
+	}
+	
+	if (str[i] == '|')
+		return (1);
+	
 	return (0);
 }
 
