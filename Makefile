@@ -63,11 +63,9 @@ SRCS = main.c \
 	src/execution/print_exit_signal_message.c\
 	src/execution/is_there_a_pipe.c\
 	src/expansion/ft_get_env_var.c\
-	src/expansion/new_expand.c\
 	src/main_tools/debug.c\
 	src/main_tools/tool_one.c\
-	src/utils/ft_lstsize.c \
-	# src/main_tools
+	src/utils/ft_lstsize.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -86,7 +84,6 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
-
 
 re: fclean all
 
