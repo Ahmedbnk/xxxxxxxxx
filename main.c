@@ -2,6 +2,7 @@
 
 void parse_line(t_shell_control_block *shell)
 {
+  printf("DEBUG: parse_line: env_cpy = %p\n", (void*)shell->env_cpy);
   shell->splitted = customized_split(shell->line);
   shell->splitted = split_with_operators(shell->splitted);
   expand(shell);
@@ -35,13 +36,18 @@ int main(int ac, char **av, char **env)
 
   ft_init_shell_block(&shell, ac, av);
   shell.env_cpy = copy_env(env);
+  printf("DEBUG: main: initial env_cpy = %p\n", (void*)shell.env_cpy);
  while (1) {
     handle_signals(0);
     if(!ft_readline(&shell))
       continue;
+    printf("DEBUG: main: before parse_line: env_cpy = %p\n", (void*)shell.env_cpy);
     parse_line(&shell);
+    printf("DEBUG: main: after parse_line: env_cpy = %p\n", (void*)shell.env_cpy);
     execute_line(&shell);
+    printf("DEBUG: main: after execute_line: env_cpy = %p\n", (void*)shell.env_cpy);
     free_memory(get_garbage_pointer(0));
+    printf("DEBUG: main: after free_memory: env_cpy = %p\n", (void*)shell.env_cpy);
     free(shell.line);
   }
   return (0);
