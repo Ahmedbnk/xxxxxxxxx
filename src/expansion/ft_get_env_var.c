@@ -89,21 +89,28 @@ int is_var_exist(char *var1, char *var2)
 
 char *get_env_var(t_shell_control_block *shell , t_expand data)
 {
+	printf("DEBUG: get_env_var called with to_expand: '%s'\n", data.to_expand);
+	
 	if (!shell || !shell->env_cpy || !data.to_expand)
 	{
+		printf("DEBUG: get_env_var safety check failed\n");
 		return NULL;
 	}
 	
 	int i = 0;
 	while (shell->env_cpy[i])
 	{
+		printf("DEBUG: Checking env[%d]: '%s'\n", i, shell->env_cpy[i]);
 		if (ft_strncmp(shell->env_cpy[i], data.to_expand + 1, ft_strlen(data.to_expand) - 1) == 0 && 
 			shell->env_cpy[i][ft_strlen(data.to_expand) - 1] == '=')
 		{
-			return (ft_strchr(shell->env_cpy[i], '=') + 1);
+			char *result = ft_strchr(shell->env_cpy[i], '=') + 1;
+			printf("DEBUG: Found match! Result: '%s'\n", result);
+			return (result);
 		}
 		i++;
 	}
+	printf("DEBUG: No match found\n");
 	return NULL;
 }
 
