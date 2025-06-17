@@ -2,5 +2,8 @@
 
 void handle_append(char *str, char **file_name)
 {
-  *file_name = str;
+  if (str && *str)
+    *file_name = str;
+  else
+    *file_name = NULL;
 }
