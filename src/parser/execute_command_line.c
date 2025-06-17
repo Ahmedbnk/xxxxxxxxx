@@ -37,8 +37,12 @@ void	skip_command(t_token **tokenized_address)
 
 void handle_all_redir(t_shell_control_block *shell)
 {
+  printf("DEBUG: Entering handle_all_redir\n");
+  
   while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
+    printf("DEBUG: Processing redirection type: %d, word: %s\n", shell->tokenized->type, shell->tokenized->word);
+    
     if (shell->tokenized->type == HEREDOC)
       shell->in_file_name = shell->tokenized->heredoc_file_name;
     else if (shell->tokenized->type == REDIR_IN)
@@ -46,10 +50,12 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_OUT)
     {
       char *filename = (shell->tokenized + 1)->word;
+      printf("DEBUG: REDIR_OUT filename: '%s'\n", filename);
       
       // Check for ambiguous redirect first
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
+        printf("DEBUG: Ambiguous redirect detected in REDIR_OUT\n");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         break; // Stop processing redirections
@@ -67,10 +73,12 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_APPEND)
     {
       char *filename = (shell->tokenized + 1)->word;
+      printf("DEBUG: REDIR_APPEND filename: '%s'\n", filename);
       
       // Check for ambiguous redirect first
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
+        printf("DEBUG: Ambiguous redirect detected in REDIR_APPEND\n");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         break; // Stop processing redirections
@@ -85,8 +93,12 @@ void handle_all_redir(t_shell_control_block *shell)
       
       handle_append(filename, &(shell->file_name));
     }
+    
+    printf("DEBUG: Moving to next token\n");
     shell->tokenized ++;
   }
+  
+  printf("DEBUG: Exiting handle_all_redir\n");
 }
 
 void	apply_redirections(t_shell_control_block *shell)
