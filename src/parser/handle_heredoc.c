@@ -32,6 +32,7 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   int fd;
   char *str = NULL; 
   char *buffer = NULL; 
+  char *original_str = NULL;
 
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
@@ -47,14 +48,25 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
       print_error("warning: here-document delimited by end-of-file (wanted `%s')\n", tokenized->delimiter);
       break;
     }
+    
+    // Save original input for delimiter comparison
+    original_str = ft_strdup(str, 1);
+    
+    // Expand for content (but not for delimiter comparison)
     str = expand_if_possible(s, str, 1);
     
     // Debug: print the input and comparison
-    printf("DEBUG: input = '%s', delimiter = '%s', equal = %d\n", str, tokenized->delimiter, are_they_equal(str, tokenized->delimiter));
+    printf("DEBUG: original input = '%s', delimiter = '%s', equal = %d\n", original_str, tokenized->delimiter, are_they_equal(original_str, tokenized->delimiter));
     
-    if(are_they_equal(str, tokenized->delimiter))
-       break;
+    if(are_they_equal(original_str, tokenized->delimiter))
+    {
+      free(original_str);
+      break;
+    }
+    
+    // Use expanded string for content
     buffer = ft_strjoin(buffer, str);
+    free(original_str);
   }
   fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
   write(fd,buffer,ft_strlen(buffer));
