@@ -33,10 +33,12 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   char *str = NULL; 
   char *buffer = NULL; 
   char *original_str = NULL;
-  char *temp = NULL;
 
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
+  
+  // Debug: print the delimiter
+  printf("DEBUG: delimiter = '%s'\n", tokenized->delimiter);
   
   while(1)
   {
@@ -53,6 +55,9 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     // Expand for content (but not for delimiter comparison)
     str = expand_if_possible(s, str, 1);
     
+    // Debug: print the input and comparison
+    printf("DEBUG: original input = '%s', delimiter = '%s', equal = %d\n", original_str, tokenized->delimiter, are_they_equal(original_str, tokenized->delimiter));
+    
     if(are_they_equal(original_str, tokenized->delimiter))
     {
       free(original_str);
@@ -60,31 +65,13 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     }
     
     // Use expanded string for content
-    if (str && *str)
-    {
-      if (!buffer)
-        buffer = ft_strdup(str, 1);
-      else
-      {
-        temp = ft_strjoin(buffer, str);
-        free(buffer);
-        buffer = temp;
-      }
-    }
+    buffer = ft_strjoin(buffer, str);
     free(original_str);
   }
-  
-  if (buffer)
-  {
-    fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
-    if (fd != -1)
-    {
-      write(fd, buffer, ft_strlen(buffer));
-      write(fd, "\n", 1);
-      close(fd);
-    }
-    free(buffer);
-  }
+  fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
+  write(fd,buffer,ft_strlen(buffer));
+  write(fd,"\n", 1);
+  close(fd);
 }
 
 void create_all_heredocs(t_shell_control_block *shell)
