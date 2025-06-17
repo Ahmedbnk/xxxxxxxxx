@@ -45,41 +45,49 @@ void handle_all_redir(t_shell_control_block *shell)
       handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
     else if (shell->tokenized->type == REDIR_OUT)
     {
-      // Check for ambiguous redirect before creating file
       char *filename = (shell->tokenized + 1)->word;
+      
+      // Create the file first
+      if (filename && *filename)
+      {
+        int fd = open(filename, O_WRONLY | O_TRUNC);
+        if (fd == -1)
+          fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        if (fd != -1)
+          close(fd);
+      }
+      
+      // Then check for ambiguous redirect
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
         print_error("ambiguous redirect\n");
         shell->exit_status = 1;
         break; // Stop processing redirections
       }
-      
-      // Create the file only if no ambiguous redirect
-      int fd = open(filename, O_WRONLY | O_TRUNC);
-      if (fd == -1)
-        fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-      if (fd != -1)
-        close(fd);
       
       handle_redir_out(filename, &(shell->file_name));
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
-      // Check for ambiguous redirect before creating file
       char *filename = (shell->tokenized + 1)->word;
+      
+      // Create the file first
+      if (filename && *filename)
+      {
+        int fd = open(filename, O_WRONLY | O_APPEND);
+        if (fd == -1)
+          fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+        if (fd != -1)
+          close(fd);
+      }
+      
+      // Then check for ambiguous redirect
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
         print_error("ambiguous redirect\n");
         shell->exit_status = 1;
         break; // Stop processing redirections
       }
-      
-      // Create the file only if no ambiguous redirect
-      int fd = open(filename, O_WRONLY | O_APPEND);
-      if (fd == -1)
-        fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-      if (fd != -1)
-        close(fd);
       
       handle_append(filename, &(shell->file_name));
     }
