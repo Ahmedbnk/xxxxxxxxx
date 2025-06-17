@@ -58,6 +58,7 @@ void handle_all_redir(t_shell_control_block *shell)
         printf("DEBUG: Ambiguous redirect detected in REDIR_OUT\n");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
+        shell->file_name = NULL; // Clear file_name to prevent dup2 hang
         break; // Stop processing redirections
       }
       
@@ -68,6 +69,7 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
+      // Only set file_name if no ambiguous redirect
       handle_redir_out(filename, &(shell->file_name));
     }
     else if (shell->tokenized->type == REDIR_APPEND)
@@ -81,6 +83,7 @@ void handle_all_redir(t_shell_control_block *shell)
         printf("DEBUG: Ambiguous redirect detected in REDIR_APPEND\n");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
+        shell->file_name = NULL; // Clear file_name to prevent dup2 hang
         break; // Stop processing redirections
       }
       
@@ -91,6 +94,7 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
+      // Only set file_name if no ambiguous redirect
       handle_append(filename, &(shell->file_name));
     }
     
