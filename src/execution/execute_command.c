@@ -5,7 +5,6 @@ void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 	int i;
 	char *cmd_with_slash;
 	char *cmd_with_its_path;
-	struct stat path_stat;
 
 	if(!path)
 		return;
@@ -16,12 +15,7 @@ void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 		cmd_with_its_path = ft_strjoin(path[i] ,cmd_with_slash);
 		if(access(cmd_with_its_path, F_OK) == 0)
 		{
-			// Check if it's a directory
-			if (stat(cmd_with_its_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-			{
-				exit((print_error("%s: Is a directory\n", cmd), 126));
-			}
-			else if(access(cmd_with_its_path, X_OK) == 0)
+			if(access(cmd_with_its_path, X_OK) == 0)
 			{
 				execve(cmd_with_its_path , av, env);
 				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
@@ -37,16 +31,9 @@ void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 
 void  check_the_access(char *cmd, char **av, char **env)
 {
-	struct stat path_stat;
-	
 	if (access(cmd, F_OK) == 0)
 	{
-		// Check if it's a directory
-		if (stat(cmd, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-		{
-			exit((print_error("%s: Is a directory\n", cmd), 126));
-		}
-		else if(access(cmd, X_OK) == 0)
+		if(access(cmd, X_OK) == 0)
 		{
 			execve(cmd , av, env);
 			exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));

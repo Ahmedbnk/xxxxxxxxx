@@ -10,7 +10,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
 #include <errno.h>
 
 # define single_q 39
