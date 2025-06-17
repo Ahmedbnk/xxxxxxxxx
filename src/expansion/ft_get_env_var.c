@@ -95,27 +95,42 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   int end;
   int i;
 
+  printf("DEBUG: get_env_var called\n");
+
   // Safety checks
   if (!shell || !data.to_expand)
+  {
+    printf("DEBUG: get_env_var safety check failed\n");
     return NULL;
+  }
+  
+  printf("DEBUG: data.to_expand = '%s'\n", data.to_expand);
   
   ptr = shell->env_cpy;
   if (!ptr)
+  {
+    printf("DEBUG: shell->env_cpy is NULL\n");
     return NULL;
+  }
 
+  printf("DEBUG: About to search through environment variables\n");
   i = 0;
   while(ptr[i])
   {
+    printf("DEBUG: Checking env var: '%s'\n", ptr[i]);
     if(ptr[i] && is_var_exist(ptr[i], (data.to_expand)+1))
     {
+      printf("DEBUG: Found matching env var: '%s'\n", ptr[i]);
       get_start_and_end(ptr[i], &start, &end);
       value = ft_substr(ptr[i], start, (end-start));
       if (value)
         value = protect_str(value);
+      printf("DEBUG: get_env_var returning: '%s'\n", value ? value : "NULL");
       return value;
     }
     i++;
   }
+  printf("DEBUG: No matching env var found, returning NULL\n");
   return NULL;
 }
 
