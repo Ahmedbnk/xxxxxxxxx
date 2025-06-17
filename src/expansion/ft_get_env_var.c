@@ -89,28 +89,21 @@ int is_var_exist(char *var1, char *var2)
 
 char *get_env_var(t_shell_control_block *shell , t_expand data)
 {
-	printf("DEBUG: get_env_var called with to_expand: '%s'\n", data.to_expand);
-	
 	if (!shell || !shell->env_cpy || !data.to_expand)
 	{
-		printf("DEBUG: get_env_var safety check failed\n");
 		return NULL;
 	}
 	
 	int i = 0;
 	while (shell->env_cpy[i])
 	{
-		printf("DEBUG: Checking env[%d]: '%s'\n", i, shell->env_cpy[i]);
 		if (ft_strncmp(shell->env_cpy[i], data.to_expand + 1, ft_strlen(data.to_expand) - 1) == 0 && 
 			shell->env_cpy[i][ft_strlen(data.to_expand) - 1] == '=')
 		{
-			char *result = ft_strchr(shell->env_cpy[i], '=') + 1;
-			printf("DEBUG: Found match! Result: '%s'\n", result);
-			return (result);
+			return (ft_strchr(shell->env_cpy[i], '=') + 1);
 		}
 		i++;
 	}
-	printf("DEBUG: No match found\n");
 	return NULL;
 }
 
@@ -120,35 +113,23 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 	int	start;
 
 	start = 0;
-	printf("DEBUG: split_helper starting with string: '%s'\n", s);
 	while (s[i])
 	{
 		while (is_space(s[i]))
-		{
-			printf("DEBUG: Skipping space at position %d (char: %d)\n", i, (unsigned char)s[i]);
 			i++;
-		}
 		start = i;
-		printf("DEBUG: Starting word at position %d\n", start);
 		while (s[i] && (!is_space(s[i]) || (is_space(s[i])
 					&& is_between_quotes(s, i))))
-		{
-			if (is_space(s[i]))
-				printf("DEBUG: Found space at position %d but not splitting (is_between_quotes: %d)\n", i, is_between_quotes(s, i));
 			i++;
-		}
 		if (i > start)
-		{
-			char *substr = ft_substr(s, start, i - start);
-			printf("DEBUG: Creating substring from %d to %d: '%s'\n", start, i, substr);
-			splitted[k++] = substr;
-		}
+			splitted[k++] = ft_substr(s, start, i - start);
 	}
 	// Handle empty string case
 	if (ft_strlen(s) == 0)
 		splitted[k++] = ft_strdup("", 1);
 	splitted[k] = NULL;
 }
+
 char	**test_split(char const *s)
 {
 	char	**splitted;
@@ -158,26 +139,10 @@ char	**test_split(char const *s)
 	if (!s)
 		return (NULL);
 	
-	printf("DEBUG: test_split called with: '%s'\n", s);
-	printf("DEBUG: String length: %zu\n", ft_strlen(s));
-	printf("DEBUG: ASCII values: ");
-	for(int x = 0; s[x]; x++)
-	{
-		printf("%d ", (unsigned char)s[x]);
-	}
-	printf("\n");
-	
 	splitted = ft_malloc((ft_w_counter(s) + 1) * sizeof(char *), 1);
 	i = 0;
 	k = 0;
 	split_helper(splitted, (char *)s, i, k);
 	
-	printf("DEBUG: test_split result:\n");
-	int j = 0;
-	while(splitted[j])
-	{
-		printf("DEBUG:   splitted[%d]: '%s'\n", j, splitted[j]);
-		j++;
-	}
 	return (splitted);
 }

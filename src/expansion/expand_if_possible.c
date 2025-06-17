@@ -112,17 +112,13 @@ void expand(t_shell_control_block *shell)
 {
   int i;
   i = 0;
-  printf("DEBUG: expand function called\n");
   while (shell->splitted[i])
   {
-    printf("DEBUG: Processing splitted[%d]: '%s'\n", i, shell->splitted[i]);
     if(are_they_equal(shell->splitted[i], "<<"))
       i++;
     else
     {
-      char *original = shell->splitted[i];
       shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
-      printf("DEBUG: After expansion: '%s' -> '%s'\n", original, shell->splitted[i]);
       if (shell->exit_status == 1)
         return;
     }
