@@ -60,9 +60,9 @@ int check_syntax_error(t_token *data, int len)
         return((print_error("syntax error near unexpected token `<<'\n"), 2));
     }
     
-    // Check for redirection without command before it
+    // Check for redirection without command before it (but allow heredoc)
     else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-              data[i].type == REDIR_APPEND || data[i].type == HEREDOC) && i == 0)
+              data[i].type == REDIR_APPEND) && i == 0)
       return((print_error("syntax error near unexpected token `newline'\n"), 2));
     
     // Check for redirection at the end (no filename)

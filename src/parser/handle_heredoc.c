@@ -9,8 +9,13 @@ char *remake_delimeter(char *str)
 
   // Use the expansion system to expand variables in the delimiter
   char *expanded = expand_if_possible(NULL, str, 1);
-  if (expanded)
+  if (expanded && *expanded)
     str = expanded;
+  else if (expanded && !*expanded)
+  {
+    // If expansion results in empty string, use original string
+    free(expanded);
+  }
 
   returned_str = ft_malloc(ft_strlen(str) + 1, 1);
 
