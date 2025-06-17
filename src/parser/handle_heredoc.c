@@ -42,9 +42,6 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
   
-  // Debug: print the delimiter
-  printf("DEBUG: delimiter = '%s'\n", tokenized->delimiter);
-  
   while(1)
   {
     str = readline(">");
@@ -59,9 +56,6 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     
     // Expand for content (but not for delimiter comparison)
     str = expand_if_possible(s, str, 1);
-    
-    // Debug: print the input and comparison
-    printf("DEBUG: original input = '%s', delimiter = '%s', equal = %d\n", original_str, tokenized->delimiter, are_they_equal(original_str, tokenized->delimiter));
     
     if(are_they_equal(original_str, tokenized->delimiter))
     {
