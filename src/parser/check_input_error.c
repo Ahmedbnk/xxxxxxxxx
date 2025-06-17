@@ -23,34 +23,34 @@ int	check_unclosed_quotes(char *str)
 int	check_invalid_redirections(char *str)
 {
 	int	i;
-	int	consecutive_gt;
-	int	consecutive_lt;
 
 	i = 0;
 	while (str[i])
 	{
-		consecutive_gt = 0;
-		consecutive_lt = 0;
-		
-		// Count consecutive > or <
-		while (str[i] == '>' && !is_between_quotes(str, i))
+		// Check for more than 2 consecutive > or <
+		if (str[i] == '>' && !is_between_quotes(str, i))
 		{
-			consecutive_gt++;
-			i++;
+			int count = 0;
+			while (str[i] == '>' && !is_between_quotes(str, i))
+			{
+				count++;
+				i++;
+			}
+			if (count > 2)
+				return (1);
 		}
-		while (str[i] == '<' && !is_between_quotes(str, i))
+		else if (str[i] == '<' && !is_between_quotes(str, i))
 		{
-			consecutive_lt++;
-			i++;
+			int count = 0;
+			while (str[i] == '<' && !is_between_quotes(str, i))
+			{
+				count++;
+				i++;
+			}
+			if (count > 2)
+				return (1);
 		}
-		
-		// Check for invalid combinations
-		if (consecutive_gt > 2 || consecutive_lt > 2)
-			return (1);
-		if (consecutive_gt == 1 && consecutive_lt == 1)
-			return (1);
-		
-		if (str[i])
+		else
 			i++;
 	}
 	return (0);
