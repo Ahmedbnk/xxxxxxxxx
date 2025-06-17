@@ -21,7 +21,7 @@ void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
 			}
 			else
-				exit((print_error("%s: Permition denied\n", cmd), 126));
+				exit((print_error("%s: Permission denied\n", cmd), 126));
 		}
 		i++;
 	}
@@ -36,13 +36,13 @@ void  check_the_access(char *cmd, char **av, char **env)
 		if(access(cmd, X_OK) == 0)
 		{
 			execve(cmd , av, env);
-				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
+			exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
 		}
 		else
-				exit((print_error("%s: Permition denied\n", cmd), 126));
+			exit((print_error("%s: Permission denied\n", cmd), 126));
 	}
 	else
-	  exit((print_error("%s: command not found\n", cmd), 127));
+		exit((print_error("%s: No such file or directory\n", cmd), 127));
 }
 
 
