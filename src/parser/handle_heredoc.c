@@ -74,7 +74,7 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     original_str = ft_strdup(str, 1);
     if (!original_str)
     {
-      free(str);
+      free(str); // readline memory
       break;
     }
     
@@ -83,8 +83,8 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     
     if(are_they_equal(original_str, tokenized->delimiter))
     {
-      free(original_str);
-      free(str);
+      free(original_str); // ft_malloc memory
+      free(str); // readline memory
       break;
     }
     
@@ -92,13 +92,12 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     temp_buffer = ft_strjoin(buffer, expanded_str ? expanded_str : str);
     if (temp_buffer)
     {
-      if (buffer)
-        free(buffer);
+      // Don't free buffer here - it's managed by garbage collector
       buffer = temp_buffer;
     }
     
-    free(original_str);
-    free(str);
+    free(original_str); // ft_malloc memory
+    free(str); // readline memory
   }
   
   if (buffer)
@@ -110,7 +109,7 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
       write(fd, "\n", 1);
       close(fd);
     }
-    free(buffer);
+    // Don't free buffer - it's managed by garbage collector
   }
 }
 
