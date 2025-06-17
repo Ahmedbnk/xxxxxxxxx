@@ -33,6 +33,7 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   char *str = NULL; 
   char *buffer = NULL; 
   char *original_str = NULL;
+  char *temp = NULL;
 
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
@@ -64,7 +65,11 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
       if (!buffer)
         buffer = ft_strdup(str, 1);
       else
-        buffer = ft_strjoin(buffer, str);
+      {
+        temp = ft_strjoin(buffer, str);
+        free(buffer);
+        buffer = temp;
+      }
     }
     free(original_str);
   }
@@ -78,6 +83,7 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
       write(fd, "\n", 1);
       close(fd);
     }
+    free(buffer);
   }
 }
 
