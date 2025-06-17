@@ -93,10 +93,12 @@ void execute_command_line_helper(t_shell_control_block *shell)
   
   if (execute_built_in(shell))
   {
+    printf("DEBUG: Built-in command executed, returning\n");
     // Built-in command executed successfully in parent process
     return;
   }
   
+  printf("DEBUG: Not a built-in command, forking\n");
   // Not a built-in command, fork and execute
   handle_signals(1);
   int p_id = fork();
