@@ -36,6 +36,11 @@ void execute_line(t_shell_control_block *shell)
     else
       execute_command_line(shell);
   }
+  else if (shell->exit_status == 2)
+  {
+    // Syntax error - exit status already set, just return
+    return;
+  }
   else if (shell->exit_status == 1)
   {
     return;

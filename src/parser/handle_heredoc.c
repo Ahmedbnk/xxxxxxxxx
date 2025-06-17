@@ -57,6 +57,9 @@ void create_all_heredocs(t_shell_control_block *shell)
 {
   t_token *ptr;
 
+  if (!shell || !shell->tokenized)
+    return;
+    
   ptr = shell->tokenized;
   while(ptr && ptr -> word)
   {
