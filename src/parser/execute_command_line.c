@@ -85,8 +85,18 @@ void	process_command(t_shell_control_block *shell)
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
+  // Save original tokenized pointer
+  t_token *original_tokenized = shell->tokenized;
+  
   // Check if it's a built-in command first
   get_cmd_and_its_args(shell);
+  
+  // Save original file descriptors
+  int original_stdin = dup(0);
+  int original_stdout = dup(1);
+  
+  // Restore original tokenized pointer for redirection handling
+  shell->tokenized = original_tokenized;
   
   // Apply redirections before executing any command (built-in or not)
   apply_redirections(shell);
@@ -94,11 +104,22 @@ void execute_command_line_helper(t_shell_control_block *shell)
   if (execute_built_in(shell))
   {
     printf("DEBUG: Built-in command executed, returning\n");
+    // Restore original file descriptors for built-in commands
+    dup2(original_stdin, 0);
+    dup2(original_stdout, 1);
+    close(original_stdin);
+    close(original_stdout);
     // Built-in command executed successfully in parent process
     return;
   }
   
   printf("DEBUG: Not a built-in command, forking\n");
+  // Restore original file descriptors before forking
+  dup2(original_stdin, 0);
+  dup2(original_stdout, 1);
+  close(original_stdin);
+  close(original_stdout);
+  
   // Not a built-in command, fork and execute
   handle_signals(1);
   int p_id = fork();
@@ -117,6 +138,9 @@ void execute_command_line_helper(t_shell_control_block *shell)
       dup2(shell->arr[1], 1);
       close(shell->arr[1]);
     }
+    // Apply redirections in child process
+    shell->tokenized = original_tokenized;
+    apply_redirections(shell);
     execute_command(shell);
     exit(0);
   }
