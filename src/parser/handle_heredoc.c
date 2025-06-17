@@ -2,7 +2,13 @@
 
 char *remake_delimeter(char *str)
 {
+  if (!str)
+    return NULL;
+    
+  // Allocate enough space for the worst case (no characters removed)
   char *returned_str = ft_malloc(ft_strlen(str) + 1, 1);
+  if (!returned_str)
+    return NULL;
 
   int i;
   int j;
@@ -37,9 +43,23 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   char *str = NULL; 
   char *buffer = NULL; 
   char *original_str = NULL;
+  char *temp_buffer = NULL;
+
+  if (!tokenized || !(tokenized + 1) || !(tokenized + 1)->word)
+    return;
 
   tokenized->heredoc_file_name = ft_strjoin("/tmp/", generate_random_name());
-  tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
+  if (!tokenized->heredoc_file_name)
+    return;
+    
+  tokenized->delimiter = remake_delimeter((tokenized + 1)->word);
+  if (!tokenized->delimiter)
+  {
+    // Clean up if delimiter creation fails
+    free(tokenized->heredoc_file_name);
+    tokenized->heredoc_file_name = NULL;
+    return;
+  }
   
   while(1)
   {
@@ -52,35 +72,60 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     
     // Save original input for delimiter comparison
     original_str = ft_strdup(str, 1);
+    if (!original_str)
+    {
+      free(str);
+      break;
+    }
     
     // Expand for content (but not for delimiter comparison)
-    str = expand_if_possible(s, str, 1);
+    char *expanded_str = expand_if_possible(s, str, 1);
     
     if(are_they_equal(original_str, tokenized->delimiter))
     {
       free(original_str);
+      free(str);
       break;
     }
     
     // Use expanded string for content
-    buffer = ft_strjoin(buffer, str);
+    temp_buffer = ft_strjoin(buffer, expanded_str ? expanded_str : str);
+    if (temp_buffer)
+    {
+      if (buffer)
+        free(buffer);
+      buffer = temp_buffer;
+    }
+    
     free(original_str);
+    free(str);
   }
-  fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
-  write(fd,buffer,ft_strlen(buffer));
-  write(fd,"\n", 1);
-  close(fd);
+  
+  if (buffer)
+  {
+    fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
+    if (fd != -1)
+    {
+      write(fd, buffer, ft_strlen(buffer));
+      write(fd, "\n", 1);
+      close(fd);
+    }
+    free(buffer);
+  }
 }
 
 void create_all_heredocs(t_shell_control_block *shell)
 {
   t_token *ptr;
 
+  if (!shell || !shell->tokenized)
+    return;
+    
   ptr = shell->tokenized;
-  while(ptr && ptr -> word)
+  while(ptr && ptr->word)
   {
-    if(ptr -> type == HEREDOC)
+    if(ptr->type == HEREDOC)
       create_heredoc(shell, ptr);
-    ptr ++;
+    ptr++;
   }
 }

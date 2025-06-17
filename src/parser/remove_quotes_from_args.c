@@ -33,7 +33,13 @@ void	remove_quotes(char **line)
 {
 	char	*line_without_quotes;
 
+	if (!line || !*line)
+		return;
+		
 	line_without_quotes = ft_malloc(ft_strlen(*line) + 1, 1);
+	if (!line_without_quotes)
+		return;
+		
 	remove_quotes_helper(*line, &line_without_quotes);
 	*line = line_without_quotes;
 }
@@ -43,7 +49,7 @@ void remove_quotes_from_args(char **splitted)
   int i;
 
   i = 0;
-  while(splitted[i])
+  while(splitted && splitted[i])
   {
     remove_quotes(&splitted[i]);
     i++;
