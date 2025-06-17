@@ -11,7 +11,6 @@ char *remake_delimeter(char *str)
   j = 0;
   while(str[i])
   {
-    // Handle $$ (two dollars next to each other) - keep them literal
     if(str[i] == '$' && str[i + 1] == '$')
     {
       returned_str[j++] = str[i++];
