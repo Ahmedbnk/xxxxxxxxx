@@ -65,13 +65,21 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
     }
     
     // Use expanded string for content
-    buffer = ft_strjoin(buffer, str);
+    if (str && *str)
+      buffer = ft_strjoin(buffer, str);
     free(original_str);
   }
-  fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
-  write(fd,buffer,ft_strlen(buffer));
-  write(fd,"\n", 1);
-  close(fd);
+  
+  if (buffer)
+  {
+    fd = open(tokenized->heredoc_file_name, O_CREAT | O_RDWR | O_TRUNC, 0644);
+    if (fd != -1)
+    {
+      write(fd, buffer, ft_strlen(buffer));
+      write(fd, "\n", 1);
+      close(fd);
+    }
+  }
 }
 
 void create_all_heredocs(t_shell_control_block *shell)
