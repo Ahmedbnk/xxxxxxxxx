@@ -44,12 +44,35 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_IN)
       handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
     else if (shell->tokenized->type == REDIR_OUT)
+    {
+      // Create the file even if it's not the last output redirection
+      char *filename = (shell->tokenized + 1)->word;
+      if (filename && *filename)
+      {
+        int fd = open(filename, O_WRONLY | O_TRUNC);
+        if (fd == -1)
+          fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        if (fd != -1)
+          close(fd);
+      }
       handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+    }
     else if (shell->tokenized->type == REDIR_APPEND)
+    {
+      // Create the file even if it's not the last append redirection
+      char *filename = (shell->tokenized + 1)->word;
+      if (filename && *filename)
+      {
+        int fd = open(filename, O_WRONLY | O_APPEND);
+        if (fd == -1)
+          fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+        if (fd != -1)
+          close(fd);
+      }
       handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+    }
     shell->tokenized ++;
   }
-
 }
 
 void	apply_redirections(t_shell_control_block *shell)
