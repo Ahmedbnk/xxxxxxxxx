@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	ft_w_counter(char const *s, char c)
+static int	w_counter(char const *s, char c)
 {
 	int	i;
 	int	k;
@@ -50,7 +50,7 @@ char	**ft_split(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *), 1);
+	splitted = ft_malloc((w_counter(s, c) + 1) * sizeof(char *), 1);
 	i = 0;
 	k = 0;
 	split_helper(splitted, (char *)s, c, i, k);
