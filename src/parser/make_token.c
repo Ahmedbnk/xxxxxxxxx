@@ -103,10 +103,15 @@ t_token *make_token(t_shell_control_block *shell)
   list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
   syntax_result = check_syntax_error(list, len);
-  if(syntax_result)
+  if(syntax_result == 2) // Syntax error - return NULL
   {
     shell->exit_status = syntax_result;
     return NULL;
+  }
+  else if(syntax_result == 1) // Ambiguous redirect - continue but set error
+  {
+    shell->exit_status = syntax_result;
+    // Don't return NULL, allow tokenization to continue
   }
   return list;
 }
