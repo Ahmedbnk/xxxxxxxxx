@@ -39,6 +39,10 @@ void handle_all_redir(t_shell_control_block *shell)
 {
   while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
+    // Stop processing if there's an ambiguous redirect error
+    if (shell->exit_status == 1)
+      break;
+      
     if (shell->tokenized->type == HEREDOC)
       shell->in_file_name = shell->tokenized->heredoc_file_name;
     else if (shell->tokenized->type == REDIR_IN)
