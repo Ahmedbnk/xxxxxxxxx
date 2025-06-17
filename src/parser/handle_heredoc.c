@@ -11,11 +11,19 @@ char *remake_delimeter(char *str)
   j = 0;
   while(str[i])
   {
-    if(str[i] == '$' && str[i + 1] == '$')
+    // Handle $$ followed by quotes - remove the $$
+    if(str[i] == '$' && str[i + 1] == '$' && 
+       (str[i + 2] == single_q || str[i + 2] == double_q))
+    {
+      i += 2; // Skip the $$
+    }
+    // Handle $$ not followed by quotes - keep them literal
+    else if(str[i] == '$' && str[i + 1] == '$')
     {
       returned_str[j++] = str[i++];
       returned_str[j++] = str[i++];
     }
+    // Handle $ followed by single or double quote (but only if not preceded by $)
     else if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q) && 
             (i == 0 || str[i - 1] != '$') && !is_between_quotes(str, i))
       i++;
