@@ -23,17 +23,31 @@ static int find_and_update_var(char **env, char *var)
 static char **add_var_to_env(char **env , char *var)
 {
     char **new_env;
+    printf("DEBUG: add_var_to_env called with var: '%s'\n", var);
+    printf("DEBUG: Current env array length: %d\n", len_of_two_d_array(env));
+    
     new_env = ft_malloc((len_of_two_d_array(env)+ 2) * sizeof(char *), 1);
+    printf("DEBUG: Allocated new_env at %p\n", (void*)new_env);
+    
     int i;
     i = 0;
     while(*env)
     {
+        printf("DEBUG: Copying env var %d: '%s'\n", i, *env);
         new_env[i] = ft_strdup(*env, 1);
         i++;
         env++;
     }
+    printf("DEBUG: Adding new var: '%s'\n", var);
     new_env[i++] = ft_strdup(var, 1);
     new_env[i] = NULL;
+    
+    printf("DEBUG: Final env array:\n");
+    for (int j = 0; j < i; j++)
+    {
+        printf("DEBUG:   [%d]: '%s'\n", j, new_env[j]);
+    }
+    
     return new_env;
 }
 
@@ -102,9 +116,16 @@ void export(char ***env, char **to_export)
             {
                 printf("DEBUG: Adding new variable to env\n");
                 *env = add_var_to_env(*env , *to_export);
+                printf("DEBUG: Environment pointer after add_var_to_env: %p\n", (void*)*env);
             }
         }
         to_export++;
+    }
+    
+    printf("DEBUG: Export completed. Final environment:\n");
+    for (int i = 0; (*env)[i]; i++)
+    {
+        printf("DEBUG:   [%d]: '%s'\n", i, (*env)[i]);
     }
 }
 
