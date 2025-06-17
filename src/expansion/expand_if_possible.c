@@ -85,15 +85,13 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 	}
 	else
 	{
-		i = 0;
-		while (i < num_of_expantion)
+		for (i = 0; i < num_of_expantion; i++)
 		{
 			s->expand_arr[i].befor_dollar = NULL;
 			s->expand_arr[i].to_expand = NULL;
 			s->expand_arr[i].after_dollar = NULL;
 			s->expand_arr[i].last_one = 0;
 			s->expand_arr[i].heredoc_flag = heredoc_flag;
-			i++;
 		}
 	}
 	

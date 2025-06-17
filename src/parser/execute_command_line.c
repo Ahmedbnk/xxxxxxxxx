@@ -23,44 +23,34 @@ char	*generate_random_name(void)
   return (ft_itoa(num));
 }
 
+
+
 void	skip_command(t_token **tokenized_address)
 {
-  while (*tokenized_address && (*tokenized_address)->type != PIPE)
-  {
-    (*tokenized_address)++;
-  }
+  t_token	*tokenized;
+
+  tokenized = *tokenized_address;
+  while (tokenized && tokenized->word != NULL && tokenized->type != PIPE)
+    tokenized ++;
+  *tokenized_address = tokenized;
 }
 
 void handle_all_redir(t_shell_control_block *shell)
 {
-  int i;
-  i = 0;
-  while (shell->tokenized[i].word)
+  while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
-    if (shell->tokenized[i].type == HEREDOC)
-    {
-      shell->in_file_name = shell->tokenized[i + 1].word;
-      i++;
-    }
-    else if (shell->tokenized[i].type == REDIR_IN)
-    {
-      shell->in_file_name = shell->tokenized[i + 1].word;
-      i++;
-    }
-    else if (shell->tokenized[i].type == REDIR_OUT)
-    {
-      shell->file_name = shell->tokenized[i + 1].word;
-      i++;
-    }
-    else if (shell->tokenized[i].type == REDIR_APPEND)
-    {
-      shell->file_name = shell->tokenized[i + 1].word;
-      i++;
-    }
-    i++;
+    if (shell->tokenized->type == HEREDOC)
+      shell->in_file_name = shell->tokenized->heredoc_file_name;
+    else if (shell->tokenized->type == REDIR_IN)
+      handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
+    else if (shell->tokenized->type == REDIR_OUT)
+      handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+    else if (shell->tokenized->type == REDIR_APPEND)
+      handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+    shell->tokenized ++;
   }
-}
 
+}
 void	process_command(t_shell_control_block *shell)
 {
   shell->in_file_name = NULL;
@@ -89,12 +79,15 @@ void	process_command(t_shell_control_block *shell)
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
+  // Check if it's a built-in command first
   get_cmd_and_its_args(shell);
   if (execute_built_in(shell))
   {
+    // Built-in command executed successfully in parent process
     return;
   }
   
+  // Not a built-in command, fork and execute
   handle_signals(1);
   int p_id = fork();
   if (p_id == 0)

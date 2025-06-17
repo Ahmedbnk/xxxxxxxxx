@@ -5,6 +5,7 @@ int	is_between_quotes(char *line, int index)
 	int	i;
 	int	quote;
 
+	// Safety checks
 	if (!line || index < 0)
 		return 0;
 

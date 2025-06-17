@@ -27,6 +27,7 @@ char *ft_charremove(const char *s1, char c)
 	
 	i = 0;
 	j = 0;
+	// Copy all characters except the specified character 'c'
 	while (s1[i])
 	{
 		if (s1[i] != c)

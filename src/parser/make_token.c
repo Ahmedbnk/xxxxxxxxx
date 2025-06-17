@@ -47,19 +47,23 @@ int check_syntax_error(t_token *data, int len)
     }
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == WORD)
     {
+      // Check for ambiguous redirection (redirection followed by empty string or NULL)
       if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
            data[i].type == REDIR_APPEND))
       {
+        // Check if the word after redirection is empty or NULL
         if (data[i + 1].word == NULL)
           return((print_error("ambiguous redirect\n"), 1));
         if (data[i + 1].word[0] == '\0')
           return((print_error("ambiguous redirect\n"), 1));
         if (ft_strlen(data[i + 1].word) == 0)
           return((print_error("ambiguous redirect\n"), 1));
+        // If we get here, the word is not empty, so it's a valid redirection
       }
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
     {
+      // Check for ambiguous redirection at the end
       if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
            data[i].type == REDIR_APPEND))
         return((print_error("ambiguous redirect\n"), 1));

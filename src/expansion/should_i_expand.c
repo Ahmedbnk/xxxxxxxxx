@@ -4,6 +4,7 @@ int	should_i_expand(char *str, int index)
 {
 	char	quote;
 
+	// Safety checks
 	if (!str || index < 0)
 		return 0;
 
