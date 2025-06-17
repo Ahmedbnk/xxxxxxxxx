@@ -7,16 +7,6 @@ char *remake_delimeter(char *str)
   if (!str)
     return NULL;
 
-  // Use the expansion system to expand variables in the delimiter
-  char *expanded = expand_if_possible(NULL, str, 1);
-  if (expanded && *expanded)
-    str = expanded;
-  else if (expanded && !*expanded)
-  {
-    // If expansion results in empty string, use original string
-    free(expanded);
-  }
-
   returned_str = ft_malloc(ft_strlen(str) + 1, 1);
 
   int i;
@@ -64,6 +54,13 @@ void create_heredoc(t_shell_control_block *s ,t_token *tokenized)
   }
   
   tokenized->delimiter = remake_delimeter((tokenized + 1) -> word);
+  
+  // Check if delimiter is valid
+  if (!tokenized->delimiter || !*tokenized->delimiter)
+  {
+    print_error("syntax error near unexpected token `newline'\n");
+    return;
+  }
   
   while(1)
   {
