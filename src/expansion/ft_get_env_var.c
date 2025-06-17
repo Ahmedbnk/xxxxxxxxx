@@ -107,6 +107,8 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   printf("DEBUG: data.to_expand = '%s'\n", data.to_expand);
   
   ptr = shell->env_cpy;
+  printf("DEBUG: shell->env_cpy = %p\n", (void*)ptr);
+  
   if (!ptr)
   {
     printf("DEBUG: shell->env_cpy is NULL\n");
@@ -114,6 +116,8 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   }
 
   printf("DEBUG: About to search through environment variables\n");
+  printf("DEBUG: First env var pointer: %p\n", (void*)ptr[0]);
+  
   i = 0;
   while(ptr[i])
   {
