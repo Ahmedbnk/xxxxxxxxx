@@ -78,9 +78,19 @@ char **split_after_expantion(char **str)
   t_list *list;
   list =NULL;
   i = 0;
+  
+  printf("DEBUG: split_after_expantion called\n");
   while(str[i])
   {
+    printf("DEBUG: Processing string[%d]: '%s'\n", i, str[i]);
     ptr = test_split(str[i]);
+    printf("DEBUG: After test_split, got:\n");
+    int j = 0;
+    while(ptr[j])
+    {
+      printf("DEBUG:   ptr[%d]: '%s'\n", j, ptr[j]);
+      j++;
+    }
     while(*ptr)
     {
       node = ft_lstnew(*ptr);
@@ -89,5 +99,13 @@ char **split_after_expantion(char **str)
     }
     i++;
   }
-  return (creat_new_splitted(list));
+  char **result = creat_new_splitted(list);
+  printf("DEBUG: Final result:\n");
+  i = 0;
+  while(result[i])
+  {
+    printf("DEBUG:   result[%d]: '%s'\n", i, result[i]);
+    i++;
+  }
+  return (result);
 }

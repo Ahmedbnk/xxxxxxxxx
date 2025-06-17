@@ -137,9 +137,19 @@ char	**test_split(char const *s)
 
 	if (!s)
 		return (NULL);
+	
+	printf("DEBUG: test_split called with: '%s'\n", s);
 	splitted = ft_malloc((ft_w_counter(s) + 1) * sizeof(char *), 1);
 	i = 0;
 	k = 0;
 	split_helper(splitted, (char *)s, i, k);
+	
+	printf("DEBUG: test_split result:\n");
+	int j = 0;
+	while(splitted[j])
+	{
+		printf("DEBUG:   splitted[%d]: '%s'\n", j, splitted[j]);
+		j++;
+	}
 	return (splitted);
 }
