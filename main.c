@@ -13,7 +13,8 @@ void parse_line(t_shell_control_block *shell)
 void execute_line(t_shell_control_block *shell)
 {
   // Reset exit_status for new command (unless it's a syntax error that should persist)
-  if (shell->exit_status == 1) // Ambiguous redirect error
+  // Only reset for non-pipeline commands to preserve errors across pipeline
+  if (shell->exit_status == 1 && !is_there_a_pipe(shell)) // Ambiguous redirect error
     shell->exit_status = 0; // Reset for new command
     
   if (shell->tokenized)
