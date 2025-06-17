@@ -56,9 +56,11 @@ void handle_all_redir(t_shell_control_block *shell)
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
         printf("DEBUG: Ambiguous redirect detected in REDIR_OUT\n");
+        printf("DEBUG: Before clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         shell->file_name = NULL; // Clear file_name to prevent dup2 hang
+        printf("DEBUG: After clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         break; // Stop processing redirections
       }
       
@@ -69,8 +71,10 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
+      printf("DEBUG: Before handle_redir_out, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
       // Only set file_name if no ambiguous redirect
       handle_redir_out(filename, &(shell->file_name));
+      printf("DEBUG: After handle_redir_out, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
@@ -81,9 +85,11 @@ void handle_all_redir(t_shell_control_block *shell)
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
         printf("DEBUG: Ambiguous redirect detected in REDIR_APPEND\n");
+        printf("DEBUG: Before clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         shell->file_name = NULL; // Clear file_name to prevent dup2 hang
+        printf("DEBUG: After clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         break; // Stop processing redirections
       }
       
@@ -94,8 +100,10 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
+      printf("DEBUG: Before handle_append, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
       // Only set file_name if no ambiguous redirect
       handle_append(filename, &(shell->file_name));
+      printf("DEBUG: After handle_append, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
     }
     
     printf("DEBUG: Moving to next token\n");
