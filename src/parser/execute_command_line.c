@@ -37,12 +37,8 @@ void	skip_command(t_token **tokenized_address)
 
 void handle_all_redir(t_shell_control_block *shell)
 {
-  printf("DEBUG: Entering handle_all_redir\n");
-  
   while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
-    printf("DEBUG: Processing redirection type: %d, word: %s\n", shell->tokenized->type, shell->tokenized->word);
-    
     if (shell->tokenized->type == HEREDOC)
       shell->in_file_name = shell->tokenized->heredoc_file_name;
     else if (shell->tokenized->type == REDIR_IN)
@@ -50,17 +46,13 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_OUT)
     {
       char *filename = (shell->tokenized + 1)->word;
-      printf("DEBUG: REDIR_OUT filename: '%s'\n", filename);
       
       // Check for ambiguous redirect first
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
-        printf("DEBUG: Ambiguous redirect detected in REDIR_OUT\n");
-        printf("DEBUG: Before clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         shell->file_name = NULL; // Clear file_name to prevent dup2 hang
-        printf("DEBUG: After clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         break; // Stop processing redirections
       }
       
@@ -71,25 +63,19 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
-      printf("DEBUG: Before handle_redir_out, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
       // Only set file_name if no ambiguous redirect
       handle_redir_out(filename, &(shell->file_name));
-      printf("DEBUG: After handle_redir_out, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
       char *filename = (shell->tokenized + 1)->word;
-      printf("DEBUG: REDIR_APPEND filename: '%s'\n", filename);
       
       // Check for ambiguous redirect first
       if (!filename || !*filename || ft_strlen(filename) == 0)
       {
-        printf("DEBUG: Ambiguous redirect detected in REDIR_APPEND\n");
-        printf("DEBUG: Before clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         // Don't print error here (already printed in syntax checker)
         shell->exit_status = 1;
         shell->file_name = NULL; // Clear file_name to prevent dup2 hang
-        printf("DEBUG: After clearing, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
         break; // Stop processing redirections
       }
       
@@ -100,62 +86,38 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
-      printf("DEBUG: Before handle_append, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
       // Only set file_name if no ambiguous redirect
       handle_append(filename, &(shell->file_name));
-      printf("DEBUG: After handle_append, file_name = '%s'\n", shell->file_name ? shell->file_name : "NULL");
     }
     
-    printf("DEBUG: Moving to next token\n");
     shell->tokenized ++;
   }
-  
-  printf("DEBUG: Exiting handle_all_redir\n");
 }
 
 void	apply_redirections(t_shell_control_block *shell)
 {
-  printf("DEBUG: Entering apply_redirections\n");
-  
   shell->in_file_name = NULL;
   shell->file_name = NULL;
   
-  printf("DEBUG: About to call handle_all_redir\n");
   handle_all_redir(shell);
-  printf("DEBUG: handle_all_redir completed\n");
-  
-  printf("DEBUG: Checking shell->file_name: '%s'\n", shell->file_name ? shell->file_name : "NULL");
   
   if (shell->file_name)
   {
-    printf("DEBUG: About to open file: %s\n", shell->file_name);
     shell->fd_out = open(shell->file_name, O_WRONLY | O_TRUNC);
-    printf("DEBUG: First open result: %d\n", shell->fd_out);
     if (shell->fd_out == -1)
     {
-      printf("DEBUG: About to create file: %s\n", shell->file_name);
       shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-      printf("DEBUG: Second open result: %d\n", shell->fd_out);
     }
-    printf("DEBUG: About to dup2\n");
     dup2(shell->fd_out, 1);
-    printf("DEBUG: About to close fd_out\n");
     close(shell->fd_out);
-    printf("DEBUG: Closed fd_out\n");
   }
-  
-  printf("DEBUG: Checking shell->in_file_name: '%s'\n", shell->in_file_name ? shell->in_file_name : "NULL");
   
   if(shell->in_file_name)
   {
-    printf("DEBUG: About to open input file: %s\n", shell->in_file_name);
     shell->fd_in = open(shell->in_file_name, O_RDONLY);
-    printf("DEBUG: Input file open result: %d\n", shell->fd_in);
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
-  
-  printf("DEBUG: Exiting apply_redirections\n");
 }
 
 void	process_command(t_shell_control_block *shell)
@@ -168,15 +130,11 @@ void	process_command(t_shell_control_block *shell)
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
-  printf("DEBUG: Entering execute_command_line_helper\n");
-  
   // Save original tokenized pointer
   t_token *original_tokenized = shell->tokenized;
   
   // Check if it's a built-in command first
-  printf("DEBUG: About to call get_cmd_and_its_args\n");
   get_cmd_and_its_args(shell);
-  printf("DEBUG: Finished get_cmd_and_its_args\n");
   
   // Save original file descriptors
   int original_stdin = dup(0);
@@ -186,20 +144,14 @@ void execute_command_line_helper(t_shell_control_block *shell)
   shell->tokenized = original_tokenized;
   
   // Apply redirections before executing any command (built-in or not)
-  printf("DEBUG: About to call apply_redirections\n");
   apply_redirections(shell);
-  printf("DEBUG: Finished apply_redirections\n");
   
   // Check if there's an ambiguous redirect error and return early
-  printf("DEBUG: Checking exit_status: %d\n", shell->exit_status);
   if (shell->exit_status == 1)
   {
-    printf("DEBUG: Ambiguous redirect detected, returning early\n");
     shell->last_child_pid = -1; // Set to -1 to prevent waitpid from hanging
     return;
   }
-  
-  printf("DEBUG: No ambiguous redirect, continuing with execution\n");
   
   if (execute_built_in(shell))
   {
@@ -253,11 +205,9 @@ void execute_command_line(t_shell_control_block *shell)
   status = 0;
   shell->line_pointer = shell->tokenized;
   shell->previous_read_end = -1;
-  printf("DEBUG: Starting execute_command_line\n");
   
   while (shell->line_pointer && shell->line_pointer->word)
   {
-    printf("DEBUG: Processing command in loop\n");
     shell->tokenized = shell->line_pointer;
     skip_command(&(shell->line_pointer));
     if (shell->line_pointer && shell->line_pointer->type == PIPE)
@@ -273,15 +223,12 @@ void execute_command_line(t_shell_control_block *shell)
     }
   }
   
-  printf("DEBUG: Finished command loop\n");
-  
   if (shell->previous_read_end != -1)
     close(shell->previous_read_end);
   
   // Only wait for child process if one was actually created
   if (shell->last_child_pid != -1)
   {
-    printf("DEBUG: Waiting for child process %d\n", shell->last_child_pid);
     waitpid(shell->last_child_pid, &status, 0);
     if (WIFEXITED(status))
       shell->exit_status = WEXITSTATUS(status);
@@ -292,13 +239,4 @@ void execute_command_line(t_shell_control_block *shell)
     while (wait(NULL) > 0)
       ;
   }
-  else
-  {
-    printf("DEBUG: No child process to wait for\n");
-  }
-  
-  printf("DEBUG: About to exit execute_command_line\n");
-  
-  if(shell->exit_status > 128)
-    print_exit_signal_message(shell->exit_status);
 }

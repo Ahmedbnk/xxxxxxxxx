@@ -12,6 +12,10 @@ void parse_line(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
+  // Reset exit_status for new command (unless it's a syntax error that should persist)
+  if (shell->exit_status == 1) // Ambiguous redirect error
+    shell->exit_status = 0; // Reset for new command
+    
   if (shell->tokenized)
   {
     create_all_heredocs(shell);
