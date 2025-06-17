@@ -2,7 +2,7 @@
 
 static void	allocat_arr_of_structs_list(t_expand **expand_list, int how_much_to_expand)
 {
-	*expand_list = ft_malloc(how_much_to_expand * sizeof(t_expand), 1);
+	*expand_list = ft_malloc(how_much_to_expand * sizeof(t_expand), 0);
 }
 
 static void	init_arr_of_structs_list(t_expand *expand_list, int how_much_to_expand, int heredoc_flag)
@@ -24,6 +24,8 @@ static void	init_arr_of_structs_list(t_expand *expand_list, int how_much_to_expa
 
 void	allocat_and_init(t_expand **expand_list, int how_much_to_expand, int heredoc_flag)
 {
+	// If expand_list already points to something, we need to be careful
+	// The garbage collector will handle the cleanup, so we can just allocate new memory
 	allocat_arr_of_structs_list(expand_list, how_much_to_expand);
 	init_arr_of_structs_list(*expand_list, how_much_to_expand, heredoc_flag);
 }
