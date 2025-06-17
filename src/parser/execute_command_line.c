@@ -54,29 +54,21 @@ void handle_all_redir(t_shell_control_block *shell)
 
 void	apply_redirections(t_shell_control_block *shell)
 {
-  printf("DEBUG: apply_redirections called\n");
   shell->in_file_name = NULL;
   shell->file_name = NULL;
   handle_all_redir(shell);
-  printf("DEBUG: After handle_all_redir: in_file_name='%s', file_name='%s'\n", 
-         shell->in_file_name ? shell->in_file_name : "NULL", 
-         shell->file_name ? shell->file_name : "NULL");
   if (shell->file_name)
   {
-    printf("DEBUG: Opening output file: '%s'\n", shell->file_name);
     shell->fd_out = open(shell->file_name, O_WRONLY | O_TRUNC);
     if (shell->fd_out == -1)
     {
-      printf("DEBUG: File doesn't exist, creating it\n");
       shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
     }
-    printf("DEBUG: File descriptor: %d\n", shell->fd_out);
     dup2(shell->fd_out, 1);
     close(shell->fd_out);
   }
   if(shell->in_file_name)
   {
-    printf("DEBUG: Opening input file: '%s'\n", shell->in_file_name);
     shell->fd_in = open(shell->in_file_name, O_RDONLY);
     dup2(shell->fd_in, 0);
     close(shell->fd_in);

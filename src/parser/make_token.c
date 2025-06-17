@@ -84,22 +84,8 @@ t_token *make_token(t_shell_control_block *shell)
 
   arr = shell->splitted;
   len = len_of_two_d_array(arr);
-  
-  printf("DEBUG: make_token called with %d tokens\n", len);
-  for(int i = 0; arr[i]; i++)
-  {
-    printf("DEBUG: arr[%d]: '%s'\n", i, arr[i]);
-  }
-  
   list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
-  
-  printf("DEBUG: After fill_the_list:\n");
-  for(int i = 0; i < len; i++)
-  {
-    printf("DEBUG: token[%d]: type=%d, word='%s'\n", i, list[i].type, list[i].word);
-  }
-  
   syntax_result = check_syntax_error(list, len);
   if(syntax_result)
   {
