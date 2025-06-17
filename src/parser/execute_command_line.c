@@ -47,7 +47,7 @@ void handle_all_redir(t_shell_control_block *shell)
     {
       char *filename = (shell->tokenized + 1)->word;
       
-      // Create the file first
+      // Create the file if filename is valid
       if (filename && *filename)
       {
         int fd = open(filename, O_WRONLY | O_TRUNC);
@@ -57,21 +57,13 @@ void handle_all_redir(t_shell_control_block *shell)
           close(fd);
       }
       
-      // Then check for ambiguous redirect
-      if (!filename || !*filename || ft_strlen(filename) == 0)
-      {
-        print_error("ambiguous redirect\n");
-        shell->exit_status = 1;
-        break; // Stop processing redirections
-      }
-      
       handle_redir_out(filename, &(shell->file_name));
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
       char *filename = (shell->tokenized + 1)->word;
       
-      // Create the file first
+      // Create the file if filename is valid
       if (filename && *filename)
       {
         int fd = open(filename, O_WRONLY | O_APPEND);
@@ -79,14 +71,6 @@ void handle_all_redir(t_shell_control_block *shell)
           fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
         if (fd != -1)
           close(fd);
-      }
-      
-      // Then check for ambiguous redirect
-      if (!filename || !*filename || ft_strlen(filename) == 0)
-      {
-        print_error("ambiguous redirect\n");
-        shell->exit_status = 1;
-        break; // Stop processing redirections
       }
       
       handle_append(filename, &(shell->file_name));
@@ -128,6 +112,10 @@ void	process_command(t_shell_control_block *shell)
 
 void execute_command_line_helper(t_shell_control_block *shell)
 {
+  // Check if there's an ambiguous redirect error and return early
+  if (shell->exit_status == 1)
+    return;
+    
   // Save original tokenized pointer
   t_token *original_tokenized = shell->tokenized;
   
