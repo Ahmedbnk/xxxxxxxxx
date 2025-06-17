@@ -26,6 +26,11 @@ void execute_line(t_shell_control_block *shell)
   {
     return;
   }
+  else
+  {
+    // Empty command (only spaces/tabs) - exit with 0
+    shell->exit_status = 0;
+  }
 }
 
 int main(int ac, char **av, char **env)

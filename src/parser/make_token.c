@@ -36,40 +36,54 @@ int check_syntax_error(t_token *data, int len)
   int i; i = 0;
   while(i < len)
   { 
+    // Check for pipe at beginning or end
     if(data[i].type == PIPE && (i == 0 || len - 1 == i))
-      return((print_error("error near | \n"), 2));
+      return((print_error("syntax error near unexpected token `|'\n"), 2));
+    
+    // Check for pipe without command before it
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
-      return((print_error("error near | \n"), 2));
+      return((print_error("syntax error near unexpected token `|'\n"), 2));
+    
+    // Check for redirection without command before it
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND) && i == 0)
+      return((print_error("syntax error near unexpected token `newline'\n"), 2));
+    
+    // Check for redirection at the end (no filename)
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND) && len - 1 == i)
+      return((print_error("syntax error near unexpected token `newline'\n"), 2));
+    
+    // Check for redirection followed by another redirection
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND) && i + 1 < len &&
+             (data[i + 1].type == REDIR_IN || data[i + 1].type == REDIR_OUT || 
+              data[i + 1].type == REDIR_APPEND))
+    {
+      if (data[i + 1].type == REDIR_OUT)
+        return((print_error("syntax error near unexpected token `>'\n"), 2));
+      else if (data[i + 1].type == REDIR_IN)
+        return((print_error("syntax error near unexpected token `<'\n"), 2));
+      else if (data[i + 1].type == REDIR_APPEND)
+        return((print_error("syntax error near unexpected token `>>'\n"), 2));
+    }
+    
+    // Check for ambiguous redirection (redirection followed by empty string)
+    else if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
+              data[i].type == REDIR_APPEND) && i + 1 < len && data[i + 1].type == WORD)
+    {
+      if (data[i + 1].word == NULL || data[i + 1].word[0] == '\0' || 
+          ft_strlen(data[i + 1].word) == 0)
+        return((print_error("ambiguous redirect\n"), 1));
+    }
+    
+    // Check for invalid token sequences
     else if (data[i].type != PIPE && data[i].type != WORD && 
              data[i + 1].type != WORD && data[i+1].type != -1)
     {
-      return((print_error("error near new line \n"), 2));
+      return((print_error("syntax error near unexpected token `newline'\n"), 2));
     }
-    else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == WORD)
-    {
-      // Check for ambiguous redirection (redirection followed by empty string or NULL)
-      if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-           data[i].type == REDIR_APPEND))
-      {
-        // Check if the word after redirection is empty or NULL
-        if (data[i + 1].word == NULL)
-          return((print_error("ambiguous redirect\n"), 1));
-        if (data[i + 1].word[0] == '\0')
-          return((print_error("ambiguous redirect\n"), 1));
-        if (ft_strlen(data[i + 1].word) == 0)
-          return((print_error("ambiguous redirect\n"), 1));
-        // If we get here, the word is not empty, so it's a valid redirection
-      }
-    }
-    else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
-    {
-      // Check for ambiguous redirection at the end
-      if ((data[i].type == REDIR_IN || data[i].type == REDIR_OUT || 
-           data[i].type == REDIR_APPEND))
-        return((print_error("ambiguous redirect\n"), 1));
-      else
-        return((print_error("error near new line \n"), 2));
-    }
+    
     i++;
   }
   return 0;
