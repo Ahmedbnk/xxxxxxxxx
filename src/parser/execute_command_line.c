@@ -58,13 +58,17 @@ void	process_command(t_shell_control_block *shell)
   handle_all_redir(shell);
   if (shell->file_name)
   {
-    shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    shell->fd_out = open(shell->file_name, O_WRONLY | O_TRUNC);
+    if (shell->fd_out == -1)
+    {
+      shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    }
     dup2(shell->fd_out, 1);
     close(shell->fd_out);
   }
   if(shell->in_file_name)
   {
-    shell->fd_in = open(shell->in_file_name, O_CREAT | O_RDONLY, 0644);
+    shell->fd_in = open(shell->in_file_name, O_RDONLY);
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
