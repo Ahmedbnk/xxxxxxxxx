@@ -7,6 +7,11 @@ char *remake_delimeter(char *str)
   if (!str)
     return NULL;
 
+  // Use the expansion system to expand variables in the delimiter
+  char *expanded = expand_if_possible(NULL, str, 1);
+  if (expanded)
+    str = expanded;
+
   returned_str = ft_malloc(ft_strlen(str) + 1, 1);
 
   int i;
