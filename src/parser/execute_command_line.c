@@ -47,6 +47,14 @@ void handle_all_redir(t_shell_control_block *shell)
     {
       char *filename = (shell->tokenized + 1)->word;
       
+      // Check for ambiguous redirect first
+      if (!filename || !*filename || ft_strlen(filename) == 0)
+      {
+        // Don't print error here (already printed in syntax checker)
+        shell->exit_status = 1;
+        break; // Stop processing redirections
+      }
+      
       // Create the file if filename is valid
       int fd = open(filename, O_WRONLY | O_TRUNC);
       if (fd == -1)
@@ -59,6 +67,14 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_APPEND)
     {
       char *filename = (shell->tokenized + 1)->word;
+      
+      // Check for ambiguous redirect first
+      if (!filename || !*filename || ft_strlen(filename) == 0)
+      {
+        // Don't print error here (already printed in syntax checker)
+        shell->exit_status = 1;
+        break; // Stop processing redirections
+      }
       
       // Create the file if filename is valid
       int fd = open(filename, O_WRONLY | O_APPEND);
@@ -121,6 +137,10 @@ void execute_command_line_helper(t_shell_control_block *shell)
   
   // Apply redirections before executing any command (built-in or not)
   apply_redirections(shell);
+  
+  // Check if there's an ambiguous redirect error and return early
+  if (shell->exit_status == 1)
+    return;
   
   if (execute_built_in(shell))
   {
