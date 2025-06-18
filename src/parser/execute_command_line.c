@@ -214,10 +214,9 @@ void execute_command_line(t_shell_control_block *shell)
       pipe(shell->arr);
     execute_command_line_helper(shell);
     
-    // Check if there was an ambiguous redirect error and break the pipeline
-    if (shell->exit_status == 1)
-      break;
-      
+    // Don't break on ambiguous redirect error - let pipeline continue
+    // The error will be handled by the individual command
+    
     if (shell->previous_read_end != -1)
       close(shell->previous_read_end);
     if (shell->line_pointer && shell->line_pointer->type == PIPE)
