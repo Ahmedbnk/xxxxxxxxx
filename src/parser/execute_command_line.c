@@ -150,8 +150,17 @@ void execute_command_line_helper(t_shell_control_block *shell)
   // Apply redirections before executing any command (built-in or not)
   apply_redirections(shell);
   
-  // Don't return early on ambiguous redirect error - let the command fail naturally
-  // but allow the pipeline to continue
+  // Check if there was an ambiguous redirect error - if so, don't execute anything
+  if (shell->exit_status == 1)
+  {
+    shell->last_child_pid = -1; // No child process created
+    // Restore file descriptors
+    dup2(original_stdin, 0);
+    dup2(original_stdout, 1);
+    close(original_stdin);
+    close(original_stdout);
+    return;
+  }
   
   if (execute_built_in(shell))
   {
