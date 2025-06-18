@@ -8,7 +8,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <stdarg.h>
 #include <sys/wait.h>
 #include <errno.h>
 
@@ -129,7 +128,6 @@ void handle_redir_in(char *str, char **in_file_name);
 char *read_file(char *file_name);
 void handle_redir_out(char *str, char **file_name);
 void handle_append(char *str, char **file_name);
-void handle_all_redir(t_shell_control_block *shell);
 char **get_cmd_and_its_args(t_shell_control_block *shell);
 void execute_command(t_shell_control_block *shell);
 void	remove_quotes(char **line);
