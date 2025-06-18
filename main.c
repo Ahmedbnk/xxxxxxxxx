@@ -2,7 +2,6 @@
 
 void expand(t_shell_control_block *shell) 
 {
-
   int i;
   i = 0;
   while (shell->splitted[i])
@@ -10,7 +9,25 @@ void expand(t_shell_control_block *shell)
     if(are_they_equal(shell->splitted[i], "<<"))
       i++;
     else
-      shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
+    {
+      char *expanded = expand_if_possible(shell, shell->splitted[i], 0);
+      
+      // Check for ambiguous redirect after expansion
+      if (expanded && ft_strlen(expanded) == 0)
+      {
+        // Empty string after expansion - check if this is a redirection filename
+        if (i > 0 && (are_they_equal(shell->splitted[i-1], ">") || 
+                      are_they_equal(shell->splitted[i-1], ">>")))
+        {
+          // This is a redirection filename that expanded to empty - ambiguous redirect
+          shell->exit_status = 1;
+          printf("ambiguous redirect\n");
+          return; // Stop processing
+        }
+      }
+      
+      shell->splitted[i] = expanded;
+    }
     i++;
   }
 }
@@ -81,6 +98,14 @@ void parse_line(t_shell_control_block *shell)
   shell->splitted = customized_split(shell->line);
   shell->splitted = split_with_operators(shell->splitted);
   expand(shell);
+  
+  // Check if there was an ambiguous redirect error
+  if (shell->exit_status == 1)
+  {
+    shell->tokenized = NULL; // Don't create tokens
+    return;
+  }
+  
   shell->splitted = split_after_expantion(shell->splitted);
   shell->splitted = handle_dollar_with_quotes(shell->splitted);
   shell->tokenized = make_token(shell);
@@ -109,6 +134,11 @@ void execute_line(t_shell_control_block *shell)
     if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
     else
       execute_command_line(shell);
+  }
+  else if (shell->exit_status == 1)
+  {
+    // Ambiguous redirect error - don't execute anything
+    return;
   }
 }
 
