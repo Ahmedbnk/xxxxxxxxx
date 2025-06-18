@@ -204,10 +204,7 @@ void execute_command_line(t_shell_control_block *shell)
 
   // Check if there's an ambiguous redirect error and return early
   if (shell->exit_status == 1)
-  {
-    printf("DEBUG: execute_command_line - ambiguous redirect detected, returning early\n");
     return;
-  }
 
   status = 0;
   shell->line_pointer = shell->tokenized;
