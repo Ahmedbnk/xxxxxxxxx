@@ -142,7 +142,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
   shell->tokenized = original_tokenized;
   
   // Apply redirections before executing any command (built-in or not)
-  apply_redirections(shell);
+  handle_all_redir(shell);
   
   // Check if there was an ambiguous redirect error - if so, don't execute anything
   if (shell->exit_status == 1)
@@ -193,7 +193,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
     }
     // Apply redirections in child process
     shell->tokenized = original_tokenized;
-    apply_redirections(shell);
+    handle_all_redir(shell);
     
     // Check if there was an ambiguous redirect error and exit early
     if (shell->exit_status == 1)
