@@ -2,7 +2,6 @@
 # define MINISHELL_H
 
 # include <fcntl.h>
-# include <stdarg.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
@@ -10,12 +9,12 @@
 # include <stdlib.h>
 # include <unistd.h>
 #include <sys/wait.h>
-#include <dirent.h>
 #include <errno.h>
 
 # define single_q 39
 # define double_q 34
 #define BUFFER_SIZE 40
+#define PROTECT 14
 
 
 typedef enum e_type
@@ -55,6 +54,7 @@ typedef struct  s_expand
 typedef struct s_shell_control_block
 {
   char **env_cpy;
+  char **  env_of_export;; 
   char *line;
   char **splitted;
   t_token *tokenized;
@@ -139,10 +139,9 @@ char ** copy_env(char **env);
 void print_env(char **env);
 void echo(char **args);
 int	ft_strncmp(const char *big, const char *little, size_t n);
-char *pwd(char **args);
+char *pwd();
 int execute_built_in(t_shell_control_block *shell);
 void print_env(char **env);
-void export(char ***env, char **to_export, t_shell_control_block *shell);
 int is_it_key_value(char *str);
 int is_valid_var(char *str);
 int compare_env_var(char *var1, char *var2);
@@ -154,26 +153,13 @@ int	ft_strcmp(char *s1, char *s2);
 char **handle_dollar_with_quotes(char **splitted);
 
 //int	ft_strncmp(const char *big, const char *little, size_t n);
-void cd(char **env, char **path, int apply_cd);
+void cd(char **env, char **path);
 int	print_error(const char *str, ...);
 void create_all_heredocs(t_shell_control_block *shell);
-void unset(char ***env, char **vars, t_shell_control_block *shell);
+void unset(char ***env, char **vars);
 
 void print_exit_signal_message(int exit_status);
 char *get_env_var(t_shell_control_block *shell , t_expand data);
-void dn(int n );
-void ds(char *to_print);
-int	is_between_lock(char *line, int index);
-char	**test_split(char const *s);
-char *ft_append(char *src, int start , int size);
-int	ft_w_counter(char const *s);
-char **split_after_expantion(char **str);
-void ft_init_shell_block(t_shell_control_block *shell, int ac, char **av);
-char *ft_readline(t_shell_control_block *shell);
-int is_there_a_pipe(t_shell_control_block *shell);
-int	how_many_dallar_to_expand(char *str, int heredoc_flag);
-void expand(t_shell_control_block *shell);
-int	ft_lstsize(t_list *lst);
-char *ft_charremove(const char *s1, char c);
-int check_ambiguous_redirection(char *filename);
+void remove_var_from_env(char ***env , char *var);
+void export(t_shell_control_block *s, char **to_export);
 #endif

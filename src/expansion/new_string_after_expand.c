@@ -1,61 +1,47 @@
 #include "minishell.h"
 
-char	*expnad_and_join_node(t_shell_control_block *s, int i)
+char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
 {
-	char	*var_value;
-	char	*result;
-
-	if (ft_strcmp(s->expand_arr[i].to_expand, "$?") == 0)
-		var_value = ft_itoa(s->exit_status);
-	else
-		var_value = get_env_var(s, s->expand_arr[i]);
-
-	if (var_value)
+	char	*path;
+	char	*the_joined_node;
+	char	*rest;
+	if (data.to_expand != NULL)
 	{
-		if (s->expand_arr[i].befor_dollar && s->expand_arr[i].after_dollar)
-			result = custom_join(custom_join(s->expand_arr[i].befor_dollar, var_value), s->expand_arr[i].after_dollar);
-		else if (s->expand_arr[i].befor_dollar)
-			result = custom_join(s->expand_arr[i].befor_dollar, var_value);
-		else if (s->expand_arr[i].after_dollar)
-			result = custom_join(var_value, s->expand_arr[i].after_dollar);
+		if (are_they_equal(data.to_expand, "$?"))
+			path = ft_itoa(s->exit_status);
 		else
-			result = ft_strdup(var_value, 1);
+			path = ft_strdup(get_env_var(s, data), 1);
+		the_joined_node = custom_join(data.befor_dollar, path);
 	}
-	else
+	if (data.last_one)
 	{
-		if (s->expand_arr[i].befor_dollar && s->expand_arr[i].after_dollar)
-			result = custom_join(s->expand_arr[i].befor_dollar, s->expand_arr[i].after_dollar);
-		else if (s->expand_arr[i].befor_dollar)
-			result = ft_strdup(s->expand_arr[i].befor_dollar, 1);
-		else if (s->expand_arr[i].after_dollar)
-			result = ft_strdup(s->expand_arr[i].after_dollar, 1);
-		else
-			result = ft_strdup("", 1);
+		rest = custom_join(the_joined_node, data.after_dollar);
+		return (rest);
 	}
-	return (result);
+	return (the_joined_node);
 }
 
 char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 {
-	char	*result;
+	char	*new_after_expand;
+	char	*expanded;
+	char	*joined;
 	int		i;
 
+	new_after_expand = NULL;
 	i = 0;
-	result = NULL;
 	while (i < num_of_expantion)
 	{
-		if (i == 0)
-			result = expnad_and_join_node(s, i);
-		else
-		{
-			if (result)
-				result = custom_join(result, expnad_and_join_node(s, i));
-			else
-				result = expnad_and_join_node(s, i);
-		}
-		if (!result)
+		if (num_of_expantion - i == 1)
+			s->expand_arr[i].last_one = 1;
+		expanded = expnad_and_join_node(s, s->expand_arr[i]);
+		if (!expanded)
+			return (NULL);
+		joined = custom_join(new_after_expand, expanded);
+		new_after_expand = joined;
+		if (!new_after_expand)
 			return (NULL);
 		i++;
 	}
-	return (result);
+	return (new_after_expand);
 }

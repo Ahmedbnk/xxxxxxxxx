@@ -17,67 +17,25 @@ void remove_var_from_env(char ***env , char *var)
   int i;
   i = 0;
 
-  env_after_unset = ft_malloc(len_of_two_d_array(*env) * sizeof(char *), 1);
+  env_after_unset = ft_malloc(len_of_two_d_array(*env) * sizeof(char *), 0);
   while(**env)
   {
     if(!compare_env_var(**env, var))
-      env_after_unset[i++]=  ft_strdup(**env, 1);
+      env_after_unset[i++]=  ft_strdup(**env, 0);
     (*env)++;
   }
   env_after_unset[i] = NULL;
   *env = env_after_unset;
 }
 
-int is_valid_unset_var(char *str)
+void unset(char ***env, char **vars)
 {
-    int i;
-    i = 0;
-    
-    if(!str || !*str)
-    {
-        print_error("unset: `': not a valid identifier\n");
-        return 0;
-    }
-    
-    // First character must be a letter or underscore
-    if(!ft_isalpha(str[0]) && str[0] != '_')
-    {
-        print_error("unset: `%s': not a valid identifier\n", str);
-        return 0;
-    }
-    
-    while(str[i])
-    {
-        if(!ft_isalnum(str[i]) && str[i] != '_')
-        {
-            print_error("unset: `%s': not a valid identifier\n", str);
-            return 0;
-        }
-        i++;
-    }
-    return 1;
-}
-
-void unset(char ***env, char **vars, t_shell_control_block *shell)
-{
-    int has_error = 0;
-    
-    while(*vars)
-    {
-        if(!is_valid_unset_var(*vars))
-        {
-            has_error = 1;
-        }
-        else if(is_the_var_in_env(*env, *vars))
-        {
-            remove_var_from_env(env, *vars);
-        }
-        vars++;
-    }
-    
-    // Set exit status to 1 if there were any errors
-    if (has_error)
-        shell->exit_status = 1;
+  while(*vars)
+  {
+    if(is_the_var_in_env(*env, *vars))
+      remove_var_from_env(env, *vars);
+    vars++;
+  }
 }
 
 // int main(int argc, char *argv[], char *env[])

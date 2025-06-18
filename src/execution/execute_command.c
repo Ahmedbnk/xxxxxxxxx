@@ -1,72 +1,59 @@
 #include "minishell.h"
 
-void  check_path(char *cmd, char **av, char **path, char **env)
+void  check_after_geting_bath( char *cmd, char **av, char **path, char **env)
 {
 	int i;
-	char *slash_cmd;
-	char *full_path;
-	DIR *dir;
+	char *cmd_with_slash;
+	char *cmd_with_its_path;
 
 	if(!path)
 		return;
 	i = 0;
-	slash_cmd = ft_strjoin("/", cmd);
+	cmd_with_slash = ft_strjoin("/", cmd);
 	while(path[i])
 	{
-		full_path = ft_strjoin(path[i] ,slash_cmd);
-		if(access(full_path, F_OK) == 0)
+		cmd_with_its_path = ft_strjoin(path[i] ,cmd_with_slash);
+		if(access(cmd_with_its_path, F_OK) == 0)
 		{
-			dir = opendir(full_path);
-			if (dir != NULL)
+			if(access(cmd_with_its_path, X_OK) == 0)
 			{
-				closedir(dir);
-				exit((print_error("%s: Is a directory\n", cmd), 126));
-			}
-			else if(access(full_path, X_OK) == 0)
-			{
-				execve(full_path , av, env);
+				execve(cmd_with_its_path , av, env);
 				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
 			}
 			else
-				exit((print_error("%s: Permission denied\n", cmd), 126));
+				exit((print_error("%s: Permition denied\n", cmd), 126));
 		}
 		i++;
 	}
 	exit((print_error("%s: command not found\n", cmd), 127));
 }
 
-void  check_file(char *cmd, char **av, char **env)
+
+void  check_the_access(char *cmd, char **av, char **env)
 {
-	DIR *dir;
-	
 	if (access(cmd, F_OK) == 0)
 	{
-		dir = opendir(cmd);
-		if (dir != NULL)
-		{
-			closedir(dir);
-			exit((print_error("%s: Is a directory\n", cmd), 126));
-		}
-		else if(access(cmd, X_OK) == 0)
+		if(access(cmd, X_OK) == 0)
 		{
 			execve(cmd , av, env);
-			exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
+				exit((print_error("%s: %s\n", cmd, strerror(errno)), errno));
 		}
 		else
-			exit((print_error("%s: Permission denied\n", cmd), 126));
+				exit((print_error("%s: Permition denied\n", cmd), 126));
 	}
 	else
-		exit((print_error("%s: No such file or directory\n", cmd), 127));
+	  exit((print_error("%s: command not found\n", cmd), 127));
 }
+
 
 char **get_path()
 {
 	char	*path;
-	char	**split;
+	char	**splited;
 
 	path = getenv("PATH");
-	split = ft_split(path , ':');
-	return split;
+	splited = ft_split(path , ':');
+	return splited;
 }
 
 void execute_command(t_shell_control_block *shell)
@@ -75,22 +62,23 @@ void execute_command(t_shell_control_block *shell)
 		return;
 	char **path = get_path();
 	if(**shell->cmd_and_args == '/')
-		check_file(*shell->cmd_and_args, shell->cmd_and_args, shell->env_cpy);
+		check_the_access(*shell->cmd_and_args, shell->cmd_and_args, shell->env_cpy);
 	else
-		check_path(*shell->cmd_and_args ,shell->cmd_and_args , path , shell->env_cpy);
+		check_after_geting_bath(*shell->cmd_and_args ,shell->cmd_and_args , path , shell->env_cpy);
 }
 
-int count_tokens(t_token *tokens)
+int how_many_strcut_in_the_array(t_token *arr_of_stracts)
 {
-	int count;
+	int number_of_structs;
 
-	count = 0;
-	while(tokens->word != NULL )
+	number_of_structs = 0;
+	while(arr_of_stracts->word != NULL )
 	{
-		count++;
-		tokens++;
+
+		number_of_structs++;
+		arr_of_stracts++;
 	}
-	return count;
+	return  number_of_structs;
 }
 
 char **get_cmd_and_its_args(t_shell_control_block *shell)
@@ -98,7 +86,7 @@ char **get_cmd_and_its_args(t_shell_control_block *shell)
     int i;
     int j;
 
-    shell->cmd_and_args = ft_malloc( (count_tokens(shell->tokenized)+1)* sizeof(char *),1);
+    shell->cmd_and_args = ft_malloc( (how_many_strcut_in_the_array(shell->tokenized)+1)* sizeof(t_token ),1);
 
     i = 0;
     j = 0;
