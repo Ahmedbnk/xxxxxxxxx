@@ -202,10 +202,6 @@ void execute_command_line(t_shell_control_block *shell)
 {
   int status;
 
-  // Check if there's an ambiguous redirect error and return early
-  if (shell->exit_status == 1)
-    return;
-
   status = 0;
   shell->line_pointer = shell->tokenized;
   shell->previous_read_end = -1;
