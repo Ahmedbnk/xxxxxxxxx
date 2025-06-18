@@ -106,7 +106,7 @@ void execute_line(t_shell_control_block *shell)
   {
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
-    if(!is_there_a_pipe(shell) && execute_built_in(shell));
+    if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
     else
       execute_command_line(shell);
   }
