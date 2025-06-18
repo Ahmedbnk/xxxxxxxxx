@@ -194,7 +194,10 @@ void execute_command_line_helper(t_shell_control_block *shell)
     
     // Check if there was an ambiguous redirect error and exit early
     if (shell->exit_status == 1)
+    {
+      printf("DEBUG: Child process exiting due to ambiguous redirect error\n");
       exit(1);
+    }
       
     execute_command(shell);
     exit(0);
