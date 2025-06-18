@@ -146,12 +146,8 @@ void execute_command_line_helper(t_shell_control_block *shell)
   // Apply redirections before executing any command (built-in or not)
   apply_redirections(shell);
   
-  // Check if there's an ambiguous redirect error and return early
-  if (shell->exit_status == 1)
-  {
-    shell->last_child_pid = -1; // Set to -1 to prevent waitpid from hanging
-    return;
-  }
+  // Don't return early on ambiguous redirect error - let the command fail naturally
+  // but allow the pipeline to continue
   
   if (execute_built_in(shell))
   {
