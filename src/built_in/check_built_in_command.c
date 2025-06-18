@@ -6,7 +6,7 @@ int  execute_built_in(t_shell_control_block *shell, int state)
     // If state is 1 (parent process), handle redirections first
     if (state == 1)
     {
-      printf("state is 1\n");
+      printf("state is now 1\n");
         // Save original file descriptors
         int original_stdin = dup(0);
         int original_stdout = dup(1);
