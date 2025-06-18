@@ -10,9 +10,31 @@ int  execute_built_in(t_shell_control_block *shell, int state)
         int original_stdin = dup(0);
         int original_stdout = dup(1);
         
-        // Apply redirections
-        handle_all_redir(shell);
+        // Save original tokenized pointer
+        t_token *original_tokenized = shell->tokenized;
         
+        // Apply redirections using the original tokens
+        shell->in_file_name = NULL;
+        shell->file_name = NULL;
+        
+        // Process redirections from the original tokens
+        while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
+        {
+            if (shell->tokenized->type == HEREDOC)
+                shell->in_file_name = shell->tokenized->heredoc_file_name;
+            else if (shell->tokenized->type == REDIR_IN)
+                handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
+            else if (shell->tokenized->type == REDIR_OUT)
+                handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+            else if (shell->tokenized->type == REDIR_APPEND)
+                handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+            shell->tokenized++;
+        }
+        
+        // Restore original tokenized pointer
+        shell->tokenized = original_tokenized;
+        
+        // Apply the redirections to file descriptors
         if (shell->file_name)
         {
             shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
