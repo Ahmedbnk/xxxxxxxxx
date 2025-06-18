@@ -37,6 +37,26 @@ void	skip_command(t_token **tokenized_address)
 
 void handle_all_redir(t_shell_control_block *shell)
 {
+  // First pass: check for any ambiguous redirects
+  t_token *temp_tokenized = shell->tokenized;
+  while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
+  {
+    if (temp_tokenized->type == REDIR_OUT || temp_tokenized->type == REDIR_APPEND)
+    {
+      char *filename = (temp_tokenized + 1)->word;
+      if (!filename || !*filename || ft_strlen(filename) == 0)
+      {
+        // Ambiguous redirect detected - don't create any files
+        shell->exit_status = 1;
+        shell->file_name = NULL;
+        shell->in_file_name = NULL;
+        return;
+      }
+    }
+    temp_tokenized++;
+  }
+  
+  // Second pass: process redirections only if no ambiguous redirects were found
   while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
   {
     if (shell->tokenized->type == HEREDOC)
@@ -47,15 +67,6 @@ void handle_all_redir(t_shell_control_block *shell)
     {
       char *filename = (shell->tokenized + 1)->word;
       
-      // Check for ambiguous redirect first
-      if (!filename || !*filename || ft_strlen(filename) == 0)
-      {
-        // Don't print error here (already printed in syntax checker)
-        shell->exit_status = 1;
-        shell->file_name = NULL; // Clear file_name to prevent dup2 hang
-        break; // Stop processing redirections
-      }
-      
       // Create the file if filename is valid
       int fd = open(filename, O_WRONLY | O_TRUNC);
       if (fd == -1)
@@ -63,21 +74,11 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
-      // Only set file_name if no ambiguous redirect
       handle_redir_out(filename, &(shell->file_name));
     }
     else if (shell->tokenized->type == REDIR_APPEND)
     {
       char *filename = (shell->tokenized + 1)->word;
-      
-      // Check for ambiguous redirect first
-      if (!filename || !*filename || ft_strlen(filename) == 0)
-      {
-        // Don't print error here (already printed in syntax checker)
-        shell->exit_status = 1;
-        shell->file_name = NULL; // Clear file_name to prevent dup2 hang
-        break; // Stop processing redirections
-      }
       
       // Create the file if filename is valid
       int fd = open(filename, O_WRONLY | O_APPEND);
@@ -86,11 +87,10 @@ void handle_all_redir(t_shell_control_block *shell)
       if (fd != -1)
         close(fd);
       
-      // Only set file_name if no ambiguous redirect
       handle_append(filename, &(shell->file_name));
     }
     
-    shell->tokenized ++;
+    shell->tokenized++;
   }
 }
 
@@ -194,10 +194,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
     
     // Check if there was an ambiguous redirect error and exit early
     if (shell->exit_status == 1)
-    {
-      printf("DEBUG: Child process exiting due to ambiguous redirect error\n");
       exit(1);
-    }
       
     execute_command(shell);
     exit(0);
