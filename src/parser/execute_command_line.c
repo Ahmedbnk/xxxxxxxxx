@@ -101,6 +101,10 @@ void	apply_redirections(t_shell_control_block *shell)
   
   handle_all_redir(shell);
   
+  // Check if there was an ambiguous redirect error
+  if (shell->exit_status == 1)
+    return; // Don't apply any redirections if there's an error
+  
   if (shell->file_name)
   {
     shell->fd_out = open(shell->file_name, O_WRONLY | O_TRUNC);
