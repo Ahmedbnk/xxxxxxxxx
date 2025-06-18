@@ -54,12 +54,29 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_IN)
       handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
     else if (shell->tokenized->type == REDIR_OUT)
-      handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+    {
+      if (!handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name)))
+      {
+        // Ambiguous redirect detected
+        shell->exit_status = 1;
+        shell->file_name = NULL;
+        shell->in_file_name = NULL;
+        return; // Stop processing redirections
+      }
+    }
     else if (shell->tokenized->type == REDIR_APPEND)
-      handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+    {
+      if (!handle_append((shell->tokenized + 1)->word, &(shell->file_name)))
+      {
+        // Ambiguous redirect detected
+        shell->exit_status = 1;
+        shell->file_name = NULL;
+        shell->in_file_name = NULL;
+        return; // Stop processing redirections
+      }
+    }
     shell->tokenized ++;
   }
-
 }
 void	process_command(t_shell_control_block *shell)
 {

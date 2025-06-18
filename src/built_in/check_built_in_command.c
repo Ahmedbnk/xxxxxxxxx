@@ -26,9 +26,41 @@ int  execute_built_in(t_shell_control_block *shell, int state)
             else if (shell->tokenized->type == REDIR_IN)
                 handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
             else if (shell->tokenized->type == REDIR_OUT)
-                handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+            {
+                if (!handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name)))
+                {
+                    // Ambiguous redirect detected
+                    shell->exit_status = 1;
+                    shell->file_name = NULL;
+                    shell->in_file_name = NULL;
+                    // Restore original tokenized pointer
+                    shell->tokenized = original_tokenized;
+                    // Restore original file descriptors
+                    dup2(original_stdin, 0);
+                    dup2(original_stdout, 1);
+                    close(original_stdin);
+                    close(original_stdout);
+                    return 1; // Return early without executing command
+                }
+            }
             else if (shell->tokenized->type == REDIR_APPEND)
-                handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+            {
+                if (!handle_append((shell->tokenized + 1)->word, &(shell->file_name)))
+                {
+                    // Ambiguous redirect detected
+                    shell->exit_status = 1;
+                    shell->file_name = NULL;
+                    shell->in_file_name = NULL;
+                    // Restore original tokenized pointer
+                    shell->tokenized = original_tokenized;
+                    // Restore original file descriptors
+                    dup2(original_stdin, 0);
+                    dup2(original_stdout, 1);
+                    close(original_stdin);
+                    close(original_stdout);
+                    return 1; // Return early without executing command
+                }
+            }
             shell->tokenized++;
         }
         
