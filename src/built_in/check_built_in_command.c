@@ -3,12 +3,16 @@
 // void execute_built_in(char **env, char **cmd_and_args)
 int  execute_built_in(t_shell_control_block *shell, int state)
 { 
+    // Declare file descriptors at function level
+    int original_stdin = -1;
+    int original_stdout = -1;
+    
     // If state is 1 (parent process), handle redirections first
     if (state == 1)
     {
         // Save original file descriptors
-        int original_stdin = dup(0);
-        int original_stdout = dup(1);
+        original_stdin = dup(0);
+        original_stdout = dup(1);
         
         // Apply redirections
         handle_all_redir(shell);
