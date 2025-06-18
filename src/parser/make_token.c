@@ -42,7 +42,11 @@ int check_syntax_error(t_token *data, int len)
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
       return((print_error("error near | \n"), 1));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
+    {
+      printf("this is what cause the error : %d\n", data[i].type);
       return((print_error("error near new line \n"), 1));
+
+    }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
       return((print_error("error near new line \n"), 1));
     i++;
