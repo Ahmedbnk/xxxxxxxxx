@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_type	get_type_type(const char *str)
@@ -32,7 +31,7 @@ void fill_the_list(t_token * list, char **arr)
 }
 
 
-int check_syntax_error(t_token *data, int len)
+int check_syntax_error(t_token *data, int len, t_shell_control_block *shell)
 {
   int i; i = 0;
   while(i < len)
@@ -41,6 +40,15 @@ int check_syntax_error(t_token *data, int len)
       return((print_error("error near | \n"), 1));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
       return((print_error("error near | \n"), 1));
+    else if ((data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND) && 
+             (i + 1 < len) && 
+             (data[i + 1].word == NULL || data[i + 1].word[0] == '\0'))
+    {
+      // Ambiguous redirect detected
+      print_error("ambiguous redirect\n");
+      shell->exit_status = 1;
+      return 1;
+    }
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
     {
       printf("this is what cause the error : %d\n", data[i].type);
@@ -64,9 +72,12 @@ t_token *make_token(t_shell_control_block *shell)
   len = len_of_two_d_array(arr);
   list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
-  if(check_syntax_error(list, len))
+  if(check_syntax_error(list, len, shell))
   {
-    shell->exit_status = 2;
+    // Check if it's an ambiguous redirect error (exit_status will be set to 1)
+    // or a general syntax error (exit_status will be set to 2)
+    if (shell->exit_status != 1) // If not already set to 1 by ambiguous redirect
+      shell->exit_status = 2;
     return NULL;
   }
   return list;
