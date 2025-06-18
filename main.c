@@ -12,16 +12,29 @@ void parse_line(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
+  printf("DEBUG: execute_line - exit_status at start: %d\n", shell->exit_status);
+  
   // Reset exit_status for new command (unless it's a syntax error that should persist)
   // Only reset for non-pipeline commands to preserve errors across pipeline
   if (shell->exit_status == 1 && !is_there_a_pipe(shell)) // Ambiguous redirect error
+  {
+    printf("DEBUG: Resetting exit_status for non-pipeline command\n");
     shell->exit_status = 0; // Reset for new command
+  }
+  else if (shell->exit_status == 1)
+  {
+    printf("DEBUG: Preserving exit_status for pipeline command\n");
+  }
     
   if (shell->tokenized)
   {
+    printf("DEBUG: Processing tokenized command\n");
     // Check if there's an ambiguous redirect error and return early
     if (shell->exit_status == 1)
+    {
+      printf("DEBUG: Returning early due to exit_status == 1\n");
       return;
+    }
       
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
@@ -32,6 +45,7 @@ void execute_line(t_shell_control_block *shell)
   }
   else if (shell->exit_status == 1)
   {
+    printf("DEBUG: Returning early due to exit_status == 1 (no tokens)\n");
     return;
   }
   else
@@ -39,6 +53,8 @@ void execute_line(t_shell_control_block *shell)
     // Empty command (only spaces/tabs) - exit with 0
     shell->exit_status = 0;
   }
+  
+  printf("DEBUG: execute_line - exit_status at end: %d\n", shell->exit_status);
 }
 
 int main(int ac, char **av, char **env)
