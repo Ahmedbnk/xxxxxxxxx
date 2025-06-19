@@ -164,8 +164,19 @@ void execute_command_line_helper(t_shell_control_block *shell)
     shell->last_child_pid = p_id;
 }
 
-void execute_command_line(t_shell_control_block *shell)
+void	execute_command_line(t_shell_control_block *shell)
 {
+  printf("DEBUG: execute_command_line - exit_status at start = %d\n", shell->exit_status);
+  
+  // Check if there's an ambiguous redirect error
+  if (shell->exit_status == 1)
+  {
+    printf("DEBUG: execute_command_line - ambiguous redirect detected, returning early\n");
+    return;
+  }
+  
+  printf("DEBUG: execute_command_line - no ambiguous redirect, processing normally\n");
+  
   int status;
 
   status = 0;

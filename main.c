@@ -125,13 +125,20 @@ int is_there_a_pipe(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
+  printf("DEBUG: execute_line - exit_status before = %d\n", shell->exit_status);
+  
   if (shell->tokenized)
   {
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
+    printf("DEBUG: execute_line - exit_status after get_cmd_and_its_args = %d\n", shell->exit_status);
+    
     if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
     else
+    {
+      printf("DEBUG: execute_line - calling execute_command_line with exit_status = %d\n", shell->exit_status);
       execute_command_line(shell);
+    }
   }
 }
 
