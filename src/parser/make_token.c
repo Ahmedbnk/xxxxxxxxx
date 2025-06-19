@@ -32,48 +32,42 @@ void fill_the_list(t_token * list, char **arr)
 
 int check_syntax_error(t_token *data, int len)
 {
-  int i; 
-  i = 0;
-  
-  while(i < len)
-  { 
-    if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND || data[i].type == REDIR_IN)
+    int i = 0;
+    while (i < len)
     {
-      if (i + 1 >= len || !data[i + 1].word || ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR"))
-      {
-        return 2;
-      }
-      
-      if (i + 1 < len && data[i + 1].word)
-      {
-        for (int j = 0; data[i + 1].word[j]; j++)
+        if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND || data[i].type == REDIR_IN)
         {
-          if (data[i + 1].word[j] == ' ')
-          {
-            return 2;
-          }
+            // If the next token is missing, it's a syntax error
+            if (i + 1 >= len || !data[i + 1].word)
+                return (print_error("error near new line \n"), 1);
+
+            // If the next token is EMPTY_REDIR or empty string, it's ambiguous
+            if (ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR"))
+                return 2;
+
+            // If the next token contains spaces, it's ambiguous
+            for (int j = 0; data[i + 1].word[j]; j++)
+            {
+                if (data[i + 1].word[j] == ' ')
+                    return 2;
+            }
         }
-      }
+        i++;
     }
-    i++;
-  }
-  
-  i = 0;
-  while(i < len)
-  { 
-    if(data[i].type == PIPE && (i == 0 || len - 1 == i))
-      return((print_error("error near | \n"), 1));
-    else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
-      return((print_error("error near | \n"), 1));
-    else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
+    i = 0;
+    while (i < len)
     {
-      return((print_error("error near new line \n"), 1));
+        if (data[i].type == PIPE && (i == 0 || len - 1 == i))
+            return (print_error("error near | \n"), 1);
+        else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type == PIPE)
+            return (print_error("error near | \n"), 1);
+        else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
+            return (print_error("error near new line \n"), 1);
+        else if (data[i].type != PIPE && data[i].type != WORD && len - 1 == i)
+            return (print_error("error near new line \n"), 1);
+        i++;
     }
-    else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
-      return((print_error("error near new line \n"), 1));
-    i++;
-  }
-  return 0;
+    return 0;
 }
 
 t_token *make_token(t_shell_control_block *shell)
