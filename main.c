@@ -9,25 +9,7 @@ void expand(t_shell_control_block *shell)
     if(are_they_equal(shell->splitted[i], "<<"))
       i++;
     else
-    {
-      char *expanded = expand_if_possible(shell, shell->splitted[i], 0);
-      
-      // Check for ambiguous redirect after expansion
-      if (expanded && ft_strlen(expanded) == 0)
-      {
-        // Empty string after expansion - check if this is a redirection filename
-        if (i > 0 && (are_they_equal(shell->splitted[i-1], ">") || 
-                      are_they_equal(shell->splitted[i-1], ">>")))
-        {
-          // This is a redirection filename that expanded to empty - ambiguous redirect
-          shell->exit_status = 1;
-          printf("ambiguous redirect\n");
-          return; // Stop processing
-        }
-      }
-      
-      shell->splitted[i] = expanded;
-    }
+      shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
     i++;
   }
 }

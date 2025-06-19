@@ -18,7 +18,51 @@ int  execute_built_in(t_shell_control_block *shell, int state)
         shell->in_file_name = NULL;
         shell->file_name = NULL;
         
-        // Process redirections from the original tokens
+        // Check for ambiguous redirects first
+        t_token *temp_tokenized = shell->tokenized;
+        while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
+        {
+            if (temp_tokenized->type == REDIR_OUT || temp_tokenized->type == REDIR_APPEND)
+            {
+                char *filename = (temp_tokenized + 1)->word;
+                if (!filename || !*filename || ft_strlen(filename) == 0)
+                {
+                    // Ambiguous redirect detected - don't create any files
+                    shell->exit_status = 1;
+                    printf("ambiguous redirect\n");
+                    // Restore original tokenized pointer
+                    shell->tokenized = original_tokenized;
+                    // Restore original file descriptors
+                    dup2(original_stdin, 0);
+                    dup2(original_stdout, 1);
+                    close(original_stdin);
+                    close(original_stdout);
+                    return 1; // Return early without executing command
+                }
+                
+                // Check if filename contains spaces (ambiguous redirect)
+                for (int i = 0; filename[i]; i++)
+                {
+                    if (filename[i] == ' ')
+                    {
+                        // Filename contains spaces - ambiguous redirect
+                        shell->exit_status = 1;
+                        printf("ambiguous redirect\n");
+                        // Restore original tokenized pointer
+                        shell->tokenized = original_tokenized;
+                        // Restore original file descriptors
+                        dup2(original_stdin, 0);
+                        dup2(original_stdout, 1);
+                        close(original_stdin);
+                        close(original_stdout);
+                        return 1; // Return early without executing command
+                    }
+                }
+            }
+            temp_tokenized++;
+        }
+        
+        // If no ambiguous redirect, process redirections normally
         while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
         {
             if (shell->tokenized->type == HEREDOC)
@@ -26,41 +70,9 @@ int  execute_built_in(t_shell_control_block *shell, int state)
             else if (shell->tokenized->type == REDIR_IN)
                 handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
             else if (shell->tokenized->type == REDIR_OUT)
-            {
-                if (!handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name)))
-                {
-                    // Ambiguous redirect detected
-                    shell->exit_status = 1;
-                    shell->file_name = NULL;
-                    shell->in_file_name = NULL;
-                    // Restore original tokenized pointer
-                    shell->tokenized = original_tokenized;
-                    // Restore original file descriptors
-                    dup2(original_stdin, 0);
-                    dup2(original_stdout, 1);
-                    close(original_stdin);
-                    close(original_stdout);
-                    return 1; // Return early without executing command
-                }
-            }
+                handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
             else if (shell->tokenized->type == REDIR_APPEND)
-            {
-                if (!handle_append((shell->tokenized + 1)->word, &(shell->file_name)))
-                {
-                    // Ambiguous redirect detected
-                    shell->exit_status = 1;
-                    shell->file_name = NULL;
-                    shell->in_file_name = NULL;
-                    // Restore original tokenized pointer
-                    shell->tokenized = original_tokenized;
-                    // Restore original file descriptors
-                    dup2(original_stdin, 0);
-                    dup2(original_stdout, 1);
-                    close(original_stdin);
-                    close(original_stdout);
-                    return 1; // Return early without executing command
-                }
-            }
+                handle_append((shell->tokenized + 1)->word, &(shell->file_name));
             shell->tokenized++;
         }
         
