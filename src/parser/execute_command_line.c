@@ -54,9 +54,61 @@ void handle_all_redir(t_shell_control_block *shell)
     else if (shell->tokenized->type == REDIR_IN)
       handle_redir_in((shell->tokenized + 1)->word, &(shell->in_file_name));
     else if (shell->tokenized->type == REDIR_OUT)
-      handle_redir_out((shell->tokenized + 1)->word, &(shell->file_name));
+    {
+      char *filename = (shell->tokenized + 1)->word;
+      
+      // Check for ambiguous redirect
+      if (!filename || !*filename || ft_strlen(filename) == 0)
+      {
+        // Ambiguous redirect detected - stop processing but keep existing files
+        shell->exit_status = 1;
+        printf("ambiguous redirect\n");
+        return; // Stop processing redirections
+      }
+      
+      // Check if filename contains spaces (ambiguous redirect)
+      for (int i = 0; filename[i]; i++)
+      {
+        if (filename[i] == ' ')
+        {
+          // Filename contains spaces - ambiguous redirect
+          shell->exit_status = 1;
+          printf("ambiguous redirect\n");
+          return; // Stop processing redirections
+        }
+      }
+      
+      // No ambiguous redirect - create the file
+      handle_redir_out(filename, &(shell->file_name));
+    }
     else if (shell->tokenized->type == REDIR_APPEND)
-      handle_append((shell->tokenized + 1)->word, &(shell->file_name));
+    {
+      char *filename = (shell->tokenized + 1)->word;
+      
+      // Check for ambiguous redirect
+      if (!filename || !*filename || ft_strlen(filename) == 0)
+      {
+        // Ambiguous redirect detected - stop processing but keep existing files
+        shell->exit_status = 1;
+        printf("ambiguous redirect\n");
+        return; // Stop processing redirections
+      }
+      
+      // Check if filename contains spaces (ambiguous redirect)
+      for (int i = 0; filename[i]; i++)
+      {
+        if (filename[i] == ' ')
+        {
+          // Filename contains spaces - ambiguous redirect
+          shell->exit_status = 1;
+          printf("ambiguous redirect\n");
+          return; // Stop processing redirections
+        }
+      }
+      
+      // No ambiguous redirect - create the file
+      handle_append(filename, &(shell->file_name));
+    }
     shell->tokenized ++;
   }
 }
@@ -66,8 +118,15 @@ void	process_command(t_shell_control_block *shell)
   shell->file_name = NULL;
   get_cmd_and_its_args(shell);
   
-  // Process redirections normally
+  // Process redirections and check for ambiguous redirects
   handle_all_redir(shell);
+  
+  // Check if there was an ambiguous redirect error
+  if (shell->exit_status == 1)
+  {
+    // Ambiguous redirect error - don't execute the command
+    return;
+  }
   
   if (shell->file_name)
   {
