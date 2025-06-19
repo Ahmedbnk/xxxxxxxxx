@@ -87,13 +87,29 @@ char **split_after_expantion(char **str)
   char **ptr;
   t_list *node;
   t_list *list;
-  list =NULL;
+  list = NULL;
   i = 0;
   while(str[i])
   {
-    ptr = customized_split(str[i]);
-    node = ft_lstnew(ptr);
-    ft_lstadd_back(&list, node);
+    // If previous token is a redirection operator, do not split this token
+    if (i > 0 && (
+        are_they_equal(str[i-1], ">") ||
+        are_they_equal(str[i-1], ">>") ||
+        are_they_equal(str[i-1], "<")))
+    {
+      // Add as a single token (no split)
+      char **single = ft_malloc(2 * sizeof(char *), 1);
+      single[0] = str[i];
+      single[1] = NULL;
+      node = ft_lstnew(single);
+      ft_lstadd_back(&list, node);
+    }
+    else
+    {
+      ptr = customized_split(str[i]);
+      node = ft_lstnew(ptr);
+      ft_lstadd_back(&list, node);
+    }
     i++;
   }
   return (creat_new_splitted(list));
