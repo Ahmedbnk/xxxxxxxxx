@@ -165,4 +165,7 @@ void print_exit_signal_message(int exit_status);
 char *get_env_var(t_shell_control_block *shell , t_expand data);
 void remove_var_from_env(char ***env , char *var);
 void export(t_shell_control_block *s, char **to_export);
+
+t_type get_type_type(const char *str);
+
 #endif
