@@ -66,13 +66,19 @@ void	process_command(t_shell_control_block *shell)
   shell->file_name = NULL;
   get_cmd_and_its_args(shell);
   
+  printf("DEBUG: process_command - exit_status = %d\n", shell->exit_status);
+  
   // Check if there's an ambiguous redirect error
   if (shell->exit_status == 1)
   {
+    printf("DEBUG: Processing redirections with ambiguous redirect error\n");
     // Process redirections until we hit the ambiguous redirect
     t_token *temp_tokenized = shell->tokenized;
+    int token_index = 0;
     while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
     {
+      printf("DEBUG: Processing token[%d]: type=%d, word='%s'\n", token_index, temp_tokenized->type, temp_tokenized->word);
+      
       if (temp_tokenized->type == HEREDOC)
         shell->in_file_name = temp_tokenized->heredoc_file_name;
       else if (temp_tokenized->type == REDIR_IN)
@@ -80,26 +86,34 @@ void	process_command(t_shell_control_block *shell)
       else if (temp_tokenized->type == REDIR_OUT)
       {
         char *filename = (temp_tokenized + 1)->word;
+        printf("DEBUG: REDIR_OUT with filename: '%s'\n", filename);
         if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
         {
           // Found the ambiguous redirect - stop processing immediately
+          printf("DEBUG: Stopping at ambiguous redirect\n");
           break;
         }
+        printf("DEBUG: Creating file: %s\n", filename);
         handle_redir_out(filename, &(shell->file_name));
       }
       else if (temp_tokenized->type == REDIR_APPEND)
       {
         char *filename = (temp_tokenized + 1)->word;
+        printf("DEBUG: REDIR_APPEND with filename: '%s'\n", filename);
         if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
         {
           // Found the ambiguous redirect - stop processing immediately
+          printf("DEBUG: Stopping at ambiguous redirect\n");
           break;
         }
+        printf("DEBUG: Creating file: %s\n", filename);
         handle_append(filename, &(shell->file_name));
       }
       temp_tokenized++;
+      token_index++;
     }
     
+    printf("DEBUG: Finished processing redirections\n");
     // Don't execute the command due to ambiguous redirect
     return;
   }
