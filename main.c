@@ -130,41 +130,59 @@ void execute_line(t_shell_control_block *shell)
     // Check for ambiguous redirect error
     if (shell->exit_status == 1)
     {
-      // Process redirections until we hit the ambiguous redirect
-      t_token *temp_tokenized = shell->tokenized;
-      while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
+      // Process each command in the pipeline separately
+      t_token *current_command = shell->tokenized;
+      
+      while (current_command && current_command->word != NULL)
       {
-        if (temp_tokenized->type == REDIR_OUT)
+        // Process redirections for this command until we hit a pipe or ambiguous redirect
+        t_token *temp_tokenized = current_command;
+        while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
         {
-          char *filename = (temp_tokenized + 1)->word;
-          if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
+          if (temp_tokenized->type == REDIR_OUT)
           {
-            // Found the ambiguous redirect - stop processing
-            break;
+            char *filename = (temp_tokenized + 1)->word;
+            if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
+            {
+              // Found an ambiguous redirect - print error and stop processing this command
+              printf("ambiguous redirect\n");
+              break;
+            }
+            // Create the file
+            int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+            if (fd != -1)
+            {
+              close(fd);
+            }
           }
-          // Create the file
-          int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-          if (fd != -1)
+          else if (temp_tokenized->type == REDIR_APPEND)
           {
-            close(fd);
+            char *filename = (temp_tokenized + 1)->word;
+            if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
+            {
+              // Found an ambiguous redirect - print error and stop processing this command
+              printf("ambiguous redirect\n");
+              break;
+            }
+            // Create the file
+            int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+            if (fd != -1)
+            {
+              close(fd);
+            }
           }
+          temp_tokenized++;
         }
-        else if (temp_tokenized->type == REDIR_APPEND)
+        
+        // Move to next command (skip over the current command and pipe)
+        while (current_command && current_command->word != NULL && current_command->type != PIPE)
         {
-          char *filename = (temp_tokenized + 1)->word;
-          if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
-          {
-            // Found the ambiguous redirect - stop processing
-            break;
-          }
-          // Create the file
-          int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-          if (fd != -1)
-          {
-            close(fd);
-          }
+          current_command++;
         }
-        temp_tokenized++;
+        if (current_command && current_command->type == PIPE)
+        {
+          current_command++; // Skip the pipe
+        }
       }
       
       // Reset exit_status for next command
