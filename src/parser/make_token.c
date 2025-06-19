@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_type	get_type_type(const char *str)
@@ -34,7 +33,39 @@ void fill_the_list(t_token * list, char **arr)
 
 int check_syntax_error(t_token *data, int len)
 {
-  int i; i = 0;
+  int i; 
+  i = 0;
+  
+  // First pass: check for ambiguous redirects
+  while(i < len)
+  { 
+    if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND)
+    {
+      // Check if the next token is empty (ambiguous redirect)
+      if (i + 1 < len && (!data[i + 1].word || !*data[i + 1].word || ft_strlen(data[i + 1].word) == 0))
+      {
+        printf("ambiguous redirect\n");
+        return 2; // Special return code for ambiguous redirect
+      }
+      
+      // Check if the next token contains spaces (ambiguous redirect)
+      if (i + 1 < len && data[i + 1].word)
+      {
+        for (int j = 0; data[i + 1].word[j]; j++)
+        {
+          if (data[i + 1].word[j] == ' ')
+          {
+            printf("ambiguous redirect\n");
+            return 2; // Special return code for ambiguous redirect
+          }
+        }
+      }
+    }
+    i++;
+  }
+  
+  // Second pass: check for syntax errors
+  i = 0;
   while(i < len)
   { 
     if(data[i].type == PIPE && (i == 0 || len - 1 == i))
@@ -44,7 +75,6 @@ int check_syntax_error(t_token *data, int len)
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
     {
       return((print_error("error near new line \n"), 1));
-
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
       return((print_error("error near new line \n"), 1));
@@ -63,10 +93,17 @@ t_token *make_token(t_shell_control_block *shell)
   len = len_of_two_d_array(arr);
   list = ft_malloc((len  + 1)* sizeof(t_token), 1);
   fill_the_list(list, arr);
-  if(check_syntax_error(list, len))
+  int syntax_result = check_syntax_error(list, len);
+  if(syntax_result == 1)
   {
     shell->exit_status = 2;
     return NULL;
+  }
+  else if(syntax_result == 2)
+  {
+    // Ambiguous redirect detected
+    shell->exit_status = 1;
+    return list; // Return the tokens so we can process them and create files before the error
   }
   return list;
 }
