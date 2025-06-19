@@ -9,7 +9,30 @@ void expand(t_shell_control_block *shell)
     if(are_they_equal(shell->splitted[i], "<<"))
       i++;
     else
-      shell->splitted[i] = expand_if_possible(shell, shell->splitted[i], 0);
+    {
+      char *expanded = expand_if_possible(shell, shell->splitted[i], 0);
+      
+      // Check if this is a redirection filename that expanded to empty
+      if (expanded && ft_strlen(expanded) == 0)
+      {
+        // Check if the previous token is a redirection operator
+        if (i > 0 && (are_they_equal(shell->splitted[i-1], ">") || 
+                      are_they_equal(shell->splitted[i-1], ">>")))
+        {
+          // This is a redirection filename that expanded to empty
+          // Replace with a special marker that won't be removed by customized_split
+          shell->splitted[i] = ft_strdup("EMPTY_REDIR", 1);
+        }
+        else
+        {
+          shell->splitted[i] = expanded;
+        }
+      }
+      else
+      {
+        shell->splitted[i] = expanded;
+      }
+    }
     i++;
   }
 }

@@ -49,8 +49,9 @@ int check_syntax_error(t_token *data, int len)
     if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND)
     {
       printf("DEBUG: Found redirection at index %d\n", i);
-      // Check if the next token is empty (ambiguous redirect)
-      if (i + 1 < len && data[i + 1].word && ft_strlen(data[i + 1].word) == 0)
+      // Check if the next token is empty or the special EMPTY_REDIR marker
+      if (i + 1 < len && data[i + 1].word && 
+          (ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR")))
       {
         printf("DEBUG: Empty filename detected at index %d\n", i + 1);
         printf("ambiguous redirect\n");
