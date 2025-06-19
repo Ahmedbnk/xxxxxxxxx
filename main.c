@@ -114,16 +114,6 @@ char **split_after_expantion(char **str)
   }
   return (creat_new_splitted(list));
 }
-void parse_line(t_shell_control_block *shell)
-{
-  shell->splitted = customized_split(shell->line);
-  shell->splitted = split_with_operators(shell->splitted);
-  expand(shell);
-  
-  shell->splitted = split_after_expantion(shell->splitted);
-  shell->splitted = handle_dollar_with_quotes(shell->splitted);
-  shell->tokenized = make_token(shell);
-}
 
 int is_there_a_pipe(t_shell_control_block *shell)
 {
