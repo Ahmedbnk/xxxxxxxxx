@@ -80,9 +80,9 @@ void	process_command(t_shell_control_block *shell)
       else if (temp_tokenized->type == REDIR_OUT)
       {
         char *filename = (temp_tokenized + 1)->word;
-        if (!filename || !*filename || ft_strlen(filename) == 0)
+        if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
         {
-          // Found the ambiguous redirect - stop processing
+          // Found the ambiguous redirect - stop processing immediately
           break;
         }
         handle_redir_out(filename, &(shell->file_name));
@@ -90,9 +90,9 @@ void	process_command(t_shell_control_block *shell)
       else if (temp_tokenized->type == REDIR_APPEND)
       {
         char *filename = (temp_tokenized + 1)->word;
-        if (!filename || !*filename || ft_strlen(filename) == 0)
+        if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
         {
-          // Found the ambiguous redirect - stop processing
+          // Found the ambiguous redirect - stop processing immediately
           break;
         }
         handle_append(filename, &(shell->file_name));
