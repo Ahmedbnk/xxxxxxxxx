@@ -74,7 +74,6 @@ int check_syntax_error(t_token *data, int len)
     i++;
   }
   
-  // Second pass: check for syntax errors
   i = 0;
   while(i < len)
   { 
