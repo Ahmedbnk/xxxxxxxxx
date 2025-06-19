@@ -144,13 +144,6 @@ t_token *make_token(t_shell_control_block *shell)
     list[j].type = get_type_type(shell->splitted[i]);
     list[j].word = ft_strdup(shell->splitted[i], 1);
     
-    if (list[j].type == HEREDOC)
-    {
-      list[j].delimiter = ft_strdup(shell->splitted[i + 1], 1);
-      handle_heredoc(&list[j], &list[j].heredoc_file_name);
-      i++;
-    }
-    
     j++;
     i++;
   }
