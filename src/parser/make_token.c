@@ -36,14 +36,23 @@ int check_syntax_error(t_token *data, int len)
   int i; 
   i = 0;
   
+  // Debug: print all tokens
+  printf("DEBUG: Checking %d tokens\n", len);
+  for (int k = 0; k < len; k++)
+  {
+    printf("DEBUG: Token[%d]: type=%d, word='%s'\n", k, data[k].type, data[k].word ? data[k].word : "NULL");
+  }
+  
   // First pass: check for ambiguous redirects
   while(i < len)
   { 
     if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND)
     {
+      printf("DEBUG: Found redirection at index %d\n", i);
       // Check if the next token is empty (ambiguous redirect)
-      if (i + 1 < len && (!data[i + 1].word || !*data[i + 1].word || ft_strlen(data[i + 1].word) == 0))
+      if (i + 1 < len && data[i + 1].word && ft_strlen(data[i + 1].word) == 0)
       {
+        printf("DEBUG: Empty filename detected at index %d\n", i + 1);
         printf("ambiguous redirect\n");
         return 2; // Special return code for ambiguous redirect
       }
@@ -55,6 +64,7 @@ int check_syntax_error(t_token *data, int len)
         {
           if (data[i + 1].word[j] == ' ')
           {
+            printf("DEBUG: Filename with spaces detected at index %d\n", i + 1);
             printf("ambiguous redirect\n");
             return 2; // Special return code for ambiguous redirect
           }
@@ -74,6 +84,7 @@ int check_syntax_error(t_token *data, int len)
       return((print_error("error near | \n"), 1));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
     {
+      printf("DEBUG: Syntax error at index %d: type=%d, next_type=%d\n", i, data[i].type, data[i + 1].type);
       return((print_error("error near new line \n"), 1));
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
