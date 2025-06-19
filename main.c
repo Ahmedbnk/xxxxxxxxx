@@ -81,11 +81,39 @@ void parse_line(t_shell_control_block *shell)
   shell->splitted = split_with_operators(shell->splitted);
   expand(shell);
   
-  // Check if there was an ambiguous redirect error
-  if (shell->exit_status == 1)
+  // Check for ambiguous redirects after expansion but before token creation
+  int i = 0;
+  while (shell->splitted[i])
   {
-    // Don't set tokenized to NULL - let the command be processed but it will fail
-    // The error will be handled during execution
+    // Check if this is a redirection operator
+    if (are_they_equal(shell->splitted[i], ">") || are_they_equal(shell->splitted[i], ">>"))
+    {
+      // Check if the next token is empty (ambiguous redirect)
+      if (i + 1 < len_of_two_d_array(shell->splitted) && 
+          (!shell->splitted[i + 1] || !*shell->splitted[i + 1] || ft_strlen(shell->splitted[i + 1]) == 0))
+      {
+        shell->exit_status = 1;
+        printf("ambiguous redirect\n");
+        shell->tokenized = NULL; // Don't create tokens
+        return;
+      }
+      
+      // Check if the next token contains spaces (ambiguous redirect)
+      if (i + 1 < len_of_two_d_array(shell->splitted) && shell->splitted[i + 1])
+      {
+        for (int j = 0; shell->splitted[i + 1][j]; j++)
+        {
+          if (shell->splitted[i + 1][j] == ' ')
+          {
+            shell->exit_status = 1;
+            printf("ambiguous redirect\n");
+            shell->tokenized = NULL; // Don't create tokens
+            return;
+          }
+        }
+      }
+    }
+    i++;
   }
   
   shell->splitted = split_after_expantion(shell->splitted);
@@ -109,6 +137,13 @@ int is_there_a_pipe(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
+  // Check if there was an ambiguous redirect error that prevented tokenization
+  if (shell->exit_status == 1 && shell->tokenized == NULL)
+  {
+    // Ambiguous redirect error prevented tokenization - don't execute anything
+    return;
+  }
+  
   // Reset exit_status for new command
   if (shell->exit_status == 1)
   {

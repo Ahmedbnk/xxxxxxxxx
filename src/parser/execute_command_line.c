@@ -66,37 +66,7 @@ void	process_command(t_shell_control_block *shell)
   shell->file_name = NULL;
   get_cmd_and_its_args(shell);
   
-  // Process redirections and check for ambiguous redirects
-  t_token *temp_tokenized = shell->tokenized;
-  while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
-  {
-    if (temp_tokenized->type == REDIR_OUT || temp_tokenized->type == REDIR_APPEND)
-    {
-      char *filename = (temp_tokenized + 1)->word;
-      if (!filename || !*filename || ft_strlen(filename) == 0)
-      {
-        // Ambiguous redirect detected - don't create any files
-        shell->exit_status = 1;
-        printf("ambiguous redirect\n");
-        return; // Stop processing
-      }
-      
-      // Check if filename contains spaces (ambiguous redirect)
-      for (int i = 0; filename[i]; i++)
-      {
-        if (filename[i] == ' ')
-        {
-          // Filename contains spaces - ambiguous redirect
-          shell->exit_status = 1;
-          printf("ambiguous redirect\n");
-          return; // Stop processing
-        }
-      }
-    }
-    temp_tokenized++;
-  }
-  
-  // If no ambiguous redirect, process redirections normally
+  // Process redirections normally
   handle_all_redir(shell);
   
   if (shell->file_name)
