@@ -131,7 +131,6 @@ void execute_line(t_shell_control_block *shell)
     if (shell->exit_status == 1)
     {
       // Process redirections until we hit the ambiguous redirect
-      printf("Processing redirections until ambiguous redirect...\n");
       t_token *temp_tokenized = shell->tokenized;
       while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
       {
@@ -141,7 +140,6 @@ void execute_line(t_shell_control_block *shell)
           if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
           {
             // Found the ambiguous redirect - stop processing
-            printf("Stopping at ambiguous redirect\n");
             break;
           }
           // Create the file
@@ -149,7 +147,6 @@ void execute_line(t_shell_control_block *shell)
           if (fd != -1)
           {
             close(fd);
-            printf("Created file: %s\n", filename);
           }
         }
         else if (temp_tokenized->type == REDIR_APPEND)
@@ -158,7 +155,6 @@ void execute_line(t_shell_control_block *shell)
           if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
           {
             // Found the ambiguous redirect - stop processing
-            printf("Stopping at ambiguous redirect\n");
             break;
           }
           // Create the file
@@ -166,7 +162,6 @@ void execute_line(t_shell_control_block *shell)
           if (fd != -1)
           {
             close(fd);
-            printf("Created file: %s\n", filename);
           }
         }
         temp_tokenized++;
