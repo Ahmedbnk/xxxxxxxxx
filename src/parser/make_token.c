@@ -96,58 +96,26 @@ int check_syntax_error(t_token *data, int len)
 
 t_token *make_token(t_shell_control_block *shell)
 {
-  int i;
-  int j;
+  int len;
   t_token *list;
-  int num_of_tokens;
+  char **arr;
 
-  num_of_tokens = len_of_two_d_array(shell->splitted);
-  list = ft_malloc((num_of_tokens + 1) * sizeof(t_token), 1);
+  arr = shell->splitted;
+  len = len_of_two_d_array(arr);
+  list = ft_malloc((len + 1) * sizeof(t_token), 1);
+  fill_the_list(list, arr);
   
-  i = 0;
-  j = 0;
-  
-  // First pass: detect ambiguous redirects
-  int has_ambiguous_redirect = 0;
-  
-  while (shell->splitted[i])
+  int syntax_result = check_syntax_error(list, len);
+  if(syntax_result == 1)
   {
-    if (are_they_equal(shell->splitted[i], ">") || are_they_equal(shell->splitted[i], ">>"))
-    {
-      // Check if next token is empty or EMPTY_REDIR
-      if (i + 1 < num_of_tokens && 
-          (are_they_equal(shell->splitted[i + 1], "EMPTY_REDIR") || 
-           ft_strlen(shell->splitted[i + 1]) == 0))
-      {
-        has_ambiguous_redirect = 1;
-        break;
-      }
-    }
-    i++;
+    shell->exit_status = 2;
+    return NULL;
   }
-  
-  // If ambiguous redirect detected, set error and return early
-  if (has_ambiguous_redirect)
+  else if(syntax_result == 2)
   {
-    printf("ambiguous redirect\n");
+    // Ambiguous redirect detected
     shell->exit_status = 1;
-    // Create a minimal token list to prevent crashes
-    list[0].type = WORD;
-    list[0].word = NULL;
-    return list;
+    return list; // Return the tokens so we can process them and create files before the error
   }
-  
-  // Second pass: normal token creation
-  i = 0;
-  while (shell->splitted[i])
-  {
-    list[j].type = get_type_type(shell->splitted[i]);
-    list[j].word = ft_strdup(shell->splitted[i], 1);
-    
-    j++;
-    i++;
-  }
-  
-  list[j].word = NULL;
   return list;
 }
