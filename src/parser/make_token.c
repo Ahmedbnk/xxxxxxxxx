@@ -35,36 +35,23 @@ int check_syntax_error(t_token *data, int len)
   int i; 
   i = 0;
   
-  // Debug: print all tokens
-  printf("DEBUG: Checking %d tokens\n", len);
-  for (int k = 0; k < len; k++)
-  {
-    printf("DEBUG: Token[%d]: type=%d, word='%s'\n", k, data[k].type, data[k].word ? data[k].word : "NULL");
-  }
-  
-  // First pass: check for ambiguous redirects
   while(i < len)
   { 
     if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND)
     {
-      printf("DEBUG: Found redirection at index %d\n", i);
-      // Check if the next token is empty or the special EMPTY_REDIR marker
       if (i + 1 < len && data[i + 1].word && 
           (ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR")))
       {
-        printf("DEBUG: Empty filename detected at index %d\n", i + 1);
-        return 2; // Special return code for ambiguous redirect
+        return 2;
       }
       
-      // Check if the next token contains spaces (ambiguous redirect)
       if (i + 1 < len && data[i + 1].word)
       {
         for (int j = 0; data[i + 1].word[j]; j++)
         {
           if (data[i + 1].word[j] == ' ')
           {
-            printf("DEBUG: Filename with spaces detected at index %d\n", i + 1);
-            return 2; // Special return code for ambiguous redirect
+            return 2;
           }
         }
       }
@@ -81,7 +68,6 @@ int check_syntax_error(t_token *data, int len)
       return((print_error("error near | \n"), 1));
     else if (data[i].type != PIPE && data[i].type != WORD && data[i + 1].type != WORD)
     {
-      printf("DEBUG: Syntax error at index %d: type=%d, next_type=%d\n", i, data[i].type, data[i + 1].type);
       return((print_error("error near new line \n"), 1));
     }
     else if (data[i].type != PIPE && data[i].type != WORD && len -1 == i)
@@ -110,9 +96,8 @@ t_token *make_token(t_shell_control_block *shell)
   }
   else if(syntax_result == 2)
   {
-    // Ambiguous redirect detected
     shell->exit_status = 1;
-    return list; // Return the tokens so we can process them and create files before the error
+    return list;
   }
   return list;
 }
