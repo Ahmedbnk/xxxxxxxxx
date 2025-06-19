@@ -39,8 +39,7 @@ int check_syntax_error(t_token *data, int len)
   { 
     if (data[i].type == REDIR_OUT || data[i].type == REDIR_APPEND || data[i].type == REDIR_IN)
     {
-      if (i + 1 < len && data[i + 1].word && 
-          (ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR")))
+      if (i + 1 >= len || !data[i + 1].word || ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR"))
       {
         return 2;
       }
