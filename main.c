@@ -139,20 +139,18 @@ void execute_line(t_shell_control_block *shell)
         t_token *temp_tokenized = current_command;
         while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
         {
-          if (temp_tokenized->type == REDIR_OUT)
+          if (temp_tokenized->type == REDIR_OUT || temp_tokenized->type == REDIR_IN)
           {
             char *filename = (temp_tokenized + 1)->word;
             if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
             {
-              // Found an ambiguous redirect - print error and stop processing this command
               printf("ambiguous redirect\n");
               break;
             }
-            // Create the file
-            int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-            if (fd != -1)
-            {
-              close(fd);
+            // Only create the file for REDIR_OUT
+            if (temp_tokenized->type == REDIR_OUT) {
+              int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+              if (fd != -1) close(fd);
             }
           }
           else if (temp_tokenized->type == REDIR_APPEND)
@@ -160,20 +158,14 @@ void execute_line(t_shell_control_block *shell)
             char *filename = (temp_tokenized + 1)->word;
             if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
             {
-              // Found an ambiguous redirect - print error and stop processing this command
               printf("ambiguous redirect\n");
               break;
             }
-            // Create the file
             int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-            if (fd != -1)
-            {
-              close(fd);
-            }
+            if (fd != -1) close(fd);
           }
           temp_tokenized++;
         }
-        
         // Move to next command (skip over the current command and pipe)
         while (current_command && current_command->word != NULL && current_command->type != PIPE)
         {
@@ -184,15 +176,12 @@ void execute_line(t_shell_control_block *shell)
           current_command++; // Skip the pipe
         }
       }
-      
       // Reset exit_status for next command
       shell->exit_status = 0;
       return;
     }
-    
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
-    
     if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
     else
       execute_command_line(shell);
