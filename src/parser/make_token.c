@@ -53,7 +53,6 @@ int check_syntax_error(t_token *data, int len)
           (ft_strlen(data[i + 1].word) == 0 || are_they_equal(data[i + 1].word, "EMPTY_REDIR")))
       {
         printf("DEBUG: Empty filename detected at index %d\n", i + 1);
-        printf("ambiguous redirect\n");
         return 2; // Special return code for ambiguous redirect
       }
       
@@ -65,7 +64,6 @@ int check_syntax_error(t_token *data, int len)
           if (data[i + 1].word[j] == ' ')
           {
             printf("DEBUG: Filename with spaces detected at index %d\n", i + 1);
-            printf("ambiguous redirect\n");
             return 2; // Special return code for ambiguous redirect
           }
         }
