@@ -30,7 +30,6 @@ void fill_the_list(t_token * list, char **arr)
     list[i].type = -1;
 }
 
-
 int check_syntax_error(t_token *data, int len)
 {
   int i; 
@@ -97,25 +96,65 @@ int check_syntax_error(t_token *data, int len)
 
 t_token *make_token(t_shell_control_block *shell)
 {
-  int len;
+  int i;
+  int j;
   t_token *list;
-  char **arr;
+  int num_of_tokens;
 
-  arr = shell->splitted;
-  len = len_of_two_d_array(arr);
-  list = ft_malloc((len  + 1)* sizeof(t_token), 1);
-  fill_the_list(list, arr);
-  int syntax_result = check_syntax_error(list, len);
-  if(syntax_result == 1)
+  num_of_tokens = len_of_two_d_array(shell->splitted);
+  list = ft_malloc((num_of_tokens + 1) * sizeof(t_token), 1);
+  
+  i = 0;
+  j = 0;
+  
+  // First pass: detect ambiguous redirects
+  int has_ambiguous_redirect = 0;
+  
+  while (shell->splitted[i])
   {
-    shell->exit_status = 2;
-    return NULL;
+    if (are_they_equal(shell->splitted[i], ">") || are_they_equal(shell->splitted[i], ">>"))
+    {
+      // Check if next token is empty or EMPTY_REDIR
+      if (i + 1 < num_of_tokens && 
+          (are_they_equal(shell->splitted[i + 1], "EMPTY_REDIR") || 
+           ft_strlen(shell->splitted[i + 1]) == 0))
+      {
+        has_ambiguous_redirect = 1;
+        break;
+      }
+    }
+    i++;
   }
-  else if(syntax_result == 2)
+  
+  // If ambiguous redirect detected, set error and return early
+  if (has_ambiguous_redirect)
   {
-    // Ambiguous redirect detected
+    printf("ambiguous redirect\n");
     shell->exit_status = 1;
-    return list; // Return the tokens so we can process them and create files before the error
+    // Create a minimal token list to prevent crashes
+    list[0].type = WORD;
+    list[0].word = NULL;
+    return list;
   }
+  
+  // Second pass: normal token creation
+  i = 0;
+  while (shell->splitted[i])
+  {
+    list[j].type = get_type_type(shell->splitted[i]);
+    list[j].word = ft_strdup(shell->splitted[i], 1);
+    
+    if (list[j].type == HEREDOC)
+    {
+      list[j].delimiter = ft_strdup(shell->splitted[i + 1], 1);
+      handle_heredoc(&list[j], &list[j].heredoc_file_name);
+      i++;
+    }
+    
+    j++;
+    i++;
+  }
+  
+  list[j].word = NULL;
   return list;
 }

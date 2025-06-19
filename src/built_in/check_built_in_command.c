@@ -6,17 +6,6 @@ int  execute_built_in(t_shell_control_block *shell, int state)
     // If state is 1 (parent process), handle redirections first
     if (state == 1)
     {
-        printf("DEBUG: execute_built_in - state=1, exit_status=%d\n", shell->exit_status);
-        
-        // Check if there's an ambiguous redirect error BEFORE processing any redirections
-        if (shell->exit_status == 1)
-        {
-            printf("DEBUG: execute_built_in - ambiguous redirect detected, returning early without processing\n");
-            return 1; // Return early without executing command or processing redirections
-        }
-        
-        printf("DEBUG: execute_built_in - no ambiguous redirect, processing normally\n");
-        
         // Save original file descriptors
         int original_stdin = dup(0);
         int original_stdout = dup(1);
