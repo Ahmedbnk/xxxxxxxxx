@@ -8,6 +8,15 @@ int  execute_built_in(t_shell_control_block *shell, int state)
     {
         printf("DEBUG: execute_built_in - state=1, exit_status=%d\n", shell->exit_status);
         
+        // Check if there's an ambiguous redirect error BEFORE processing any redirections
+        if (shell->exit_status == 1)
+        {
+            printf("DEBUG: execute_built_in - ambiguous redirect detected, returning early without processing\n");
+            return 1; // Return early without executing command or processing redirections
+        }
+        
+        printf("DEBUG: execute_built_in - no ambiguous redirect, processing normally\n");
+        
         // Save original file descriptors
         int original_stdin = dup(0);
         int original_stdout = dup(1);
@@ -18,63 +27,6 @@ int  execute_built_in(t_shell_control_block *shell, int state)
         // Apply redirections using the original tokens
         shell->in_file_name = NULL;
         shell->file_name = NULL;
-        
-        // Check if there's an ambiguous redirect error
-        if (shell->exit_status == 1)
-        {
-            printf("DEBUG: execute_built_in - ambiguous redirect detected, processing redirections until error\n");
-            // Process redirections until we hit the ambiguous redirect
-            t_token *temp_tokenized = shell->tokenized;
-            while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
-            {
-                printf("DEBUG: execute_built_in - processing token: type=%d, word='%s'\n", temp_tokenized->type, temp_tokenized->word);
-                
-                if (temp_tokenized->type == HEREDOC)
-                    shell->in_file_name = temp_tokenized->heredoc_file_name;
-                else if (temp_tokenized->type == REDIR_IN)
-                    handle_redir_in((temp_tokenized + 1)->word, &(shell->in_file_name));
-                else if (temp_tokenized->type == REDIR_OUT)
-                {
-                    char *filename = (temp_tokenized + 1)->word;
-                    printf("DEBUG: execute_built_in - REDIR_OUT with filename: '%s'\n", filename);
-                    if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
-                    {
-                        printf("DEBUG: execute_built_in - found ambiguous redirect, stopping\n");
-                        // Found the ambiguous redirect - stop processing
-                        break;
-                    }
-                    printf("DEBUG: execute_built_in - creating file: %s\n", filename);
-                    handle_redir_out(filename, &(shell->file_name));
-                }
-                else if (temp_tokenized->type == REDIR_APPEND)
-                {
-                    char *filename = (temp_tokenized + 1)->word;
-                    printf("DEBUG: execute_built_in - REDIR_APPEND with filename: '%s'\n", filename);
-                    if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
-                    {
-                        printf("DEBUG: execute_built_in - found ambiguous redirect, stopping\n");
-                        // Found the ambiguous redirect - stop processing
-                        break;
-                    }
-                    printf("DEBUG: execute_built_in - creating file: %s\n", filename);
-                    handle_append(filename, &(shell->file_name));
-                }
-                temp_tokenized++;
-            }
-            
-            printf("DEBUG: execute_built_in - returning early due to ambiguous redirect\n");
-            // Don't execute the command due to ambiguous redirect
-            // Restore original tokenized pointer
-            shell->tokenized = original_tokenized;
-            // Restore original file descriptors
-            dup2(original_stdin, 0);
-            dup2(original_stdout, 1);
-            close(original_stdin);
-            close(original_stdout);
-            return 1; // Return early without executing command
-        }
-        
-        printf("DEBUG: execute_built_in - no ambiguous redirect, processing normally\n");
         
         // Process redirections normally
         while (shell->tokenized && shell->tokenized->word != NULL && shell->tokenized->type != PIPE)
