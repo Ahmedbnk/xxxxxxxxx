@@ -168,4 +168,6 @@ void export(t_shell_control_block *s, char **to_export);
 
 t_type get_type_type(const char *str);
 
+void parse_line(t_shell_control_block *shell);
+
 #endif
