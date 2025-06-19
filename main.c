@@ -139,63 +139,26 @@ int is_there_a_pipe(t_shell_control_block *shell)
   return 0;
 }
 
+// Forward declaration
+int check_ambiguous_and_syntax(t_token *tokens);
+
 void execute_line(t_shell_control_block *shell)
 {
+  parse_line(shell);
+  int check = check_ambiguous_and_syntax(shell->tokenized);
+  if (check == 1) {
+    shell->exit_status = 2; // syntax error
+    return;
+  } else if (check == 2) {
+    shell->exit_status = 1; // ambiguous redirect
+    printf("ambiguous redirect\n");
+    return;
+  } else {
+    shell->exit_status = 0;
+  }
+
   if (shell->tokenized)
   {
-    // Check for ambiguous redirect error
-    if (shell->exit_status == 1)
-    {
-      // Process each command in the pipeline separately
-      t_token *current_command = shell->tokenized;
-      
-      while (current_command && current_command->word != NULL)
-      {
-        // Process redirections for this command until we hit a pipe or ambiguous redirect
-        t_token *temp_tokenized = current_command;
-        while (temp_tokenized && temp_tokenized->word != NULL && temp_tokenized->type != PIPE)
-        {
-          if (temp_tokenized->type == REDIR_OUT || temp_tokenized->type == REDIR_IN)
-          {
-            char *filename = (temp_tokenized + 1)->word;
-            if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
-            {
-              printf("ambiguous redirect\n");
-              break;
-            }
-            // Only create the file for REDIR_OUT
-            if (temp_tokenized->type == REDIR_OUT) {
-              int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-              if (fd != -1) close(fd);
-            }
-          }
-          else if (temp_tokenized->type == REDIR_APPEND)
-          {
-            char *filename = (temp_tokenized + 1)->word;
-            if (!filename || !*filename || ft_strlen(filename) == 0 || are_they_equal(filename, "EMPTY_REDIR"))
-            {
-              printf("ambiguous redirect\n");
-              break;
-            }
-            int fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-            if (fd != -1) close(fd);
-          }
-          temp_tokenized++;
-        }
-        // Move to next command (skip over the current command and pipe)
-        while (current_command && current_command->word != NULL && current_command->type != PIPE)
-        {
-          current_command++;
-        }
-        if (current_command && current_command->type == PIPE)
-        {
-          current_command++; // Skip the pipe
-        }
-      }
-      // Reset exit_status for next command
-      shell->exit_status = 0;
-      return;
-    }
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
     if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
@@ -246,7 +209,6 @@ int main(int ac, char **av, char **env)
     handle_signals(0);
     if(!ft_readline(&shell))
       continue;
-    parse_line(&shell);
     execute_line(&shell);
     free_memory(get_garbage_pointer(1));
     free(shell.line);
