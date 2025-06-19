@@ -6,11 +6,6 @@ static int is_redir(const char *s) {
     return are_they_equal(s, ">") || are_they_equal(s, ">>") || are_they_equal(s, "<");
 }
 
-// Helper: is this token an operator?
-static int is_operator(const char *s) {
-    return is_redir(s) || are_they_equal(s, "|") || are_they_equal(s, "<<");
-}
-
 // Robust parse_line: tokenize, expand, and keep redir targets as single tokens
 void parse_line(t_shell_control_block *shell) {
     char **split = customized_split(shell->line);
