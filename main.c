@@ -125,13 +125,6 @@ int is_there_a_pipe(t_shell_control_block *shell)
 
 void execute_line(t_shell_control_block *shell)
 {
-  // Reset exit_status for new command
-  if (shell->exit_status == 1)
-  {
-    // Ambiguous redirect error - reset for new command
-    shell->exit_status = 0;
-  }
-  
   if (shell->tokenized)
   {
     create_all_heredocs(shell);
