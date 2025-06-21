@@ -1,77 +1,90 @@
 NAME = minishell
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g -Iinclude 
-SRCS = main.c \
-	src/env/copy_env.c \
-	src/env/allocate_and_init_expand_list.c \
-	src/expansion/expand_if_possible.c \
-	src/utils/custom_join.c \
-	src/expansion/should_i_expand.c \
-	src/expansion/is_expand_separator.c \
-	src/expansion/new_string_after_expand.c \
-	src/parser/check_input_error.c \
-	src/parser/remove_quotes_from_args.c \
-	src/parser/split_with_operators.c \
-	src/parser/make_token.c \
-	src/parser/is_between_quotes.c \
-	src/parser/customized_split.c \
-	src/utils/is_space.c \
-	src/utils/are_they_equal.c \
-	src/utils/len_of_two_d_array.c \
-	src/utils/print_splitted.c \
-	src/utils/ft_strchr.c \
-	src/utils/get_next_line.c \
-	src/signals/handle_signals.c\
-	src/utils/ft_isalnum.c\
-	src/utils/ft_memcpy.c\
-	src/utils/ft_split.c\
-	src/utils/ft_strdup.c\
-	src/utils/ft_itoa.c\
-	src/utils/ft_strjoin.c\
-	src/utils/ft_strlen.c\
-	src/utils/ft_substr.c\
-	src/utils/garbage_collection_lstnew.c\
-	src/utils/garbage_collector.c\
-	src/utils/ft_lstnew.c\
-	src/utils/ft_lstadd_back.c\
-	src/parser/execute_command_line.c\
-	src/parser/handle_heredoc.c\
-	src/parser/get_files_name.c\
-	src/utils/print_file.c\
-	src/parser/handle_redir_in.c\
-	src/utils/read_file.c\
-	src/utils/print_error.c\
-	src/parser/handle_redir_out.c\
-	src/parser/handle_append.c \
-	src/execution/execute_command.c\
-	src/built_in/echo.c\
-	src/built_in/pwd.c\
-	src/built_in/env.c\
-	src/built_in/ft_strncmp.c\
-	src/built_in/check_built_in_command.c\
-	src/built_in/cd.c\
-	src/built_in/export.c\
-	src/built_in/ft_isalpha.c\
-	src/built_in/ft_isdigit.c\
-	src/built_in/ft_strcmp.c\
-	src/built_in/ist_valid_env_var.c\
-	src/built_in/unset.c\
-	src/parser/handle_dollar_with_quotes.c\
-	src/execution/print_exit_signal_message.c\
-	src/expansion/ft_get_env_var.c\
-	src/expansion/expand_outside_dollars.c\
-	src/utils/generate_random_name.c\
-	src/utils/is_quote.c\
-	src/utils/is_protected.c\
-	src/utils/is_all_spaces.c\
-	src/utils/ft_lstsize.c\
-	src/utils/it_there_a_pipe.c\
+READLINE = -lreadline
 
+# Source directories
+SRC_DIR = src
+CORE_DIR = $(SRC_DIR)/core
+BUILTINS_DIR = $(SRC_DIR)/builtins
+EXECUTION_DIR = $(SRC_DIR)/execution
+PARSER_DIR = $(SRC_DIR)/parser
+EXPANSION_DIR = $(SRC_DIR)/expansion
+ENV_DIR = $(SRC_DIR)/env
+UTILS_DIR = $(SRC_DIR)/utils
+
+# Source files
+SRCS = $(SRC_DIR)/main.c \
+	$(CORE_DIR)/shell.c \
+	$(BUILTINS_DIR)/builtin_dispatcher.c \
+	$(BUILTINS_DIR)/echo.c \
+	$(BUILTINS_DIR)/cd.c \
+	$(BUILTINS_DIR)/pwd.c \
+	$(BUILTINS_DIR)/env.c \
+	$(BUILTINS_DIR)/export.c \
+	$(BUILTINS_DIR)/unset.c \
+	$(BUILTINS_DIR)/env_validation.c \
+	$(BUILTINS_DIR)/ft_strcmp.c \
+	$(BUILTINS_DIR)/ft_strncmp.c \
+	$(BUILTINS_DIR)/ft_isalpha.c \
+	$(BUILTINS_DIR)/ft_isdigit.c \
+	$(EXECUTION_DIR)/command_executor.c \
+	$(EXECUTION_DIR)/execute_command_line.c \
+	$(EXECUTION_DIR)/handle_signals.c \
+	$(EXECUTION_DIR)/print_exit_signal_message.c \
+	$(EXECUTION_DIR)/handle_redir_in.c \
+	$(EXECUTION_DIR)/handle_redir_out.c \
+	$(EXECUTION_DIR)/handle_append.c \
+	$(EXECUTION_DIR)/handle_heredoc.c \
+	$(PARSER_DIR)/tokenizer.c \
+	$(PARSER_DIR)/lexer.c \
+	$(PARSER_DIR)/file_parser.c \
+	$(PARSER_DIR)/split_with_operators.c \
+	$(PARSER_DIR)/is_between_quotes.c \
+	$(PARSER_DIR)/remove_quotes_from_args.c \
+	$(PARSER_DIR)/handle_dollar_with_quotes.c \
+	$(PARSER_DIR)/check_input_error.c \
+	$(EXPANSION_DIR)/expand_if_possible.c \
+	$(EXPANSION_DIR)/should_i_expand.c \
+	$(EXPANSION_DIR)/is_expand_separator.c \
+	$(EXPANSION_DIR)/new_string_after_expand.c \
+	$(EXPANSION_DIR)/ft_get_env_var.c \
+	$(EXPANSION_DIR)/expand_outside_dollars.c \
+	$(EXPANSION_DIR)/expnad_inside_quote_dollar.c \
+	$(ENV_DIR)/copy_env.c \
+	$(ENV_DIR)/allocate_and_init_expand_list.c \
+	$(UTILS_DIR)/ft_strlen.c \
+	$(UTILS_DIR)/ft_strdup.c \
+	$(UTILS_DIR)/ft_strchr.c \
+	$(UTILS_DIR)/ft_strjoin.c \
+	$(UTILS_DIR)/ft_substr.c \
+	$(UTILS_DIR)/ft_split.c \
+	$(UTILS_DIR)/ft_itoa.c \
+	$(UTILS_DIR)/ft_memcpy.c \
+	$(UTILS_DIR)/ft_isalnum.c \
+	$(UTILS_DIR)/ft_lstnew.c \
+	$(UTILS_DIR)/ft_lstadd_back.c \
+	$(UTILS_DIR)/ft_lstsize.c \
+	$(UTILS_DIR)/garbage_collector.c \
+	$(UTILS_DIR)/garbage_collection_lstnew.c \
+	$(UTILS_DIR)/get_next_line.c \
+	$(UTILS_DIR)/ft_putstr_fd.c \
+	$(UTILS_DIR)/print_error.c \
+	$(UTILS_DIR)/generate_random_name.c \
+	$(UTILS_DIR)/custom_join.c \
+	$(UTILS_DIR)/are_they_equal.c \
+	$(UTILS_DIR)/is_space.c \
+	$(UTILS_DIR)/is_quote.c \
+	$(UTILS_DIR)/is_all_spaces.c \
+	$(UTILS_DIR)/is_protected.c \
+	$(UTILS_DIR)/print_file.c \
+	$(UTILS_DIR)/read_file.c \
+	$(UTILS_DIR)/print_splitted.c \
+	$(UTILS_DIR)/pipe_checker.c \
+	$(UTILS_DIR)/array_utils.c
 
 OBJS = $(SRCS:.c=.o)
-
-READLINE =-lreadline
 
 all: $(NAME)
 
@@ -82,11 +95,10 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) 
+	del /Q $(OBJS) 2>nul || echo "No object files to clean"
 
 fclean: clean
-	rm -f $(NAME)
-
+	del $(NAME).exe 2>nul || echo "No executable to clean"
 
 re: fclean all
 
