@@ -16,7 +16,7 @@ char *remake_delimeter(char *str)
       returned_str[j++] = str[i++];
       returned_str[j++] = str[i++];
     }
-    else if(str[i] == '$' && (str[i + 1] == single_q || str[i + 1] == double_q) && !is_between_quotes(str, i))
+    else if(str[i] == '$' && (str[i + 1] == SINGLE_Q || str[i + 1] == DOUBLE_Q) && !is_between_quotes(str, i))
       i ++;
     else
       returned_str[j++] = str[i++];

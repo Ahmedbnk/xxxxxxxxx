@@ -7,17 +7,15 @@ int	is_between_quotes(char *line, int index)
 
 	i = 0;
 	quote = 0;
-	while (line[i])
+	while (i < index)
 	{
-		if ((line[i] == single_q || line[i] == double_q) && quote == 0)
+		if ((line[i] == SINGLE_Q || line[i] == DOUBLE_Q) && quote == 0)
 			quote = line[i];
-		else if ((line[i] == single_q || line[i] == double_q)
+		else if ((line[i] == SINGLE_Q || line[i] == DOUBLE_Q)
 			&& line[i] == quote)
 			quote = 0;
-		if (i == index)
-			return (quote);
 		i++;
 	}
-	return (0);
+	return (quote);
 }
 

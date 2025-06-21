@@ -2,5 +2,5 @@
 
 int is_quote(char c)
 {
-    return (c == single_q || c == double_q);
+    return (c == SINGLE_Q || c == DOUBLE_Q);
 }

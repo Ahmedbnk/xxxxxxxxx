@@ -43,6 +43,7 @@ SRCS = $(SRC_DIR)/main.c \
 	$(EXPANSION_DIR)/expand_if_possible.c \
 	$(EXPANSION_DIR)/should_i_expand.c \
 	$(EXPANSION_DIR)/is_expand_separator.c \
+	$(EXPANSION_DIR)/is_expand_separator_fix.c \
 	$(EXPANSION_DIR)/new_string_after_expand.c \
 	$(EXPANSION_DIR)/ft_get_env_var.c \
 	$(EXPANSION_DIR)/expand_outside_dollars.c \
