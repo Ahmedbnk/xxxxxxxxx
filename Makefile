@@ -17,18 +17,13 @@ UTILS_DIR = $(SRC_DIR)/utils
 # Source files
 SRCS = $(SRC_DIR)/main.c \
 	$(CORE_DIR)/shell.c \
-	$(BUILTINS_DIR)/builtin_dispatcher.c \
 	$(BUILTINS_DIR)/echo.c \
 	$(BUILTINS_DIR)/cd.c \
 	$(BUILTINS_DIR)/pwd.c \
-	$(BUILTINS_DIR)/env.c \
 	$(BUILTINS_DIR)/export.c \
 	$(BUILTINS_DIR)/unset.c \
-	$(BUILTINS_DIR)/env_validation.c \
-	$(BUILTINS_DIR)/ft_strcmp.c \
-	$(BUILTINS_DIR)/ft_strncmp.c \
-	$(BUILTINS_DIR)/ft_isalpha.c \
-	$(BUILTINS_DIR)/ft_isdigit.c \
+	$(BUILTINS_DIR)/env.c \
+	$(BUILTINS_DIR)/exit.c \
 	$(EXECUTION_DIR)/command_executor.c \
 	$(EXECUTION_DIR)/execute_command_line.c \
 	$(EXECUTION_DIR)/handle_signals.c \
