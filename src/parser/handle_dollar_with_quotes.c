@@ -13,7 +13,7 @@ char *remove_dollar_if_quotes_after_it(char *str)
       returned_string[j++] = str[i++];
   }
   returned_string[j] = '\0';
-  remove_quotes(&returned_string);
+  // remove_quotes(&returned_string);
   return returned_string;
 }
 

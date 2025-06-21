@@ -1,157 +1,85 @@
 #include "minishell.h"
 
-void expand(t_shell_control_block *shell) 
-{
-  int i;
-  i = 0;
-  while (shell->splitted[i])
-  {
-    if(are_they_equal(shell->splitted[i], "<<"))
-      i++;
-    else
-    {
-      char *expanded = expand_if_possible(shell, shell->splitted[i], 0);
-      
-      // Check if this is a redirection filename that expanded to empty
-      if (expanded && ft_strlen(expanded) == 0)
-      {
-        // Check if the previous token is a redirection operator
-        if (i > 0 && (are_they_equal(shell->splitted[i-1], ">") || 
-                      are_they_equal(shell->splitted[i-1], ">>")))
-        {
-          // This is a redirection filename that expanded to empty
-          // Replace with a special marker that won't be removed by customized_split
-          shell->splitted[i] = ft_strdup("EMPTY_REDIR", 1);
-        }
-        else
-        {
-          shell->splitted[i] = expanded;
-        }
-      }
-      else
-      {
-        shell->splitted[i] = expanded;
-      }
-    }
-    i++;
-  }
-}
-
-int count_lsit_size(t_list *list)
-{
-  int size;
-  int i;
-  char **array;
-  size = 0;
-  while(list)
-  {
-    array = (char **)(list->content);
-    i = 0;
-    while(array[i])
-    {
-      size ++;
-      i++;
-    }
-    list = list->next;
-  }
-  return size;
-}
-
-char **creat_new_splitted(t_list *list)
-{
-  char **new_splitted;
-  char **array;
-
-  int i;
-  int j;
-  j = 0;
-  new_splitted = ft_malloc((count_lsit_size(list)+1) * sizeof(char *), 1);
-  while(list)
-  {
-    array = (char **)list->content;
-    i = 0;
-    while(array[i])
-    {
-      new_splitted[j] = array[i];
-      j++;
-      i++;
-    }
-    list = list->next;
-  }
-  new_splitted[j] = NULL;
-  return new_splitted;
-}
-char **split_after_expantion(char **str)
+void split_after_expantion(t_shell_control_block *sh, char *str, char *old_str)
 {
   int i;
   char **ptr;
-  t_list *node;
-  t_list *list;
-  list = NULL;
   i = 0;
-  while(str[i])
+  (void)old_str;
+  ptr = customized_split(str);
+  while (ptr[i])
   {
-    // If previous token is a redirection operator, do not split this token
-    if (i > 0 && (
-        are_they_equal(str[i-1], ">") ||
-        are_they_equal(str[i-1], ">>") ||
-        are_they_equal(str[i-1], "<")))
+    rm_quotes_from_one_str(sh, &ptr[i]);
+    ft_lstadd_back(&sh->lst, ft_lstnew(ptr[i]));
+    i++;
+  }
+}
+
+void expand_and_split(t_shell_control_block *shell) 
+{
+  int i;
+  i = 0;
+  char *ptr;
+  shell->lst = NULL;
+  while (shell->splitted[i])
+  {
+    if(are_they_equal(shell->splitted[i], "<<"))
     {
-      // Add as a single token (no split)
-      char **single = ft_malloc(2 * sizeof(char *), 1);
-      single[0] = str[i];
-      single[1] = NULL;
-      node = ft_lstnew(single);
-      ft_lstadd_back(&list, node);
+        ft_lstadd_back(&shell->lst, ft_lstnew(shell->splitted[i++]));
+        ft_lstadd_back(&shell->lst, ft_lstnew(shell->splitted[i]));
     }
     else
     {
-      ptr = customized_split(str[i]);
-      node = ft_lstnew(ptr);
-      ft_lstadd_back(&list, node);
+      ptr = expand_if_possible(shell, shell->splitted[i], 0);
+      if (are_they_equal(shell->splitted[i], ptr))
+      {
+        rm_quotes_from_one_str(shell, &ptr);
+        ft_lstadd_back(&shell->lst, ft_lstnew(ptr));
+      }
+      else
+        split_after_expantion(shell, ptr, shell->splitted[i]);
     }
     i++;
   }
-  return (creat_new_splitted(list));
 }
 
-int is_there_a_pipe(t_shell_control_block *shell)
+char **update_splitted(t_shell_control_block *shell)
 {
-  t_token *ptr;
-
-  ptr = shell->tokenized;
-  while(ptr->word != NULL)
+  char **the_updated_splitted;
+  t_list *ptr;
+  int len;
+  int i;
+  len = ft_lstsize(shell->lst);
+  the_updated_splitted = ft_malloc((len +1) *sizeof(char *), 1);
+  ptr = shell->lst;
+  i = 0;
+  while (ptr)
   {
-    if(ptr->type == PIPE)
-      return 1;
-    ptr++;
+    the_updated_splitted[i++] = (char *)ptr->content;
+    ptr = ptr->next;
   }
-  return 0;
+  the_updated_splitted[i] = NULL;
+  return the_updated_splitted;
 }
 
-// Forward declaration
-int check_ambiguous_and_syntax(t_token *tokens);
+void parse_line(t_shell_control_block *shell)
+{
+  shell->porotect_var = generate_random_name();
+  shell->splitted = customized_split(shell->line);
+  shell->splitted = split_with_operators(shell->splitted);
+  get_files_name(shell);
+  expand_and_split(shell);
+  shell->splitted = update_splitted(shell);
+  shell->tokenized = make_token(shell);
+}
 
 void execute_line(t_shell_control_block *shell)
 {
-  parse_line(shell);
-  int check = check_ambiguous_and_syntax(shell->tokenized);
-  if (check == 1) {
-    shell->exit_status = 2; // syntax error
-    return;
-  } else if (check == 2) {
-    shell->exit_status = 1; // ambiguous redirect
-    printf("ambiguous redirect\n");
-    return;
-  } else {
-    shell->exit_status = 0;
-  }
-
   if (shell->tokenized)
   {
     create_all_heredocs(shell);
     get_cmd_and_its_args(shell);
-    if(!is_there_a_pipe(shell) && execute_built_in(shell, 1));
+    if(!is_there_a_pipe(shell) && execute_built_in(shell, parent));
     else
       execute_command_line(shell);
   }
@@ -183,6 +111,8 @@ void ft_init_shell_block(t_shell_control_block *shell, int ac, char **av)
   shell->env_cpy = NULL;
   shell->line = NULL;
   shell->splitted = NULL;
+  shell->file_name_lst = NULL;
+  shell->lst = NULL;
   shell->cmd_and_args= NULL;
   shell->env_of_export = NULL;
   shell->exit_status= 0;
@@ -196,9 +126,10 @@ int main(int ac, char **av, char **env)
   shell.env_of_export = copy_env(env);
   shell.env_cpy = copy_env(env);
  while (1) {
-    handle_signals(0);
-    if(!ft_readline(&shell))
-      continue;
+   handle_signals(0);
+   if (!ft_readline(&shell))
+     continue;
+    parse_line(&shell);
     execute_line(&shell);
     free_memory(get_garbage_pointer(1));
     free(shell.line);

@@ -37,6 +37,7 @@ SRCS = main.c \
 	src/utils/ft_lstadd_back.c\
 	src/parser/execute_command_line.c\
 	src/parser/handle_heredoc.c\
+	src/parser/get_files_name.c\
 	src/utils/print_file.c\
 	src/parser/handle_redir_in.c\
 	src/utils/read_file.c\
@@ -59,8 +60,14 @@ SRCS = main.c \
 	src/parser/handle_dollar_with_quotes.c\
 	src/execution/print_exit_signal_message.c\
 	src/expansion/ft_get_env_var.c\
-	src/parser/parse_line.c \
-	src/parser/check_ambiguous_and_syntax.c \
+	src/expansion/expand_outside_dollars.c\
+	src/utils/generate_random_name.c\
+	src/utils/is_quote.c\
+	src/utils/is_protected.c\
+	src/utils/is_all_spaces.c\
+	src/utils/ft_lstsize.c\
+	src/utils/it_there_a_pipe.c\
+
 
 OBJS = $(SRCS:.c=.o)
 

@@ -74,6 +74,25 @@ void	string_after_dollar(t_expand *data, char *str, int *offset)
 }
 
 //char	*expand_if_possible(char *str , int heredoc_flag)
+
+// void r_q(t_shell_control_block *sh, int size)
+// {
+//   int i = 0;
+//   t_expand *ptr;
+//   ptr = sh->expand_arr;
+//   char quote = 0;
+//   while(i < size)
+//   {
+//     if(ptr->befor_dollar)
+//       rm_quotes_from_multi_str(&ptr->befor_dollar, &quote);
+//     if(ptr->to_expand)
+//       rm_quotes_from_multi_str(&ptr->to_expand, &quote);
+//     if(i+1 == size && ptr->after_dollar)
+//       rm_quotes_from_multi_str(&ptr->after_dollar, &quote);
+//     i++;
+//   }
+// }
+
 char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 {
 	int i;
@@ -96,6 +115,8 @@ char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 		string_after_dollar(&(s->expand_arr[i]), str, &offset);
 		i++;
 	}
+	// printf("s%s\n", str);
+//	r_q(s, num_of_expantion);
 	new_str = new_str_after_expand(s, num_of_expantion);
 	return (new_str);
 }

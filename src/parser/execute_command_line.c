@@ -1,29 +1,27 @@
 #include "minishell.h"
 
-int	generate_random_number(void)
-{
-  int	fd;
-  int	random_number;
+// int	generate_random_number(void)
+// {
+//   int	fd;
+//   int	random_number;
 
-  fd = open("/dev/random", O_RDONLY);
-  read(fd, &random_number, 4);
-  close(fd);
-  if (random_number < 0)
-    return (-random_number);
-  return (random_number);
-}
+//   fd = open("/dev/random", O_RDONLY);
+//   read(fd, &random_number, 4);
+//   close(fd);
+//   if (random_number < 0)
+//     return (-random_number);
+//   return (random_number);
+// }
 
-char	*generate_random_name(void)
-{
-  int	num;
+// char	*generate_random_name(void)
+// {
+//   int	num;
 
-  num = generate_random_number();
-  if (num < 0)
-    return (NULL);
-  return (ft_itoa(num));
-}
-
-
+//   num = generate_random_number();
+//   if (num < 0)
+//     return (NULL);
+//   return (ft_itoa(num));
+// }
 
 void	skip_command(t_token **tokenized_address)
 {
@@ -59,17 +57,15 @@ void handle_all_redir(t_shell_control_block *shell)
       handle_append((shell->tokenized + 1)->word, &(shell->file_name));
     shell->tokenized ++;
   }
+
 }
 void	process_command(t_shell_control_block *shell)
 {
   shell->in_file_name = NULL;
   shell->file_name = NULL;
   get_cmd_and_its_args(shell);
-  
-  // Process redirections normally
   handle_all_redir(shell);
-  
-  if (shell->file_name)
+    if (shell->file_name)
   {
     shell->fd_out = open(shell->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
     dup2(shell->fd_out, 1);
@@ -81,7 +77,7 @@ void	process_command(t_shell_control_block *shell)
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
-  if(!execute_built_in(shell, 2))
+  if(!execute_built_in(shell, child))
     execute_command(shell);
   unlink(shell->in_file_name);
 }
@@ -112,7 +108,7 @@ void execute_command_line_helper(t_shell_control_block *shell)
     shell->last_child_pid = p_id;
 }
 
-void	execute_command_line(t_shell_control_block *shell)
+void execute_command_line(t_shell_control_block *shell)
 {
   int status;
 
