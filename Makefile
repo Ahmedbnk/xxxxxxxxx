@@ -14,7 +14,7 @@ EXPANSION_DIR = $(SRC_DIR)/expansion
 ENV_DIR = $(SRC_DIR)/env
 UTILS_DIR = $(SRC_DIR)/utils
 
-# Source files - ONLY files that actually exist
+# Source files - ONLY files that definitely exist
 SRCS = $(SRC_DIR)/main.c \
 	$(CORE_DIR)/shell.c \
 	$(BUILTINS_DIR)/echo.c \
