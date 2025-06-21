@@ -77,7 +77,7 @@ void	process_command(t_shell_control_block *shell)
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
-  if(!execute_built_in(shell, child))
+  if(!execute_built_in(shell, CHILD))
     execute_command(shell);
   unlink(shell->in_file_name);
 }
