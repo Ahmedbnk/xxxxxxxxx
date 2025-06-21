@@ -90,10 +90,10 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	del /Q $(OBJS) 2>nul || echo "No object files to clean"
+	rm -f $(OBJS)
 
 fclean: clean
-	del $(NAME).exe 2>nul || echo "No executable to clean"
+	rm -f $(NAME)
 
 re: fclean all
 

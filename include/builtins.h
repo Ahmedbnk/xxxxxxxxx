@@ -1,8 +1,6 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-# include "minishell.h"
-
 // Built-in command functions
 int		execute_built_in(t_shell_control_block *shell, int state);
 void	echo(char **args);

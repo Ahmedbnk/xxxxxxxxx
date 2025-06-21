@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-# include "minishell.h"
-
 // String utilities
 size_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *s, int flag);

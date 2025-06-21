@@ -1,8 +1,6 @@
 #ifndef EXPANSION_H
 # define EXPANSION_H
 
-# include "minishell.h"
-
 // Variable expansion
 char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag);
 char	*expand_outside_dollar(t_shell_control_block *scb, char *str);

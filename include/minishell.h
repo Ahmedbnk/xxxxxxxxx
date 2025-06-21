@@ -11,14 +11,6 @@
 # include <sys/wait.h>
 # include <errno.h>
 
-// Include modular headers
-# include "builtins.h"
-# include "execution.h"
-# include "expansion.h"
-# include "parser.h"
-# include "utils.h"
-# include "env.h"
-
 // Constants
 # define PARENT 1
 # define CHILD 2
@@ -101,6 +93,14 @@ typedef struct s_shell_control_block
 	int				status;
 	int				exit_status;
 }					t_shell_control_block;
+
+// Include modular headers (after type definitions)
+# include "builtins.h"
+# include "execution.h"
+# include "expansion.h"
+# include "parser.h"
+# include "utils.h"
+# include "env.h"
 
 // Core shell functions
 void	ft_init_shell_block(t_shell_control_block *shell, int ac, char **av);

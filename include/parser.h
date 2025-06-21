@@ -1,8 +1,6 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "minishell.h"
-
 // Main parsing functions
 void	parse_line(t_shell_control_block *shell);
 t_token	*make_token(t_shell_control_block *shell);

@@ -1,8 +1,6 @@
 #ifndef ENV_H
 # define ENV_H
 
-# include "minishell.h"
-
 // Environment operations
 char	**copy_env(char **env);
 void	print_env(char **env);
