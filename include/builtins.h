@@ -9,6 +9,7 @@ char	*pwd(void);
 void	print_env(char **env);
 void	export(t_shell_control_block *s, char **to_export);
 void	unset(char ***env, char **vars);
+void	minishell_exit(t_shell_control_block *shell, char **args);
 
 // Built-in utility functions
 int		ft_strcmp(char *s1, char *s2);

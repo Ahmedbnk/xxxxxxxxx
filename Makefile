@@ -77,7 +77,13 @@ SRCS = $(SRC_DIR)/main.c \
 	$(UTILS_DIR)/read_file.c \
 	$(UTILS_DIR)/print_splitted.c \
 	$(UTILS_DIR)/pipe_checker.c \
-	$(UTILS_DIR)/array_utils.c
+	$(UTILS_DIR)/array_utils.c \
+	$(UTILS_DIR)/env_validation.c \
+	$(UTILS_DIR)/ft_strcmp.c \
+	$(UTILS_DIR)/ft_strncmp.c \
+	$(UTILS_DIR)/ft_isalpha.c \
+	$(UTILS_DIR)/ft_isdigit.c \
+	$(UTILS_DIR)/builtin_dispatcher.c
 
 OBJS = $(SRCS:.c=.o)
 
