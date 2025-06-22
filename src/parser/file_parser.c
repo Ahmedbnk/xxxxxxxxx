@@ -104,26 +104,6 @@ void	prepare_lst(t_shell_control_block *sh)
 	}
 }
 
-static void	process_redirection_token(t_shell_control_block *sh, char **ptr)
-{
-	t_name_lst	*new_node;
-
-	if (!*(ptr + 1))
-		return ;
-	new_node = new_file_name(*(ptr + 1), VALID_NAME, NOT_NEW_START);
-	if (new_node)
-		add_back_file_name(&(sh->file_name_lst), new_node);
-}
-
-static void	process_pipe_token(t_shell_control_block *sh)
-{
-	t_name_lst	*new_node;
-
-	new_node = new_file_name("|", VALID_NAME, NEW_START);
-	if (new_node)
-		add_back_file_name(&(sh->file_name_lst), new_node);
-}
-
 void	get_files_name(t_shell_control_block *s)
 {
 	int		i;
