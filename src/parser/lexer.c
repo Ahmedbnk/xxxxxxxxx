@@ -1,5 +1,48 @@
 #include "minishell.h"
 
+static int	ft_w_counter(char const *s)
+{
+	int	i;
+	int	k;
+	int	counter;
+
+	i = 0;
+	k = 0;
+	counter = 0;
+	while (s[i])
+	{
+		if (is_space(s[i]))
+			k = 0;
+		else
+		{
+			if (k == 0)
+				counter++;
+			k = 1;
+		}
+		i++;
+	}
+	return (counter);
+}
+
+static void	split_helper(char **splitted, char *s, int i, int k)
+{
+	int	start;
+
+	start = 0;
+	while (s[i])
+	{
+		while (is_space(s[i]))
+			i++;
+		start = i;
+		while (s[i] && (!is_space(s[i]) || (is_space(s[i])
+					&& is_between_quotes(s, i))))
+			i++;
+		if (i > start)
+			splitted[k++] = ft_substr(s, start, i - start);
+	}
+	splitted[k] = NULL;
+}
+
 char	**customized_split(char const *s)
 {
 	char	**result;

@@ -104,6 +104,68 @@ void	prepare_lst(t_shell_control_block *sh)
 	}
 }
 
+static void	process_redirection_token(t_shell_control_block *sh, char **ptr)
+{
+	t_name_lst	*new_node;
+
+	if (!*(ptr + 1))
+		return ;
+	new_node = new_file_name(*(ptr + 1), VALID_NAME, NOT_NEW_START);
+	if (new_node)
+		add_back_file_name(&(sh->file_name_lst), new_node);
+}
+
+static void	process_pipe_token(t_shell_control_block *sh)
+{
+	t_name_lst	*new_node;
+
+	new_node = new_file_name("|", VALID_NAME, NEW_START);
+	if (new_node)
+		add_back_file_name(&(sh->file_name_lst), new_node);
+}
+
+static void	parse_tokens(t_shell_control_block *sh)
+{
+	char	**ptr;
+
+	if (!sh || !sh->splitted)
+		return ;
+	ptr = sh->splitted;
+	while (*ptr)
+	{
+		if (is_redirection(*ptr))
+		{
+			process_redirection_token(sh, ptr);
+			ptr++;
+		}
+		else if (are_they_equal(*ptr, "|"))
+			process_pipe_token(sh);
+		ptr++;
+	}
+}
+
+static void	debug_print_node(t_name_lst *lst)
+{
+		printf("------> file name is %s\n", (char *)lst->file_name);
+		printf("------> valid is %d\n", lst->valid);
+		printf("------> is new start is %d\n", lst->new_start);
+		printf("***********************>\n");
+}
+
+static void	debug_print_list(t_shell_control_block *sh)
+{
+	t_name_lst	*lst;
+
+	if (!sh || !sh->file_name_lst)
+		return ;
+	lst = sh->file_name_lst;
+	while (lst)
+	{
+		debug_print_node(lst);
+		lst = lst->next;
+	}
+}
+
 void	get_files_name(t_shell_control_block *s)
 {
 	int		i;
