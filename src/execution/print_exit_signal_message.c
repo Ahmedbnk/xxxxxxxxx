@@ -50,7 +50,6 @@ static void second_range(int exit_status)
     printf("File size limit exceeded (core dumped)\n");
   else if (exit_status == 26)
     printf("Virtual timer expired\n");
-
 }
 
 static void third_range(int exit_status)

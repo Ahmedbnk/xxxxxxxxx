@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 t_type	get_type_type(const char *str)
@@ -52,18 +51,65 @@ int check_syntax_error(t_token *data, int len)
 
 t_token *make_token(t_shell_control_block *shell)
 {
-  int len;
-  t_token *list;
-  char **arr;
+	int		i;
+	int		token_count;
+	t_token	*tokenized;
 
-  arr = shell->splitted;
-  len = len_of_two_d_array(arr);
-  list = ft_malloc((len  + 1)* sizeof(t_token), 1);
-  fill_the_list(list, arr);
-  if(check_syntax_error(list, len))
-  {
-    shell->exit_status = 2;
-    return NULL;
-  }
-  return list;
+	i = 0;
+	token_count = 0;
+	while (shell->splitted[i])
+	{
+		if (are_they_equal(shell->splitted[i], "|"))
+			token_count++;
+		else if (are_they_equal(shell->splitted[i], "<"))
+			token_count++;
+		else if (are_they_equal(shell->splitted[i], ">"))
+			token_count++;
+		else if (are_they_equal(shell->splitted[i], ">>"))
+			token_count++;
+		else if (are_they_equal(shell->splitted[i], "<<"))
+			token_count++;
+		i++;
+	}
+
+	tokenized = ft_malloc((token_count + 1) * sizeof(t_token), 1);
+	i = 0;
+	token_count = 0;
+	while (shell->splitted[i])
+	{
+		if (are_they_equal(shell->splitted[i], "|"))
+		{
+			tokenized[token_count].type = PIPE;
+			tokenized[token_count].word = shell->splitted[i];
+			token_count++;
+		}
+		else if (are_they_equal(shell->splitted[i], "<"))
+		{
+			tokenized[token_count].type = REDIR_IN;
+			tokenized[token_count].word = shell->splitted[i];
+			token_count++;
+		}
+		else if (are_they_equal(shell->splitted[i], ">"))
+		{
+			tokenized[token_count].type = REDIR_OUT;
+			tokenized[token_count].word = shell->splitted[i];
+			token_count++;
+		}
+		else if (are_they_equal(shell->splitted[i], ">>"))
+		{
+			tokenized[token_count].type = REDIR_APPEND;
+			tokenized[token_count].word = shell->splitted[i];
+			token_count++;
+		}
+		else if (are_they_equal(shell->splitted[i], "<<"))
+		{
+			tokenized[token_count].type = HEREDOC;
+			tokenized[token_count].word = shell->splitted[i];
+			token_count++;
+		}
+		i++;
+	}
+	tokenized[token_count].type = -1;
+	tokenized[token_count].word = NULL;
+	return (tokenized);
 }

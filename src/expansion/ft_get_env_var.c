@@ -75,3 +75,25 @@ char *get_env_var(t_shell_control_block *shell , t_expand data)
   }
   return NULL;
 }
+
+char	*ft_get_env_var(t_shell_control_block *shell, char *var_name)
+{
+	int		i;
+	char	*env_var;
+
+	if (!shell->env_cpy || !var_name)
+		return (NULL);
+	
+	i = 0;
+	while (shell->env_cpy[i])
+	{
+		if (ft_strncmp(shell->env_cpy[i], var_name, ft_strlen(var_name)) == 0 &&
+			shell->env_cpy[i][ft_strlen(var_name)] == '=')
+		{
+			env_var = ft_strdup(shell->env_cpy[i] + ft_strlen(var_name) + 1, 1);
+			return (env_var);
+		}
+		i++;
+	}
+	return (NULL);
+}

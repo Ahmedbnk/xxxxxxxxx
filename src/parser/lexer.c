@@ -43,29 +43,45 @@ static void	split_helper(char **splitted, char *s, int i, int k)
 	splitted[k] = NULL;
 }
 
-
 char	**customized_split(char const *s)
 {
-	char	**splitted;
+	char	**result;
 	int		i;
-	int		k;
-  //lmouchkil kan hna
-  if(*s == '\0' || is_all_spaces(s))
-  {
-    splitted = ft_malloc(2 *sizeof(char *),1);
-    splitted[0] = ft_strdup("", 1);
-    splitted[1] = NULL;
-    return splitted;
-  }
+	int		j;
+	int		word_count;
 
 	if (!s)
 		return (NULL);
-	splitted = ft_malloc((ft_w_counter(s) + 1) * sizeof(char *), 1);
+	word_count = 0;
 	i = 0;
-	k = 0;
-	split_helper(splitted, (char *)s, i, k);
-	return (splitted);
+	while (s[i])
+	{
+		while (s[i] && is_space(s[i]))
+			i++;
+		if (s[i])
+			word_count++;
+		while (s[i] && !is_space(s[i]))
+			i++;
+	}
+	result = ft_malloc((word_count + 1) * sizeof(char *), 1);
+	i = 0;
+	j = 0;
+	while (s[i])
+	{
+		while (s[i] && is_space(s[i]))
+			i++;
+		if (s[i])
+		{
+			result[j] = ft_strdup(s + i, 1);
+			j++;
+		}
+		while (s[i] && !is_space(s[i]))
+			i++;
+	}
+	result[j] = NULL;
+	return (result);
 }
+
 //#include <stdio.h>
 //  int	main(void)
 //  {

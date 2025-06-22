@@ -433,3 +433,34 @@
 // 	cleanup_expansion_array(expand_arr, dollar_count);
 // 	return (result ? result : ft_strdup(str, 1));
 // }
+
+#include "minishell.h"
+
+char	*expand_outside_dollar(t_shell_control_block *scb, char *str)
+{
+	char	*result;
+	int		i;
+	int		j;
+
+	if (!str || !*str)
+		return (str);
+	
+	result = ft_malloc(ft_strlen(str) * 2 + 1, 1);
+	i = 0;
+	j = 0;
+	
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i + 1] && !is_space(str[i + 1]))
+		{
+			// Simple variable expansion
+			result[j++] = str[i++];
+			while (str[i] && !is_space(str[i]) && str[i] != '$')
+				result[j++] = str[i++];
+		}
+		else
+			result[j++] = str[i++];
+	}
+	result[j] = '\0';
+	return (result);
+}

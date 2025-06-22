@@ -95,28 +95,16 @@ void	string_after_dollar(t_expand *data, char *str, int *offset)
 
 char	*expand_if_possible(t_shell_control_block *s, char *str, int heredoc_flag)
 {
-	int i;
-	int offset;
-	int num_of_expantion;
-	char *new_str;
+	char	*result;
+	int		expand_count;
 
-	s->expand_arr = NULL;
-
-	i = 0;
-	offset = 0;
-	num_of_expantion = how_many_dallar_to_expand(str, heredoc_flag);
-	if (num_of_expantion == 0)
-		return (ft_strdup(str, 1));
-	allocat_and_init(&(s->expand_arr), num_of_expantion, heredoc_flag);
-	while (i < num_of_expantion)
-	{
-		string_before_dollar(&(s->expand_arr[i]), str, &offset);
-		string_to_expand(&(s->expand_arr[i]), str, &offset);
-		string_after_dollar(&(s->expand_arr[i]), str, &offset);
-		i++;
-	}
-	// printf("s%s\n", str);
-//	r_q(s, num_of_expantion);
-	new_str = new_str_after_expand(s, num_of_expantion);
-	return (new_str);
+	if (!str || !*str)
+		return (str);
+	
+	expand_count = how_many_dallar_to_expand(str, heredoc_flag);
+	if (expand_count == 0)
+		return (str);
+	
+	result = expand_outside_dollar(s, str);
+	return (result);
 }

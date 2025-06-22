@@ -166,12 +166,30 @@ static void	debug_print_list(t_shell_control_block *sh)
 	}
 }
 
-void	get_files_name(t_shell_control_block *sh)
+void	get_files_name(t_shell_control_block *s)
 {
-	if (!sh)
-		return ;
-	sh->file_name_lst = NULL;
-	parse_tokens(sh);
-	prepare_lst(sh);
-	debug_print_list(sh);
+	int		i;
+	t_name_lst	*new_node;
+
+	i = 0;
+	s->file_name_lst = NULL;
+	while (s->splitted[i])
+	{
+		if (are_they_equal(s->splitted[i], "<") || 
+			are_they_equal(s->splitted[i], ">") ||
+			are_they_equal(s->splitted[i], ">>") ||
+			are_they_equal(s->splitted[i], "<<"))
+		{
+			if (s->splitted[i + 1])
+			{
+				new_node = ft_malloc(sizeof(t_name_lst), 1);
+				new_node->file_name = s->splitted[i + 1];
+				new_node->valid = 1;
+				new_node->new_start = 1;
+				new_node->next = s->file_name_lst;
+				s->file_name_lst = new_node;
+			}
+		}
+		i++;
+	}
 }
