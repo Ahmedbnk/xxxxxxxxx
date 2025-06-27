@@ -13,7 +13,7 @@ static char	*creat_rest(int fd, char *rest)
 	ssize_t	readed_bytes;
 	char	*rest_clean;
 
-	buffer = malloc((size_t)BUFFER_SIZE + 1);
+	buffer = ft_malloc((size_t)BUFFER_SIZE + 1, 1);
 	readed_bytes = 1;
 	while (ft_strchr(rest, '\n') == NULL && readed_bytes != 0)
 	{

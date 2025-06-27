@@ -46,8 +46,8 @@ ft_substr	src/utils/ft_substr.c	/^char	*ft_substr(char const *s, unsigned int st
 ft_w_counter	src/parser/customized_split.c	/^static int	ft_w_counter(char const *s)$/;"	f	language:C	typeref:typename:int	file:
 ft_w_counter	src/utils/ft_split.c	/^static int	ft_w_counter(char const *s, char c)$/;"	f	language:C	typeref:typename:int	file:
 garbage_collection_lstnew	src/utils/garbage_collection_lstnew.c	/^t_list	*garbage_collection_lstnew(void *content)$/;"	f	language:C	typeref:typename:t_list *
-generate_random_name	src/parser/parse_tokenized.c	/^char *generate_random_name()$/;"	f	language:C	typeref:typename:char *
-generate_random_number	src/parser/parse_tokenized.c	/^int generate_random_number()$/;"	f	language:C	typeref:typename:int
+generate_random_name	src/parser/parse_tokenze.c	/^char *generate_random_name()$/;"	f	language:C	typeref:typename:char *
+generate_random_number	src/parser/parse_tokenze.c	/^int generate_random_number()$/;"	f	language:C	typeref:typename:int
 get_cmd_and_its_args	src/execution/execute_command.c	/^char **get_cmd_and_its_args(t_token *arr_of_stracts)$/;"	f	language:C	typeref:typename:char **
 get_garbage_pointer	src/utils/garbage_collector.c	/^t_list	**get_garbage_pointer(void)$/;"	f	language:C	typeref:typename:t_list **
 get_next_line	src/utils/get_next_line.c	/^char	*get_next_line(int fd)$/;"	f	language:C	typeref:typename:char *
@@ -71,11 +71,11 @@ len_of_two_d_array	src/utils/len_of_two_d_array.c	/^int len_of_two_d_array(char 
 make_token	src/parser/make_token.c	/^t_token *make_token(char **arr)$/;"	f	language:C	typeref:typename:t_token *
 n_counter	src/utils/ft_itoa.c	/^static int	n_counter(int n)$/;"	f	language:C	typeref:typename:int	file:
 new_str_after_expand	src/expansion/new_string_after_expand.c	/^char	*new_str_after_expand(t_arr_of_structs *data, int num_of_expantion)$/;"	f	language:C	typeref:typename:char *
-parse_tokenized	src/parser/parse_tokenized.c	/^void parse_tokenized(t_token *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
-print_command	src/parser/parse_tokenized.c	/^void print_command(t_token *tokenized)$/;"	f	language:C	typeref:typename:void
+parse_tokenze	src/parser/parse_tokenze.c	/^void parse_tokenze(t_token *tokenze, char **env)$/;"	f	language:C	typeref:typename:void
+print_command	src/parser/parse_tokenze.c	/^void print_command(t_token *tokenze)$/;"	f	language:C	typeref:typename:void
 print_file	src/utils/print_file.c	/^void print_file(char *str)$/;"	f	language:C	typeref:typename:void
 print_splitted	src/utils/print_splitted.c	/^void print_splitted(char **splitted)$/;"	f	language:C	typeref:typename:void
-process_command	src/parser/parse_tokenized.c	/^void process_command(t_token *tokenized, char **env)$/;"	f	language:C	typeref:typename:void
+process_command	src/parser/parse_tokenze.c	/^void process_command(t_token *tokenze, char **env)$/;"	f	language:C	typeref:typename:void
 read_file	src/parser/read_file.c	/^char *read_file(char *file_name)$/;"	f	language:C	typeref:typename:char *
 read_file	src/utils/read_file.c	/^char *read_file(char *file_name)$/;"	f	language:C	typeref:typename:char *
 remove_quotes	src/parser/remove_quotes_from_args.c	/^void	remove_quotes(char **line)$/;"	f	language:C	typeref:typename:void
@@ -83,7 +83,7 @@ remove_quotes_from_args	src/parser/remove_quotes_from_args.c	/^void remove_quote
 remove_quotes_helper	src/parser/remove_quotes_from_args.c	/^static void	remove_quotes_helper(char *line, char **parsed_quote_line)$/;"	f	language:C	typeref:typename:void	file:
 should_i_expand	src/expansion/should_i_expand.c	/^int	should_i_expand(char *str, int index)$/;"	f	language:C	typeref:typename:int
 sigint_handler	src/signals/handle_signals.c	/^void	sigint_handler(int signo)$/;"	f	language:C	typeref:typename:void
-skip_command	src/parser/parse_tokenized.c	/^void skip_command(t_token **tokenized_address)$/;"	f	language:C	typeref:typename:void
+skip_command	src/parser/parse_tokenze.c	/^void skip_command(t_token **tokenze_address)$/;"	f	language:C	typeref:typename:void
 split_helper	src/parser/customized_split.c	/^static void	split_helper(char **splitted, char *s, int i, int k)$/;"	f	language:C	typeref:typename:void	file:
 split_string_with_operators	src/parser/split_with_operators.c	/^static void	split_string_with_operators(char **container, char *str, int *j_ptr)$/;"	f	language:C	typeref:typename:void	file:
 split_with_operators	src/parser/split_with_operators.c	/^char	**split_with_operators(char **splitted)$/;"	f	language:C	typeref:typename:char **

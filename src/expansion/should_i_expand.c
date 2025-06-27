@@ -2,11 +2,13 @@
 
 int	should_i_expand(char *str, int index)
 {
-	int	quote;
+	char	quote;
 
 	quote = 0;
-	if (quote == SINGLE_Q || str[index + 1] == '\0' || str[index
-		+ 1] == SINGLE_Q || str[index + 1] == DOUBLE_Q)
+	quote = is_between_quotes(str, index);
+	if (quote == single_q || str[index + 1] == '\0' || str[index
+		+ 1] == single_q || str[index + 1] == double_q)
 		return (0);
-	return (1);
+	else
+		return (1);
 }

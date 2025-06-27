@@ -4,12 +4,12 @@ int is_there_a_pipe(t_shell_control_block *shell)
 {
   t_token *ptr;
 
-  ptr = shell->tokenized;
-  while(ptr->word != NULL)
+  ptr = shell->tokenze;
+  while(ptr)
   {
     if(ptr->type == PIPE)
       return 1;
-    ptr++;
+	ptr = ptr->next;
   }
   return 0;
 }

@@ -1,19 +1,20 @@
+
 #include "minishell.h"
 
-int	check_input_error(t_shell_control_block *shell)
+int	check_unclosed_quotes(char *str)
 {
+	int	i;
 	int	single_quote;
 	int	double_quote;
-	int	i;
 
+	i = 0;
 	single_quote = 0;
 	double_quote = 0;
-	i = 0;
-	while (shell->line[i])
+	while (str[i])
 	{
-		if (shell->line[i] == SINGLE_Q && double_quote == 0)
+		if (str[i] == single_q && double_quote == 0)
 			single_quote = !single_quote;
-		else if (shell->line[i] == DOUBLE_Q && single_quote == 0)
+		else if (str[i] == double_q && single_quote == 0)
 			double_quote = !double_quote;
 		i++;
 	}
@@ -27,7 +28,7 @@ int	check_error(t_shell_control_block *shell)
   str = shell->line;
   if(!str || !*str)
     return 1;
-	if (check_input_error(shell))
+	if (check_unclosed_quotes(str))
 	{
 		print_error("unclosed quote\n");
     shell->exit_status = 2;
