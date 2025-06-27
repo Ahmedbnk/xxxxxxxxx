@@ -2,7 +2,7 @@
 
 #define  SIZE 4096
 
-char *pwd()
+int pwd()
 {
     char *buffer;
 
@@ -10,7 +10,8 @@ char *pwd()
     if ((getcwd(buffer, SIZE) == NULL))
     {
        printf("%s\n", strerror(errno));
-       return NULL;
+       return 1;
     }
-    return buffer;
+    printf("%s\n", buffer);
+    return 0;
 }

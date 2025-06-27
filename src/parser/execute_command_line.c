@@ -80,7 +80,6 @@ void execute_command_line_helper(t_shell_control_block *shell)
   int p_id = fork();
   if (p_id == 0)
   {
-    // Child process - restore default signal handling
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     if (shell->previous_read_end != -1)

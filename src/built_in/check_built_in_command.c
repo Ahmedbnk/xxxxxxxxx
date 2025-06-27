@@ -3,17 +3,41 @@
 int execute_built_in_command(t_shell_control_block *shell)
 {
   if(are_they_equal(*shell->cmd_and_args, "pwd"))
-    return ((printf("%s\n",pwd()), 1));
+  {
+    int result = pwd();
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "env"))
-    return ((print_env(shell->env_cpy), 1));
+  {
+    int result = print_env(shell->env_cpy);
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "echo"))
-    return ((echo(shell->cmd_and_args), 1));
+  {
+    int result = echo(shell->cmd_and_args);
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "cd"))
-    return ((cd(shell->env_cpy, shell->cmd_and_args), 1));
+  {
+    int result = cd(shell->env_cpy, shell->cmd_and_args);
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "export"))
-    return((export(shell, shell->cmd_and_args +1),1));
+  {
+    int result = export(shell, shell->cmd_and_args +1);
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "unset"))
-    return((unset(&shell->env_cpy, shell->cmd_and_args +1),1));
+  {
+    int result = unset(&shell->env_cpy, shell->cmd_and_args +1);
+    shell->exit_status = result;
+    return 1;
+  }
   else if(are_they_equal(*shell->cmd_and_args, "exit"))
     return(exit(0), 1);
   return 0;

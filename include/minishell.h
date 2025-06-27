@@ -22,9 +22,6 @@
 # define AMBIGUOUS 1
 # define NEW_START 2
 
-// Global variable for signal handling (as required by subject)
-extern int g_signal_received;
-
 typedef enum e_type
 {
 	WORD,
@@ -139,13 +136,13 @@ t_token		*new_token(void *content, int type);
 void		add_token_to_lst(t_token **lst, t_token *new);
 t_type		get_token_type(const char *str);
 
-void	cd(char **env, char **path);
-void	echo(char **args);
-void	unset(char ***env, char **vars);
-void	export(t_shell_control_block *s, char **to_export);
+int		cd(char **env, char **path);
+int		echo(char **args);
+int		unset(char ***env, char **vars);
+int		export(t_shell_control_block *s, char **to_export);
 int		execute_built_in(t_shell_control_block *shell, int state);
 
-char	*pwd(void);
+int		pwd(void);
 char	*get_next_line(int fd);
 char	*generate_random_name(void);
 char	*read_file(char *file_name);
@@ -154,7 +151,7 @@ char	*custom_join(char const *s1, char const *s2);
 char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion);
 char	*get_env_var(t_shell_control_block *shell, t_expand data);
 
-void	print_env(char **env);
+int		print_env(char **env);
 void	print_file(char *str);
 void	print_exit_signal_message(int exit_status);
 void	print_splitted(char **splitted);

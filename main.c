@@ -7,10 +7,6 @@ int main(int ac, char **av, char **env)
   ft_init_shell_block(&sh, ac, av);
   sh.env_of_export = copy_env(env);
   sh.env_cpy = copy_env(env);
-  
-  // Initialize signal handling for interactive mode
-  handle_signals(0);
-  
  while (1)
   {
     handle_signals(0);
