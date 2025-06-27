@@ -9,7 +9,7 @@ void execute_line(t_shell_control_block *sh)
     if(!is_there_a_pipe(sh) && execute_built_in(sh, parent))
     {
       // Built-in commands now handle their own exit status
-      // No need to set default exit status here
+      // No need to set default exit status here ...
     }
     else
       execute_command_line(sh);
