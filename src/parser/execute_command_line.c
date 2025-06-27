@@ -97,7 +97,6 @@ void execute_command_line_helper(t_shell_control_block *shell)
       close(shell->arr[1]);
     }
     process_command(shell);
-    exit(0);
   }
   else
     shell->last_child_pid = p_id;
@@ -129,29 +128,16 @@ void execute_command_line(t_shell_control_block *shell)
   }
   if (shell->previous_read_end != -1)
     close(shell->previous_read_end);
-  
-  // Wait for the last child process and get its exit status
-  if (waitpid(shell->last_child_pid, &status, 0) == -1)
-  {
-    shell->exit_status = 1; // Error waiting for child
-  }
-  else if (WIFEXITED(status))
-  {
+  waitpid(shell->last_child_pid, &status, 0);
+  if (WIFEXITED(status))
     shell->exit_status = WEXITSTATUS(status);
-  }
   else if(WIFSIGNALED(status))
-  {
-    shell->exit_status = 128 + WTERMSIG(status);
-  }
+    shell->exit_status =  128 + WTERMSIG(status);
   else if(WIFSTOPPED(status))
-  {
     shell->exit_status = WSTOPSIG(status);
-  }
-  
-  // Wait for any remaining child processes to avoid zombies
   while (wait(NULL) > 0)
     ;
-    
   if(shell->exit_status > 128)
     print_exit_signal_message(shell->exit_status);
+
 }
