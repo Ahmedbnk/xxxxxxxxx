@@ -11,6 +11,7 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include <dirent.h>
+# include <stdarg.h>
 
 # define parent 1
 # define child 2
