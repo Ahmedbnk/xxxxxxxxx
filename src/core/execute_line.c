@@ -12,6 +12,10 @@ void execute_line(t_shell_control_block *sh)
       // No need to set default exit status here ...
     }
     else
+    {
+      // Always use execute_command_line when there are pipes
+      // or when the command is not a built-in
       execute_command_line(sh);
+    }
   }
 }

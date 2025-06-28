@@ -70,10 +70,8 @@ void	process_command(t_shell_control_block *shell)
   }
   if(!execute_built_in(shell, child))
     execute_command(shell);
-  if(shell->in_file_name)
+	if(shell->in_file_name)
   		unlink(shell->in_file_name);
-  // Exit with the proper status from the command
-  exit(shell->exit_status);
 }
 
 void execute_command_line_helper(t_shell_control_block *shell)
@@ -91,12 +89,12 @@ void execute_command_line_helper(t_shell_control_block *shell)
     }
     if (shell->line_pointer && shell->line_pointer->type == PIPE)
     {
-      close(shell->previous_read_end);
       close(shell->arr[0]);
       dup2(shell->arr[1], 1);
       close(shell->arr[1]);
     }
     process_command(shell);
+    exit(0);
   }
   else
     shell->last_child_pid = p_id;
