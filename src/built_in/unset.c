@@ -30,17 +30,13 @@ void remove_var_from_env(char ***env , char *var)
 
 int unset(char ***env, char **vars)
 {
-  int has_error = 0;
-  
   while(*vars)
   {
     if(is_the_var_in_env(*env, *vars))
       remove_var_from_env(env, *vars);
-    else
-      has_error = 1;
     vars++;
   }
-  return has_error;
+  return (0);
 }
 
 // int main(int argc, char *argv[], char *env[])

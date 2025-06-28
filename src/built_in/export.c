@@ -66,19 +66,15 @@ static char **add_var_to_env(char **env , char *var)
 
 int export(t_shell_control_block *s, char **to_export)
 {
-    int has_error = 0;
-    
     if(!to_export || !*to_export)
     {
         sort_env(s->env_of_export);
-        return 0;
+        return (0);
     }
     while(*to_export)
     {
         if(!is_valid_var(*to_export))
-        {
-            has_error = 1;
-        }
+            return (1);
         else
         {
         if (find_and_update_var(s->env_of_export, *to_export));
@@ -92,5 +88,5 @@ int export(t_shell_control_block *s, char **to_export)
         }
         to_export++;
     }
-    return has_error;
+    return (0);
 }

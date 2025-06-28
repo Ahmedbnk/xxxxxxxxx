@@ -19,7 +19,7 @@ static int is_valid_flag(char *str)
 	return 1;
 }
 
-int echo(char **args)
+void echo(char **args)
 {
     int first_argument_flag;
 
@@ -39,5 +39,4 @@ int echo(char **args)
     }
     if(!first_argument_flag)
          printf("\n");
-    return 0;
 }

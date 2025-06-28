@@ -14,17 +14,6 @@ void update_env_dir(char **env, char *old_dir, char *new_dir)
     }
 }
 
-char *get_current_dir()
-{
-    char *buffer;
-    buffer = ft_malloc(4096, 1);
-    if ((getcwd(buffer, 4096) == NULL))
-    {
-       return NULL;
-    }
-    return buffer;
-}
-
 int cd(char **env, char **path)
 {
     char *old_dir;
@@ -32,16 +21,16 @@ int cd(char **env, char **path)
 
     if(are_they_equal(*path, "cd"))
         path++;
-    old_dir = get_current_dir();
+    old_dir = pwd();
     if(chdir(*path) == 0)
     {
-        new_dir = get_current_dir();
+        new_dir = pwd();
         update_env_dir(env, old_dir, new_dir);
-        return 0;
+        return (0);
     }
     else
     {
-    	printf("%s\n" , strerror(errno));
-        return 1;
+        printf("%s\n" , strerror(errno));
+        return (1);
     }
 }

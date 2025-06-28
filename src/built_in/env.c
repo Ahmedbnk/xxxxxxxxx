@@ -1,12 +1,11 @@
 #include "minishell.h"
 
-int print_env(char **env)
+void print_env(char **env)
 {
     if(!env || !*env)
-        return 0;
+        return;
     while(*env)
         printf("%s\n", *env++);
-    return 0;
 }
 
 
