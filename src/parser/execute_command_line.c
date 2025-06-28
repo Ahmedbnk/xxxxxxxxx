@@ -68,6 +68,12 @@ void	process_command(t_shell_control_block *shell)
     dup2(shell->fd_in, 0);
     close(shell->fd_in);
   }
+  if (shell->line_pointer && shell->line_pointer->type == PIPE)
+  {
+    close(shell->arr[0]);
+    dup2(shell->arr[1], 1);
+    close(shell->arr[1]);
+  }
   if(!execute_built_in(shell, child))
     execute_command(shell);
 	if(shell->in_file_name)
@@ -86,12 +92,6 @@ void execute_command_line_helper(t_shell_control_block *shell)
     {
       dup2(shell->previous_read_end, 0);
       close(shell->previous_read_end);
-    }
-    if (shell->line_pointer && shell->line_pointer->type == PIPE)
-    {
-      close(shell->arr[0]);
-      dup2(shell->arr[1], 1);
-      close(shell->arr[1]);
     }
     process_command(shell);
     exit(0);
