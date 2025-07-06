@@ -1,92 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:52:51 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/05 16:35:50 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-
-
-static int find_and_update_var(char **env, char *var)
+int	export(t_shell *s, char **to_export)
 {
-    int i;
+	int	state;
 
-    i = 0;
-
-    while (env[i])
-    {
-        if (compare_env_var(env[i], var))
-        {
-            env[i] = ft_strdup(var, 0);
-            return 1;
-        }
-        i++;
-    }
-    return 0;
-}
-
-static char **add_var_to_env(char **env , char *var)
-{
-    char **new_env;
-    new_env = ft_malloc((len_of_two_d_array(env)+ 2) * sizeof(char *), 0);
-    int i;
-    i = 0;
-    while(*env)
-    {
-        new_env[i] = ft_strdup(*env, 0);
-        i++;
-        env++;
-    }
-    new_env[i++] = ft_strdup(var, 0);
-    new_env[i] = NULL;
-    return new_env;
-}
-
-
-
- static void sort_env(char **env)
-{
-	int i;
-	int j;
-	i = 0;
-	char *tmp;
-		while(env[i])
+	state = 0;
+	if (!to_export || !*to_export)
+		return ((sort_env(s->env_of_export), 0));
+	while (*to_export)
+	{
+		if (!is_valid_var(*to_export))
+			state = 1;
+		else
 		{
-            j = i+1;
-            while(env[j])
-            {
-                if(ft_strcmp(env[i], env[j]) > 0)
-                {
-                    tmp = env[i];
-                    env[i] = env[j];
-                    env[j] = tmp;
-                }
-                j++;
-            }
-			i++;
+			if (find_and_update_var(s->env_of_export, *to_export))
+				;
+			else
+				s->env_of_export = add_var_to_env(s->env_of_export, *to_export);
+			if (!is_it_key_value(*to_export))
+				;
+			else if (find_and_update_var(s->env_cpy, *to_export))
+				;
+			else
+				s->env_cpy = add_var_to_env(s->env_cpy, *to_export);
 		}
-    remove_var_from_env(&env, "_");
-        print_env(env);
-}
-
-int export(t_shell_control_block *s, char **to_export)
-{
-    if(!to_export || !*to_export)
-    {
-        sort_env(s->env_of_export);
-        return (0);
-    }
-    while(*to_export)
-    {
-        if(!is_valid_var(*to_export))
-            return (1);
-        else
-        {
-        if (find_and_update_var(s->env_of_export, *to_export));
-        else
-            s->env_of_export = add_var_to_env(s->env_of_export , *to_export);
-        if(!is_it_key_value(*to_export))
-            ;
-        else if (find_and_update_var(s->env_cpy, *to_export));
-        else
-            s->env_cpy = add_var_to_env(s->env_cpy , *to_export);
-        }
-        to_export++;
-    }
-    return (0);
+		to_export++;
+	}
+	return (state);
 }

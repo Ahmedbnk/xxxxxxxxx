@@ -1,42 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:52:51 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/06 18:09:24 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static int is_valid_flag(char *str)
+int	echo(char **args)
 {
-	int i;
+	int	new_line_flag;
 
-	i = 0;
-	if (!str)
-		return 0;
-	if(str[i] != '-' || str[i + 1] != 'n')
-		return 0;
-	i++;
-	while (str[i])
+	args++;
+	new_line_flag = 0;
+	while (is_valid_flag(*args))
 	{
-		if(str[i] != 'n')
-			return 0;
-		i++;
+		new_line_flag = 1;
+		args++;
 	}
-	return 1;
-}
-
-void echo(char **args)
-{
-    int first_argument_flag;
-
-    args++;
-    first_argument_flag = 0;
-  if(is_valid_flag(*args))
-  {
-    first_argument_flag = 1;
-    args ++;
-  }
-    while(*args)
-    {
-        printf("%s", *args);
-        if(*(args + 1) != NULL)
-          printf(" ");
-      args++;
-    }
-    if(!first_argument_flag)
-         printf("\n");
+	while (*args)
+	{
+		printf("%s", *args);
+		if (*(args + 1) != NULL)
+			printf(" ");
+		args++;
+	}
+	if (!new_line_flag)
+		printf("\n");
+	return (0);
 }

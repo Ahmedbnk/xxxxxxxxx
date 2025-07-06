@@ -1,21 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   custom_join.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abenkrar <abenkrar@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:53:01 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 17:53:01 by abenkrar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
-
-void ft_strcpy(char *dst, const char *src)
-{
-	int	i;
-
-	i = 0;
-	if (!dst || !src)
-		return;
-	while (src[i])
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return;
-}
 
 char	*custom_join(char const *s1, char const *s2)
 {
@@ -33,7 +28,7 @@ char	*custom_join(char const *s1, char const *s2)
 	if (s1)
 		ft_strcpy(a, s1);
 	else
-	  a[0] = '\0';
+		a[0] = '\0';
 	if (s2)
 		ft_strcpy(a + len1, s2);
 	return (a);

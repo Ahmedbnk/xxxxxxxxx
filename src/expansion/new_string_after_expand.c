@@ -1,27 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   new_string_after_expand.c                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:52:54 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 18:50:32 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char	*expnad_and_join_node(t_shell_control_block *s, t_expand data)
-{
-	char	*path;
-	char	*the_joined_node;
-	char	*rest;
-	if (data.to_expand != NULL)
-	{
-		if (are_they_equal(data.to_expand, "$?"))
-			path = ft_itoa(s->exit_status);
-		else
-			path = ft_strdup(get_env_var(s, data), 1);
-		the_joined_node = custom_join(data.befor_dollar, path);
-	}
-	if (data.last_one)
-	{
-		rest = custom_join(the_joined_node, data.after_dollar);
-		return (rest);
-	}
-	return (the_joined_node);
-}
-
-char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
+char	*new_str_after_expand(t_shell *s, int num_of_expantion)
 {
 	char	*new_after_expand;
 	char	*expanded;
@@ -34,7 +25,7 @@ char	*new_str_after_expand(t_shell_control_block *s, int num_of_expantion)
 	{
 		if (num_of_expantion - i == 1)
 			s->expand_arr[i].last_one = 1;
-		expanded = expnad_and_join_node(s, s->expand_arr[i]);
+		expanded = expand_and_join_node(s, s->expand_arr[i]);
 		if (!expanded)
 			return (NULL);
 		joined = custom_join(new_after_expand, expanded);

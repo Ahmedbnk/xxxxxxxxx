@@ -1,32 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_dollar_with_quotes.c                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:52:59 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/05 14:10:11 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char *remove_dollar_if_quotes_after_it(char *str)
+char	**handle_dollar_with_quotes(char **splitted)
 {
-  char *returned_string = ft_malloc(ft_strlen(str)+1, 1);
-  int i = 0;
-  int j = 0;
-  while(str[i])
-  {
-    if(str[i] == '$' && !is_between_quotes(str, i) && (str[i + 1] == single_q || str[i + 1] == double_q) )
-      i++;
-    else
-      returned_string[j++] = str[i++];
-  }
-  returned_string[j] = '\0';
-  // remove_quotes(&returned_string);
-  return returned_string;
-}
+	int	i;
 
-char **handle_dollar_with_quotes(char **splitted)
-{
-  int i = 0;
-  while(splitted[i])
-  {
-    if(are_they_equal(splitted[i], "<<"))
-      i++;
-    else
-      splitted[i] = remove_dollar_if_quotes_after_it(splitted[i]);
-    i++;
-  }
-  return splitted;
+	i = 0;
+	while (splitted[i])
+	{
+		if (are_eq(splitted[i], "<<"))
+			i++;
+		else
+			splitted[i] = remove_dollar_if_quotes_after_it(splitted[i]);
+		i++;
+	}
+	return (splitted);
 }

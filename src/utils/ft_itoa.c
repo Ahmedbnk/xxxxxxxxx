@@ -12,33 +12,6 @@
 
 #include "minishell.h"
 
-static int	n_counter(int n)
-{
-	int	counter;
-
-	counter = 0;
-	if (n <= 0)
-		counter = 1;
-	while (n)
-	{
-		n = n / 10;
-		counter++;
-	}
-	return (counter);
-}
-
-static void	fill_n_str(char *str, int n)
-{
-	int	len;
-
-	len = n_counter(n);
-	while (len--)
-	{
-		str[len] = n % 10 + '0';
-		n = n / 10;
-	}
-}
-
 char	*ft_itoa(int n)
 {
 	int		len;
@@ -47,7 +20,7 @@ char	*ft_itoa(int n)
 	if (n == -2147483648)
 		return (ft_strdup("-2147483648", 1));
 	len = n_counter(n);
-	a = ft_malloc((len + 1) * sizeof(char),1);
+	a = ft_malloc((len + 1) * sizeof(char), 1);
 	if (n == 0)
 		a[0] = '0';
 	if (n > 0)

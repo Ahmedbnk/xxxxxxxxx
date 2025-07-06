@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   printf_for_deb.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:53:01 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 18:29:46 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -16,9 +27,10 @@ static void	ft_putstr(char *str)
 		str++;
 	}
 }
-void s(char *str)
+
+void	s(char *str)
 {
-  ft_putstr("[");
-  ft_putstr(str);
-  ft_putstr("]\n");
+	ft_putstr("[");
+	ft_putstr(str);
+	ft_putstr("]\n");
 }

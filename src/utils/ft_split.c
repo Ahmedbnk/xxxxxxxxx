@@ -1,39 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkasimi <nkasimi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:53:02 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 18:27:53 by nkasimi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-static int	ft_w_counter(char const *s, char c)
-{
-	int	i;
-	int	k;
-	int	counter;
-
-	i = 0;
-	k = 0;
-	counter = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-		{
-			k = 0;
-		}
-		else
-		{
-			if (k == 0)
-				counter++;
-			k = 1;
-		}
-		i++;
-	}
-	return (counter);
-}
 
 char	**ft_split(char const *s, char c)
 {
 	char	**splitted;
+	int		i;
+	int		k;
+	int		start;
 
-	int (i), (k), (start);
 	if (!s)
 		return (NULL);
-	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *),1);
+	splitted = ft_malloc((ft_w_counter(s, c) + 1) * sizeof(char *), 1);
 	i = 0;
 	k = 0;
 	while (s[i])
@@ -49,15 +37,3 @@ char	**ft_split(char const *s, char c)
 	splitted[k] = NULL;
 	return (splitted);
 }
-// #include <stdio.h>
-// int	main(void)
-// {
-// 	char s[] = "hello world";
-// 	// char *str = NULL;
-// 	char **splitted = ft_split(NULL, ' ');
-// 	if (splitted == NULL)
-// 		printf("nadi");
-// 	else
-// 		printf("%s\n", splitted[0]);
-// 	return (0);
-// }

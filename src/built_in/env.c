@@ -1,11 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abenkrar <abenkrar@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:52:51 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 17:52:51 by abenkrar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void print_env(char **env)
+int	print_env(char **env)
 {
-    if(!env || !*env)
-        return;
-    while(*env)
-        printf("%s\n", *env++);
+	if (!env || !*env)
+		return (0);
+	while (*env)
+		printf("%s\n", *env++);
+	return (0);
 }
-
-

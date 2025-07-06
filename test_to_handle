@@ -1,1 +1,31 @@
-dollar in the delemiter
+Flash:hddhhdhdhdhd
+hddhhdhdhdhd: command not found
+Flash:$?
+127: command not found
+Flash:$?
+127: command not found
+Flash:<<a
+> a
+Flash:$?
+0: command not found
+Flash:
+Flash:
+➜  mini git:(main) ✗ ./minishell
+Flash:<<a<<b<<c
+> 
+warning: here-document delimited by end-of-file wanted: a
+> 
+warning: here-document delimited by end-of-file wanted: b
+> 
+warning: here-document delimited by end-of-file wanted: c
+Flash:
+➜  mini git:(main) ✗ ./minishell
+Flash:
+Flash:$?
+0: command not found
+Flash:<<a
+> a
+Flash:$?
+0: command not found
+Flash:
+Flash:

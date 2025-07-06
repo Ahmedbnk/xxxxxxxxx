@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abenkrar <abenkrar@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:53:02 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 17:53:02 by abenkrar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -8,9 +20,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	if (!s1)
 		return ((char *)s2);
-  if(!s2)
-    return ((char*)s1);
-	a = ft_malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * (sizeof(char)),1);
+	if (!s2)
+		return ((char *)s1);
+	a = ft_malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * (sizeof(char)), 1);
 	i = 0;
 	while (i < (int)ft_strlen(s1))
 	{

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abenkrar <abenkrar@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/04 17:53:02 by abenkrar          #+#    #+#             */
+/*   Updated: 2025/07/04 17:53:02 by abenkrar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*handle_failure_and_eof(char *rest, ssize_t readed_bytes)
@@ -50,7 +62,6 @@ static char	*creat_line(char **rest)
 	*rest = temp_rest;
 	return (line);
 }
-
 
 char	*get_next_line(int fd)
 {
